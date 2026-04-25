@@ -1,0 +1,27 @@
+/* Navbar.css */
+nav {
+  position: fixed; /* Keeps it in the corner */
+  top: 0;
+  right: 0;
+  padding: 1rem 2rem; /* Adds space from the edges */
+  z-index: 1000; /* Ensures it stays on top of other content */
+}
+
+nav ul {
+  list-style-type: none;
+  display: flex; /* Aligns links horizontally */
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: #f0eaea; /* Dark text color (adjust if your site background is dark) */
+  font-weight: bold;
+  font-family: sans-serif;
+}
+
+nav ul li a:hover {
+  color: #555; /* Slightly lighter on hover */
+}

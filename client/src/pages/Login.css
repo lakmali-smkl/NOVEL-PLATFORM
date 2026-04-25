@@ -1,0 +1,48 @@
+/* Login.css */
+
+/* 1. Reset the body styles so they don't break other pages */
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #1a1a1a; /* Dark background fallback */
+}
+
+/* 2. Add the centering wrapper */
+.auth-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* This pushes the content to the vertical center */
+  width: 100%;
+}
+
+/* 3. Your existing styles */
+.login-container {
+  background: rgba(255, 255, 255, 0.05); 
+  backdrop-filter: blur(10px);        
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 15px;
+  padding: 40px;
+  width: 300px;
+  color: rgb(214, 212, 212);
+  text-align: center;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.login-container input {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  background-color: #c1043d;
+  color: rgb(245, 240, 240);
+  border: none;
+  cursor: pointer;
+  border-radius: 5px; /* Added slight rounding for a better look */
+}

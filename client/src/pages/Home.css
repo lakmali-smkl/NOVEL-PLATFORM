@@ -1,0 +1,44 @@
+/* Home.css */
+
+.home-container {
+  position: relative;
+  width: 100%;
+  height: 100vh; /* Full viewport height */
+  overflow: hidden;
+}
+
+.video-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* This makes the video fill the screen perfectly */
+  z-index: 0; /* Behind the content */
+}
+
+.hero-overlay {
+  position: relative;
+  z-index: 1; /* In front of the video */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: white; /* White text looks better on video */
+  text-align: center;
+}
+
+.hero-overlay h1 { font-size: 3rem; margin-bottom: 15px; }
+.hero-overlay p { font-size: 1.2rem; margin-bottom: 30px; }
+
+/* The Red Buttons */
+.cta-buttons { display: flex; gap: 20px; }
+.btn-red {
+  background-color: red;
+  color: white;
+  padding: 12px 25px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+}
