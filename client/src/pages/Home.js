@@ -1,16 +1,17 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './Home.css';
+import myVideo from './backgroundVideo.mp4';
 
 const Home = () => {
   return (
     <div className="home-container">
-      {/* The Video Background */}
+     
       <video autoPlay loop muted playsInline className="video-background">
-        <source src="/background.mp4" type="video/mp4" />
+        <source src={myVideo} type="video/mp4" />
       </video>
 
-      {/* The Content Overlay */}
+     
       <section className="hero-overlay">
         <h1>Welcome to My Novel Hub</h1>
         <p>Explore, read, and share your favorite stories and articles.</p>

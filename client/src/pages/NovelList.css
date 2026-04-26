@@ -1,0 +1,44 @@
+.novel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.novel-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  transition: transform 0.2s;
+}
+
+.novel-card:hover {
+  transform: translateY(-5px);
+}
+
+.cover-img {
+  width: 100%;
+  height: 350px;
+  object-fit: cover;
+}
+
+.novel-info {
+  padding: 15px;
+}
+
+.read-btn {
+  background: #8b0000;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.novel-gallery h2 {
+  color: #e8eded; /* A bright, professional teal/cyan color */
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 1.5rem;
+}

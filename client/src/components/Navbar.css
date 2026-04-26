@@ -1,27 +1,60 @@
 /* Navbar.css */
-nav {
-  position: fixed; /* Keeps it in the corner */
+
+.navbar {
+  display: flex;
+  justify-content: space-between; /* Pushes elements to far left and right */
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #770307da; /* Add a background color for visibility */
+  color: #fff;
+  position: fixed;
   top: 0;
-  right: 0;
-  padding: 1rem 2rem; /* Adds space from the edges */
-  z-index: 1000; /* Ensures it stays on top of other content */
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  box-sizing: border-box; /* Ensures padding doesn't affect width */
 }
 
-nav ul {
-  list-style-type: none;
-  display: flex; /* Aligns links horizontally */
+/* Container for the Menu Button (Top Left) */
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  min-width: 50px;
+}
+
+/* Container for Login/Register/Logout/Home (Top Right) */
+.nav-right {
+  display: flex;
+  align-items: center;
   gap: 20px;
+  list-style-type: none;
   margin: 0;
   padding: 0;
 }
 
-nav ul li a {
+.nav-link, 
+.nav-btn {
   text-decoration: none;
-  color: #f0eaea; /* Dark text color (adjust if your site background is dark) */
+  color: #f0eaea;
   font-weight: bold;
   font-family: sans-serif;
+  cursor: pointer;
+  font-size: 1rem;
 }
 
-nav ul li a:hover {
-  color: #555; /* Slightly lighter on hover */
+.nav-link:hover, 
+.nav-btn:hover {
+  color: #bdc3c7;
 }
+
+/* Special button styling */
+.menu-btn {
+  background: none; 
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+

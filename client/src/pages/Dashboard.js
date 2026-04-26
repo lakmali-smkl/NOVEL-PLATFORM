@@ -1,23 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import './Dashboard.css';
 
-const Dashboard = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
+const Dashboard = ({ isSidebarOpen, setIsSidebarOpen }) => {
   return (
     <div className="dashboard-container">
-      
-      {/* 1. Hamburger Button (Only shows when menu is CLOSED) */}
-      {!isSidebarOpen && (
-        <button className="hamburger-btn" onClick={() => setIsSidebarOpen(true)}>
-          ☰
-        </button>
-      )}
-
-      {/* 2. Sidebar */}
+      {/* Sidebar now controlled by props */}
       <aside className={`sidebar ${isSidebarOpen ? 'active' : ''}`}>
-        {/* Close Button (Only shows when menu is OPEN, inside the sidebar) */}
         <button className="close-btn" onClick={() => setIsSidebarOpen(false)}>
           ✕
         </button>

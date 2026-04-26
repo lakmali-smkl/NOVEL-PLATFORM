@@ -35,7 +35,7 @@
 /* The Red Buttons */
 .cta-buttons { display: flex; gap: 20px; }
 .btn-red {
-  background-color: red;
+  background-color: #770307da;
   color: white;
   padding: 12px 25px;
   border-radius: 5px;
