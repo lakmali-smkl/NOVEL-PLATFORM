@@ -25,7 +25,7 @@ const Navbar = ({ user, setUser, toggleSidebar }) => {
           </button>
         )}
         <Link to="/" className="nav-link">Home</Link>
-        {!isDashboard && !isLibraryPage && (
+        {!isLibraryPage && (
           <Link to="/library" className="nav-link">Library</Link>
         )}
       </div>
@@ -33,7 +33,6 @@ const Navbar = ({ user, setUser, toggleSidebar }) => {
       <ul className="nav-right">
         {user ? (
           <>
-            {/* ADMIN CHECK: Only shows if the user is an admin */}
             {user.isAdmin && !isDashboard && !isLibraryPage &&(
               <li>
                 <Link to="/dashboard/add-creation" className="nav-link admin-link">

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './NovelList.css';
+import { Link } from 'react-router-dom';
 
 const NovelList = () => {
   const [novels, setNovels] = useState([]);
@@ -29,7 +30,9 @@ const NovelList = () => {
               <h3>{novel.title}</h3>
               <p className="author">By: {novel.author}</p>
               <p className="excerpt">{novel.content?.substring(0, 100)}...</p>
-              <button className="read-btn">Read More</button>
+              <Link to={`/read/novel/${novel._id}`}>
+                <button className="read-btn">Read More</button>
+              </Link>
             </div>
           </div>
         ))}

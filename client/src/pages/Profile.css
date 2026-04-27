@@ -1,0 +1,114 @@
+.profile-container {
+  padding: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Header styling */
+.profile-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.avatar-placeholder {
+  width: 100px;
+  height: 100px;
+  background-color: #007bff;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  font-weight: bold;
+  margin: 0 auto 1rem auto;
+}
+
+/* Responsive Grid */
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.info-card {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e1e4e8;
+}
+
+/* Content rows */
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.info-row span {
+  color: #6a737d;
+  font-weight: 500;
+}
+
+.stat-box {
+  text-align: center;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.stat-number {
+  font-size: 2rem;
+  color: #007bff;
+  font-weight: bold;
+}
+
+.profile-header h1 {
+    color: #e5e4ea; 
+    font-size: 2.5rem;
+    margin-top: 10px;
+}
+
+
+.email-text {
+    color: #5dade2; 
+    font-weight: 500;
+    font-style: italic;
+}
+
+.edit-input {
+  padding: 10px;
+  font-size: 1.5rem;
+  border: 2px solid #007bff;
+  border-radius: 6px;
+  width: 200px;
+  text-align: center;
+}
+
+.edit-btn {
+  background-color: #007bff;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.save-btn {
+  background-color: #28a745;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  margin-right: 10px;
+}
+
+.cancel-btn {
+  background-color: #6c757d;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+}

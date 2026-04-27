@@ -80,3 +80,17 @@
     display: none; /* Hide 'X' on desktop */
   }
 }
+
+.dashboard-container {
+  display: flex;       /* This enables Flexbox */
+  width: 100%;
+  min-height: 100vh;   /* Keeps the layout filling the screen height */
+  overflow-x: hidden;  /* Prevents horizontal scrollbars */
+}
+
+
+.content {
+  flex-grow: 1;        /* This is the key: it forces content to fill the rest of the screen */
+  padding: 20px;
+  width: 100%;         /* Ensures content behaves predictably */
+}

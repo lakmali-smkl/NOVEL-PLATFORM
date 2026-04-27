@@ -11,6 +11,9 @@ import AddNovel from './pages/AddNovel';
 import AddArticle from './pages/AddArticle';
 //import ArticleList from './pages/ArticleList';
 import Library from './pages/Library';
+import ReadPage from './pages/ReadPage';
+import Favorites from './pages/Favorites';
+import Profile from './pages/Profile';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -36,17 +39,21 @@ function App() {
         <Route path="/login" element={<Login setUser={setUser} />} />
         <Route path="/register" element={<Register />} />
         
-        {/* User Dashboard */}
+        {/* Consolidated Dashboard Route */}
         <Route 
-          path="/dashboard/*" 
-          element={<Dashboard isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />} 
-        />
+          path="/dashboard" 
+          element={<Dashboard isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />}
+        >
+          <Route path="favorites" element={<Favorites />} />
+          <Route path="profile" element={<Profile />} />
+        </Route>
         
-        {/* Admin Specific Routes */}
+        {/* Admin & Other Routes */}
         <Route path="/admin-dashboard" element={<AdminDashboard user={user} />} />
         <Route path="/add-novel" element={<AddNovel user={user} />} />
         <Route path="/add-article" element={<AddArticle />} />
         <Route path="/library" element={<Library />} />
+        <Route path="/read/:type/:id" element={<ReadPage />} />
       </Routes>
     </>
   );
