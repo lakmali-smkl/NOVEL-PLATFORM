@@ -1,0 +1,96 @@
+/* --- Hamburger Button (Fixed top-left) --- */
+.hamburger-btn {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  z-index: 1000;
+  background: #770307da;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  font-size: 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* --- Sidebar Styles --- */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -250px; /* Hidden by default */
+  width: 250px;
+  height: 100vh;
+  background-color: #770307da;
+  z-index: 1001; /* Higher than the hamburger button */
+  transition: 0.3s ease-in-out;
+  padding-top: 10px;
+}
+
+.sidebar.active {
+  left: 0;
+}
+
+/* --- Close Button (Inside Sidebar) --- */
+.close-btn {
+  background: transparent;
+  color: white;
+  border: none;
+  font-size: 28px;
+  padding: 10px 20px;
+  cursor: pointer;
+  display: block;
+}
+
+/* --- Sidebar Links --- */
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 20px;
+}
+
+.sidebar ul li a {
+  display: block;
+  padding: 20px;
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  transition: background 0.3s;
+}
+
+.sidebar ul li a:hover {
+  background-color: rgba(124, 8, 8, 0.2);
+}
+
+/* --- Main Content --- */
+.content {
+  padding: 20px;
+}
+
+/* Responsive adjustment */
+@media (min-width: 769px) {
+  .hamburger-btn {
+    display: none; /* Hide hamburger on desktop */
+  }
+  .sidebar {
+    position: relative; /* Sidebar stays in layout on desktop */
+    left: 0;
+  }
+  .close-btn {
+    display: none; /* Hide 'X' on desktop */
+  }
+}
+
+.dashboard-container {
+  display: flex;       /* This enables Flexbox */
+  width: 100%;
+  min-height: 100vh;   /* Keeps the layout filling the screen height */
+  overflow-x: hidden;  /* Prevents horizontal scrollbars */
+}
+
+
+.content {
+  flex-grow: 1;        /* This is the key: it forces content to fill the rest of the screen */
+  padding: 20px;
+  width: 100%;         /* Ensures content behaves predictably */
+}

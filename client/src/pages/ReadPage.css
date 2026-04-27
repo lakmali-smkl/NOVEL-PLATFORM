@@ -1,0 +1,32 @@
+.read-page-container {
+  background-color: #1a1a1a;
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+
+.read-card {
+  background-color: #ffffff;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.read-card h1 {
+  color: #1a202c;
+  margin-bottom: 10px;
+}
+
+.author-name {
+  color: #718096;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.content-body {
+  color: #2d3748;
+  line-height: 1.8;
+  font-size: 1.1rem;
+  white-space: pre-wrap; /* Keeps your paragraphs/line breaks intact */
+}
