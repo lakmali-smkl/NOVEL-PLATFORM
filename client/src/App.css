@@ -36,3 +36,12 @@
     transform: rotate(360deg);
   }
 }
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.app-main-layout {
+  padding-top: 80px; /* Adjust this to match your Navbar's height exactly */
+}

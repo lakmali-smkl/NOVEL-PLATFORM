@@ -174,6 +174,44 @@ app.patch('/api/users/:id', async (req, res) => {
   }
 });
 
+
+// Update a Novel
+app.put('/api/novels/:id', async (req, res) => {
+    try {
+      const updatedNovel = await Novel.findByIdAndUpdate(req.params.id, req.body, { returnDocument: 'after' });
+      res.json({ message: "Novel updated!", data: updatedNovel });
+    } catch (error) { res.status(500).json({ error: "Update failed" }); }
+  });
+
+  // Update an Article
+  app.put('/api/articles/:id', async (req, res) => {
+    try {
+      const updatedArticle = await Article.findByIdAndUpdate(req.params.id, req.body, { returnDocument: 'after' });
+      res.json({ message: "Article updated!", data: updatedArticle });
+    } catch (error) { res.status(500).json({ error: "Update failed" }); }
+  });
+
+
+  // Remove a favorite from a user's profile
+app.delete('/api/users/:userId/favorites/:contentId', async (req, res) => {
+  try {
+    const { userId, contentId } = req.params;
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $pull: { favorites: { contentId: contentId } } },
+      { new: true }
+    );
+    if (!user) return res.status(404).json({ error: "User not found" });
+    res.json({ message: "Favorite removed", favorites: user.favorites });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to remove favorite" });
+  }
+});
+
+
 // Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+
+

@@ -7,9 +7,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import AddNovel from './pages/AddNovel';
-//import NovelList from './pages/NovelList';
 import AddArticle from './pages/AddArticle';
-//import ArticleList from './pages/ArticleList';
 import Library from './pages/Library';
 import ReadPage from './pages/ReadPage';
 import Favorites from './pages/Favorites';
@@ -35,25 +33,21 @@ function App() {
         toggleSidebar={toggleSidebar} 
       />
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Home user={user} />} />
         <Route path="/login" element={<Login setUser={setUser} />} />
         <Route path="/register" element={<Register />} />
         
-        {/* Consolidated Dashboard Route */}
-        <Route 
-          path="/dashboard" 
-          element={<Dashboard isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />}
-        >
+        <Route path="/dashboard" element={<Dashboard isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />}>
           <Route path="favorites" element={<Favorites />} />
           <Route path="profile" element={<Profile />} />
         </Route>
         
-        {/* Admin & Other Routes */}
         <Route path="/admin-dashboard" element={<AdminDashboard user={user} />} />
         <Route path="/add-novel" element={<AddNovel user={user} />} />
         <Route path="/add-article" element={<AddArticle />} />
         <Route path="/library" element={<Library />} />
         <Route path="/read/:type/:id" element={<ReadPage />} />
+        
       </Routes>
     </>
   );

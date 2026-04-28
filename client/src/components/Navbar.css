@@ -11,7 +11,8 @@
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 1000;
+  height: 80px;
+  z-index: 999;
   box-sizing: border-box; /* Ensures padding doesn't affect width */
 }
 

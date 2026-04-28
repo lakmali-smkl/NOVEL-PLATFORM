@@ -20,10 +20,15 @@
   left: -250px; /* Hidden by default */
   width: 250px;
   height: 100vh;
+  flex-shrink: 0;
   background-color: #770307da;
   z-index: 1001; /* Higher than the hamburger button */
   transition: 0.3s ease-in-out;
   padding-top: 10px;
+}
+
+.hamburger-btn {
+  z-index: 1002; /* Ensure this is the highest number so it's never covered */
 }
 
 .sidebar.active {
@@ -69,12 +74,22 @@
 
 /* Responsive adjustment */
 @media (min-width: 769px) {
+  .dashboard-container {
+    padding-top: 80px; /* Ensures content clears the top bar on desktop */
+  }
+
   .hamburger-btn {
     display: none; /* Hide hamburger on desktop */
   }
   .sidebar {
     position: relative; /* Sidebar stays in layout on desktop */
     left: 0;
+    z-index: 1;
+  }
+  .content {
+    flex-grow: 1; /* Forces the content to fill the remaining screen width */
+    padding: 20px;
+    display: block;
   }
   .close-btn {
     display: none; /* Hide 'X' on desktop */
@@ -84,7 +99,8 @@
 .dashboard-container {
   display: flex;       /* This enables Flexbox */
   width: 100%;
-  min-height: 100vh;   /* Keeps the layout filling the screen height */
+  min-height: 100vh;   
+  padding-top: 70px;
   overflow-x: hidden;  /* Prevents horizontal scrollbars */
 }
 
@@ -92,5 +108,6 @@
 .content {
   flex-grow: 1;        /* This is the key: it forces content to fill the rest of the screen */
   padding: 20px;
-  width: 100%;         /* Ensures content behaves predictably */
+  width: 100%;         
+  overflow-y: auto;
 }

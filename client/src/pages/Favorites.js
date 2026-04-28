@@ -4,8 +4,6 @@ import './Favorites.css';
 
 const Favorites = () => {
   const [favs, setFavs] = useState([]);
-  
-  // 1. Get the raw string first
   const userStr = localStorage.getItem('user');
   // 2. Safely parse it
   const user = userStr ? JSON.parse(userStr) : null;
@@ -25,6 +23,26 @@ const Favorites = () => {
     return <div className="fav-content"><h2>Please login to see your favorites.</h2></div>;
   }
 
+  const handleDelete = async (contentId) => {
+  if (window.confirm("Remove from favorites?")) {
+    try {
+      // Use the user's _id and the item's contentId
+      const response = await fetch(`http://localhost:5000/api/users/${user._id}/favorites/${contentId}`, { 
+        method: 'DELETE' 
+      });
+      
+      if (response.ok) {
+        // Filter the UI using contentId since that's what your state uses
+        setFavs(favs.filter(item => item.contentId !== contentId));
+      } else {
+        console.error("Failed to delete from server");
+      }
+    } catch (err) {
+      console.error("Delete failed:", err);
+    }
+  }
+};
+
   return (
     <div className="fav-content">
       <h2>My Saved Favorites</h2>
@@ -34,6 +52,12 @@ const Favorites = () => {
             <div key={item.contentId} className="fav-card">
               <h3>{item.title}</h3>
               <Link to={`/read/${item.type}/${item.contentId}`}>Read Now</Link>
+              <button 
+              className="delete-btn" 
+                onClick={() => handleDelete(item.contentId)}
+              >
+                Remove Favorite
+              </button>
             </div>
           ))
         ) : (

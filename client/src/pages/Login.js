@@ -20,11 +20,10 @@ const Login = ({ setUser }) => {
 
     const data = await response.json();
 
-    console.log("Server responded with:", data);
-
     if (response.ok) {
       setUser(data.user);
       localStorage.setItem('user', JSON.stringify(data.user));
+
 
       const isAdmin = data.user.isAdmin === true || data.user.isAdmin === "true";
       
@@ -33,7 +32,7 @@ const Login = ({ setUser }) => {
       if (isAdmin) {
         navigate('/admin-dashboard'); 
       } else {
-        navigate('/dashboard');
+        navigate('/');
       }
     } else {
       alert(data.message || "Login failed");

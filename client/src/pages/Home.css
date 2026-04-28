@@ -1,39 +1,41 @@
-/* Home.css */
-
-.home-container {
+/* --- GUEST VIEW (The original video background) --- */
+.guest-view {
   position: relative;
   width: 100%;
-  height: 100vh; /* Full viewport height */
+  height: 100vh; /* Keeps the video full screen */
   overflow: hidden;
 }
 
-.video-background {
+.guest-view .video-background {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover; /* This makes the video fill the screen perfectly */
-  z-index: 0; /* Behind the content */
+  object-fit: cover;
+  z-index: 0;
 }
 
-.hero-overlay {
+.guest-view .hero-overlay {
   position: relative;
-  z-index: 1; /* In front of the video */
+  z-index: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100%;
-  color: white; /* White text looks better on video */
+  color: white;
   text-align: center;
 }
 
-.hero-overlay h1 { font-size: 3rem; margin-bottom: 15px; }
-.hero-overlay p { font-size: 1.2rem; margin-bottom: 30px; }
+/* Keep the base button styles global so they always show up in guest mode */
+.cta-buttons { 
+  display: flex; 
+  gap: 20px; 
+  position: relative;
+  z-index: 10; /* Ensure they are above the video */
+}
 
-/* The Red Buttons */
-.cta-buttons { display: flex; gap: 20px; }
 .btn-red {
   background-color: #770307da;
   color: white;
@@ -41,4 +43,63 @@
   border-radius: 5px;
   text-decoration: none;
   font-weight: bold;
+  transition: background 0.3s;
+}
+
+.btn-red:hover {
+  background-color: #b2040a;
+}
+
+/* Ensure the hero-overlay is visible */
+.hero-overlay {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  color: white;
+  text-align: center;
+}
+
+/* --- LOGGED-IN VIEW (The Dashboard) --- */
+.logged-in-view {
+  padding: 40px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 100vh; /* Allows scrolling */
+}
+
+.welcome-banner {
+  background: linear-gradient(135deg, #770307 0%, #2a0103 100%);
+  color: white;
+  padding: 50px;
+  border-radius: 15px;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.trending-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+}
+
+.novel-card {
+  background: #fff;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.read-now-btn {
+  display: block;
+  margin-top: 10px;
+  background-color: #770307;
+  color: white;
+  padding: 10px;
+  text-decoration: none;
+  border-radius: 5px;
 }
