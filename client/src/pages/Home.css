@@ -14,6 +14,7 @@
   height: 100%;
   object-fit: cover;
   z-index: 0;
+  filter: brightness(0.4); /* Optional: darken the video for better text contrast */
 }
 
 .guest-view .hero-overlay {
@@ -26,13 +27,14 @@
   height: 100%;
   color: white;
   text-align: center;
+  gap: 20px;
 }
 
 /* Keep the base button styles global so they always show up in guest mode */
 .cta-buttons { 
   display: flex; 
   gap: 20px; 
-  position: relative;
+  /*position: relative;
   z-index: 10; /* Ensure they are above the video */
 }
 
@@ -40,14 +42,15 @@
   background-color: #770307da;
   color: white;
   padding: 12px 25px;
-  border-radius: 5px;
+  border-radius: 50px;
   text-decoration: none;
-  font-weight: bold;
-  transition: background 0.3s;
+  font-weight: 600;
+  transition: transform 0.2s, background 0.3s;
 }
 
 .btn-red:hover {
   background-color: #b2040a;
+  transform: scale(1.05);
 }
 
 /* Ensure the hero-overlay is visible */
@@ -66,41 +69,82 @@
 /* --- LOGGED-IN VIEW (The Dashboard) --- */
 .logged-in-view {
   padding: 40px 20px;
-  padding-top: 120px;
+  padding-top: 100px;
   max-width: 1200px;
   margin: 0 auto;
+  z-index: 1;
   min-height: 100vh; /* Allows scrolling */
+  box-sizing: border-box;
 }
 
 .welcome-banner {
-  background: linear-gradient(135deg, #770307 0%, #2a0103 100%);
+  background: linear-gradient(135deg, #1e1e1e 0%, #000 100%);
+  border-left: 5px solid #770307; /* Brand accent */
   color: white;
-  padding: 50px;
-  border-radius: 15px;
+  padding: 40px;
+  border-radius: 12px;
   text-align: center;
   margin-bottom: 40px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+.welcome-banner h1 span {
+  color: #ff4d4d; /* Username highlight */
+}
+
+.trending-section h2 {
+  color: #fff;
+  margin-bottom: 20px;
 }
 
 .trending-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 25px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
 }
 
 .novel-card {
-  background: #fff;
-  padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  text-align: center;
+  background: #1e1e1e;
+  border-radius: 12px;
+  padding: 0;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid #333;
+}
+
+.novel-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.5);
+  border-color: #770307;
+}
+
+.novel-card img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+}
+
+.novel-card h3 {
+  padding: 15px 15px 5px 15px;
+  color: white;
+  margin: 0;
 }
 
 .read-now-btn {
   display: block;
-  margin-top: 10px;
-  background-color: #770307;
-  color: white;
+  margin: 15px;
+  background-color: transparent;
+  border: 1px solid #770307;
+  color: #770307;
+  text-align: center;
   padding: 10px;
   text-decoration: none;
-  border-radius: 5px;
+  border-radius: 6px;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+
+.read-now-btn:hover {
+  background-color: #770307;
+  color: white;
 }

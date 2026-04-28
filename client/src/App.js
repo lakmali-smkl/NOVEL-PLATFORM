@@ -43,10 +43,22 @@ function App() {
           <button className="close-btn" onClick={() => setIsSidebarOpen(false)}>
             ✕
           </button>
-          <h2>My Dashboard</h2>
+          <div className="sidebar-header">
+            <h3>Account</h3>
+          </div>
           <ul>
-            <li><Link to="/dashboard/favorites" onClick={() => setIsSidebarOpen(false)}>Favorites</Link></li>
-            <li><Link to="/dashboard/profile" onClick={() => setIsSidebarOpen(false)}>Profile</Link></li>
+            <li><Link to="/dashboard/profile" onClick={() => setIsSidebarOpen(false)}>👤 Profile</Link></li>
+            <li><Link to="/dashboard/favorites" onClick={() => setIsSidebarOpen(false)}>❤️ Favorites</Link></li>
+            <li><Link to="/dashboard/read-later" onClick={() => setIsSidebarOpen(false)}>🔖 Read Later</Link></li>
+            <li><Link to="/dashboard/history" onClick={() => setIsSidebarOpen(false)}>🕒 Reading History</Link></li>
+            
+            <div className="sidebar-divider"></div>
+            
+            <div className="sidebar-header">
+              <h3>Creative</h3>
+            </div>
+            <li><Link to="/dashboard/my-novels" onClick={() => setIsSidebarOpen(false)}>✍️ My Publications</Link></li>
+            <li><Link to="/dashboard/settings" onClick={() => setIsSidebarOpen(false)}>⚙️ Settings</Link></li>
           </ul>
         </aside>
       )}

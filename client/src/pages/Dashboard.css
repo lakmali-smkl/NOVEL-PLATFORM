@@ -1,77 +1,68 @@
-/* --- Sidebar Styles --- */
+/* --- Optimized Sidebar Styles --- */
 .sidebar {
   position: fixed;
   top: 0;
-  left: -250px; /* Hidden by default */
-  width: 250px;
+  left: -280px; /* Slightly wider for better text fit */
+  width: 280px;
   height: 100vh;
-  background-color: #770307da;
+  background-color: #1a1a1a; /* Darker, more professional grey-black */
   z-index: 1001;
-  transition: 0.3s ease-in-out;
-  padding-top: 80px;
+  transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding-top: 60px;
+  box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+  border-right: 1px solid #333;
 }
 
 .sidebar.active {
   left: 0;
 }
 
-/* Desktop: hide sidebar, user clicks menu to open */
-@media (min-width: 769px) {
-  .sidebar {
-    display: none;
-  }
-  
-  .sidebar.active {
-    display: block;
-    left: 0;
-  }
-  
-  .close-btn {
-    display: block;
-  }
+.sidebar-header h3 {
+  color: #770307; /* Your brand color */
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 20px 25px 5px;
+  margin: 0;
 }
 
-/* --- Close Button (Inside Sidebar) --- */
-.close-btn {
-  background: transparent;
-  color: white;
-  border: none;
-  font-size: 28px;
-  padding: 10px 20px;
-  cursor: pointer;
-  display: block;
-}
-
-/* --- Sidebar Links --- */
-.sidebar ul {
-  list-style: none;
-  padding: 0;
-  margin-top: 20px;
+.sidebar-divider {
+  height: 1px;
+  background: #333;
+  margin: 15px 25px;
 }
 
 .sidebar ul li a {
-  display: block;
-  padding: 20px;
-  color: white;
+  display: flex;
+  align-items: center;
+  padding: 15px 25px;
+  color: #ccc;
   text-decoration: none;
-  font-weight: bold;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  transition: background 0.3s;
+  font-weight: 500;
+  font-size: 1.05rem;
+  transition: all 0.2s ease;
 }
 
 .sidebar ul li a:hover {
-  background-color: rgba(124, 8, 8, 0.2);
+  background-color: #770307;
+  color: white;
+  padding-left: 35px; /* Slight slide effect on hover */
 }
 
-/* --- Main Content --- */
-.content {
-  padding: 20px;
-  padding-top: 100px;
-}
-
-/* Dashboard container for pages under /dashboard */
 .dashboard-container {
-  padding: 20px;
-  padding-top: 100px;
+  display: flex;
   min-height: 100vh;
+  background-color: #121212; /* Match the dark theme */
+}
+
+.content {
+  flex: 1;
+  padding: 40px;
+  padding-top: 100px;
+  transition: margin-left 0.3s ease;
+}
+
+/* If you want the content to push over when sidebar is active */
+.sidebar.active + .dashboard-container .content {
+  margin-left: 280px;
 }
