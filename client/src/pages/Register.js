@@ -111,7 +111,7 @@ const Register = () => {
               required
             />
 
-            <button type="submit">Sign Up</button>
+            <button type="submit" className="auth-btn">Sign Up</button>
           </form>
         </div>
     </div>

@@ -47,6 +47,7 @@ app.post('/login', async (req, res) => {
         username: user.username, 
         email: user.email,
         isAdmin: user.isAdmin,
+        isWriter: user.isWriter,
         favorites: user.favorites || []
       } 
     });

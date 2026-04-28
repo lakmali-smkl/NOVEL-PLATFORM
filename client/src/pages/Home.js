@@ -10,7 +10,7 @@ const Home = ({ user }) => {
   // 1. All Hooks must be at the top level
   useEffect(() => {
     // Only fetch for logged-in regular users
-    if (user && !user.isAdmin) {
+    if (user && !user.isWriter) {
       fetch(`${API_BASE_URL}/api/novels`)
         .then(res => res.json())
         .then(data => setTrending(data.slice(0, 3)))
@@ -18,9 +18,9 @@ const Home = ({ user }) => {
     }
   }, [user]);
 
-  // 2. Admin Guard: Redirect before rendering the home content
-  if (user && user.isAdmin) {
-    return <Navigate to="/admin-dashboard" replace />;
+  // 2. writer Guard: Redirect before rendering the home content
+  if (user && user.isWriter) {
+    return <Navigate to="/writer-dashboard" replace />;
   }
 
   // --- VIEW 1: Logged In (Discovery) ---

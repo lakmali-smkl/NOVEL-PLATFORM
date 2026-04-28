@@ -19,7 +19,7 @@ const Navbar = ({ user, setUser, toggleSidebar }) => {
   return (
     <nav className="navbar">
       <div className="nav-left">
-        {user && !user.isAdmin && (
+        {user && !user.isWriter && (
           <button className="menu-btn" onClick={toggleSidebar}>
             ☰
           </button>
@@ -33,9 +33,9 @@ const Navbar = ({ user, setUser, toggleSidebar }) => {
       <ul className="nav-right">
         {user ? (
           <>
-            {user.isAdmin && !isDashboard && !isLibraryPage &&(
+            {user.isWriter && !isDashboard && !isLibraryPage &&(
               <li>
-                <Link to="/dashboard/add-creation" className="nav-link admin-link">
+                <Link to="/dashboard/add-creation" className="nav-link writer-link">
                   + Add Novel
                 </Link>
               </li>

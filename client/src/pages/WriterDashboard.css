@@ -1,4 +1,4 @@
-.admin-container {
+.writer-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 120px 20px 40px; /* Top padding to clear the fixed navbar */
@@ -7,28 +7,28 @@
   color: #fff;
 }
 
-.admin-header {
+.writer-header {
   margin-bottom: 50px;
   text-align: left; /* Professional dashboards usually left-align headers */
   border-left: 6px solid #770307;
   padding-left: 20px;
 }
 
-.admin-header h1 {
+.writer-header h1 {
   font-size: 2.8rem;
   font-weight: 800;
   letter-spacing: -1px;
   margin: 0;
 }
 
-.admin-header p {
+.writer-header p {
   color: #b3b3b3;
   font-size: 1.1rem;
   margin-top: 8px;
 }
 
 /* Grid Layout */
-.admin-actions {
+.writer-actions {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 25px;
@@ -69,7 +69,7 @@
 }
 
 /* Buttons */
-.admin-btn {
+.writer-btn {
   width: 100%;
   padding: 14px;
   border-radius: 8px;
@@ -82,23 +82,23 @@
   font-size: 0.85rem;
 }
 
-.admin-btn:not(.secondary) {
+.writer-btn:not(.secondary) {
   background-color: #770307;
   color: white;
 }
 
-.admin-btn:not(.secondary):hover {
+.writer-btn:not(.secondary):hover {
   background-color: #a0050a;
   box-shadow: 0 5px 15px rgba(160, 5, 10, 0.4);
 }
 
-.admin-btn.secondary {
+.writer-btn.secondary {
   background-color: transparent;
   color: #fff;
   border: 1px solid #444;
 }
 
-.admin-btn.secondary:hover {
+.writer-btn.secondary:hover {
   background-color: #fff;
   color: #000;
 }

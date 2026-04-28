@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './AdminForms.css'; 
+import './writerForms.css'; 
 
 const AddNovel = ({ user }) => {
   const [formData, setFormData] = useState({
@@ -40,7 +40,7 @@ const AddNovel = ({ user }) => {
 
       if (response.ok) {
         alert("Novel published successfully!");
-        navigate('/admin-dashboard');
+        navigate('/writer-dashboard');
       } else {
         alert("Error saving novel.");
       }
@@ -51,13 +51,13 @@ const AddNovel = ({ user }) => {
   };
 
   return (
-    <div className="admin-form-container">
+    <div className="writer-form-container">
       <h2>Add New Novel</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>Title</label>
           <input 
-            className="admin-input" 
+            className="writer-input" 
             name="title" 
             onChange={handleInputChange} 
             required 
@@ -67,7 +67,7 @@ const AddNovel = ({ user }) => {
         <div className="form-group">
           <label>Content (Paste below or upload .txt file)</label>
           <textarea 
-            className="admin-textarea" 
+            className="writer-textarea" 
             name="content" 
             onChange={handleInputChange} 
           />
@@ -90,7 +90,7 @@ const AddNovel = ({ user }) => {
         <div className="form-group">
           <label>Author Name</label>
           <input 
-            className="admin-input" 
+            className="writer-input" 
             name="authorName" 
             value={formData.authorName} 
             onChange={handleInputChange} 
@@ -100,7 +100,7 @@ const AddNovel = ({ user }) => {
         <div className="form-group">
           <label>Author Speech (Bio/Notes)</label>
           <textarea 
-            className="admin-textarea" 
+            className="writer-textarea" 
             name="authorSpeech" 
             onChange={handleInputChange} 
           />

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './AdminForms.css'; // Importing the separate CSS file
+import './writerForms.css'; // Importing the separate CSS file
 
 const AddArticle = () => {
     const [formData, setFormData] = useState({
@@ -54,13 +54,13 @@ const AddArticle = () => {
     };
 
     return (
-        <div className="admin-form-container">
+        <div className="writer-form-container">
             <h2>Write New Article</h2>
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label>Article Title</label>
                     <input
-                        className="admin-input"
+                        className="writer-input"
                         name="title"
                         type="text"
                         value={formData.title}
@@ -73,7 +73,7 @@ const AddArticle = () => {
                 <div className="form-group">
                     <label>Author Name</label>
                     <input
-                        className="admin-input"
+                        className="writer-input"
                         name="authorName"
                         type="text"
                         value={formData.authorName}
@@ -85,7 +85,7 @@ const AddArticle = () => {
                 <div className="form-group">
                     <label>Content</label>
                     <textarea
-                        className="admin-textarea"
+                        className="writer-textarea"
                         name="content"
                         value={formData.content}
                         placeholder="Start writing your thoughts..."

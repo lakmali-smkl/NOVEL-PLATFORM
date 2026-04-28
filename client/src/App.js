@@ -5,7 +5,7 @@ import Login from './pages/Login';
 import Navbar from './components/Navbar';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
-import AdminDashboard from './pages/AdminDashboard';
+import WriterDashboard from './pages/WriterDashboard';
 import AddNovel from './pages/AddNovel';
 import AddArticle from './pages/AddArticle';
 import Library from './pages/Library';
@@ -26,8 +26,8 @@ function App() {
     }
   }, []);
 
-  // Only show sidebar for logged-in non-admin users
-  const showSidebar = user && !user.isAdmin;
+  // Only show sidebar for logged-in non-writer users
+  const showSidebar = user && !user.isWriter;
 
   return (
     <>
@@ -71,7 +71,7 @@ function App() {
           <Route path="profile" element={<Profile />} />
         </Route>
         
-        <Route path="/admin-dashboard" element={<AdminDashboard user={user} />} />
+        <Route path="/writer-dashboard" element={<WriterDashboard user={user} />} />
         <Route path="/add-novel" element={<AddNovel user={user} />} />
         <Route path="/add-article" element={<AddArticle />} />
         <Route path="/library" element={<Library />} />

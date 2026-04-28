@@ -44,6 +44,9 @@
   cursor: pointer;
   font-size: 0.95rem;
   transition: all 0.3s ease;
+  background: transparent; /* Ensure button background is clear */
+  border: none;             /* Remove default button border */
+  padding: 5px 10px;
 }
 
 .nav-link:hover, 
@@ -66,3 +69,19 @@
   background: rgba(255, 255, 255, 0.1);
 }
 
+.logout-btn-nav {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  padding: 6px 15px;
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.logout-btn-nav:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: #ffffff;
+  transform: translateY(-1px);
+}
