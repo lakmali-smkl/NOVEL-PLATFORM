@@ -1,0 +1,63 @@
+/* Container for the Edit Page */
+.edit-novel-container {
+    max-width: 900px; /* Wider for comfortable writing */
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #1a1a1a;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.edit-novel-container h1 {
+    color: #fff;
+    margin-bottom: 25px;
+    font-size: 2rem;
+    border-left: 5px solid #a50000; /* Red accent mark */
+    padding-left: 15px;
+}
+
+/* Layout for form groups */
+.edit-form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.edit-form-group label {
+    color: #a0a0a0;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+/* Main content area (The large textarea) */
+.edit-textarea {
+    min-height: 500px; /* Give yourself room to write */
+    line-height: 1.6;
+    font-family: 'Georgia', serif; /* Serif fonts are better for long-form reading */
+    padding: 20px;
+    background-color: #fdfdfd; /* Light background for the actual text area */
+    color: #1a1a1a;
+    border: none;
+    border-radius: 4px;
+    font-size: 1.1rem;
+    resize: vertical;
+}
+
+/* Redesigned Save Button */
+.save-changes-btn {
+    width: 100%;
+    padding: 15px;
+    background-color: #a50000;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.save-changes-btn:hover {
+    background-color: #800000;
+}

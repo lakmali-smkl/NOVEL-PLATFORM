@@ -102,3 +102,21 @@
   background-color: #fff;
   color: #000;
 }
+
+.full-width-section {
+  grid-column: 1 / -1;
+  margin-top: 20px;
+}
+
+.works-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.works-table th, .works-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+}

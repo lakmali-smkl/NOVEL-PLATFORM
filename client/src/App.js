@@ -12,6 +12,12 @@ import Library from './pages/Library';
 import ReadPage from './pages/ReadPage';
 import Favorites from './pages/Favorites';
 import Profile from './pages/Profile';
+import EditNovel from './pages/EditNovel';
+import MyPublications from './pages/MyPublications';
+import ReadLater from './pages/ReadLater';
+import ReadingHistory from './pages/ReadingHistory';
+import Settings from './pages/Settings';
+import EditArticle from './pages/EditArticle';
 import './App.css';
 
 function App() {
@@ -69,14 +75,19 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />}>
           <Route path="favorites" element={<Favorites />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="my-novels" element={<MyPublications />} />
+          <Route path="read-later" element={<ReadLater />} />
+          <Route path="history" element={<ReadingHistory />} />
+          <Route path="settings" element={<Settings />} />
         </Route>
         
         <Route path="/writer-dashboard" element={<WriterDashboard user={user} />} />
         <Route path="/add-novel" element={<AddNovel user={user} />} />
-        <Route path="/add-article" element={<AddArticle />} />
+        <Route path="/add-article" element={<AddArticle user={user} />} />
         <Route path="/library" element={<Library />} />
         <Route path="/read/:type/:id" element={<ReadPage />} />
-        
+        <Route path="/edit-novel/:id" element={<EditNovel user={user} />} />
+        <Route path="/edit-article/:id" element={<EditArticle />} />
       </Routes>
     </>
   );

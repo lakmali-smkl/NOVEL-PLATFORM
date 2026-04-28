@@ -6,7 +6,6 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   hintQuestion: { type: String, required: true },
   hintAnswer: { type: String, required: true },
-  isAdmin: { type: Boolean, default: false },
   isWriter: { type: Boolean, default: false },
   favorites: [{
     contentId: { type: String },

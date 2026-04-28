@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './writerForms.css'; // Importing the separate CSS file
 
-const AddArticle = () => {
+const AddArticle = ({ user }) => {
     const [formData, setFormData] = useState({
         title: '',
         content: '',
@@ -22,11 +22,21 @@ const AddArticle = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Use FormData for file uploads
+        // 1. FIX: Define the variable first by grabbing the _id from the user prop
+        const authorId = user?._id;
+
+        // 2. NOW you can safely check if it exists
+        if (!authorId) {
+            alert("User is not logged in properly. Please refresh.");
+            return;
+        }
+
         const data = new FormData();
         data.append('title', formData.title);
         data.append('content', formData.content);
         data.append('authorName', formData.authorName);
+        data.append('authorId', authorId); // Use the variable you defined above
+        
         if (coverPhoto) {
             data.append('coverPhoto', coverPhoto);
         }
@@ -34,15 +44,14 @@ const AddArticle = () => {
         try {
             const response = await fetch('http://localhost:5000/api/articles', {
                 method: 'POST',
-                // Note: Don't set 'Content-Type' header when sending FormData; 
-                // the browser will set it automatically with the boundary.
                 body: data,
             });
 
             if (response.ok) {
                 alert("Article published successfully!");
-                // Optional: Clear form
+                // Clear the form
                 setFormData({ title: '', content: '', authorName: '' });
+                setCoverPhoto(null); // Clear the image too
                 e.target.reset();
             } else {
                 alert("Error saving article");

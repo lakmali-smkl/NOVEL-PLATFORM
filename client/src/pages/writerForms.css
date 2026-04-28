@@ -1,81 +1,95 @@
+/* Container styling */
 .writer-form-container {
-  max-width: 800px;
-  margin: 40px auto;
-  padding: 40px;
-  background: #1a1a1a;
-  border-radius: 16px;
-  border: 1px solid #333;
-  color: #fff;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 40px;
+    background-color: #1a1a1a; /* Consistent with dark dashboard */
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    color: #ffffff;
 }
 
 .writer-form-container h2 {
-  text-align: center;
-  margin-bottom: 30px;
-  border-bottom: 2px solid #770307;
-  padding-bottom: 10px;
+    margin-bottom: 30px;
+    text-align: center;
+    font-weight: 600;
+    color: #e0e0e0;
 }
 
+/* Form Groups */
 .form-group {
-  margin-bottom: 25px;
-  display: flex;
-  flex-direction: column;
+    margin-bottom: 25px;
 }
 
 .form-group label {
-  font-weight: 600;
-  margin-bottom: 10px;
-  color: #ccc;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-size: 0.85rem;
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #bbb;
 }
 
-.writer-input, 
+/* Common Input/Textarea styling */
+.writer-input,
 .writer-textarea {
-  width: 100%;
-  padding: 14px;
-  background: #252525;
-  border: 1px solid #444;
-  border-radius: 6px;
-  color: white;
-  font-size: 1rem;
+    width: 100%;
+    padding: 12px 16px;
+    background-color: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-sizing: border-box; /* Ensures padding doesn't break width */
 }
 
 .writer-textarea {
-  min-height: 200px;
-  resize: vertical;
+    min-height: 200px;
+    resize: vertical;
 }
 
-.writer-input:focus, 
+/* Focus States (Crucial for Professionalism) */
+.writer-input:focus,
 .writer-textarea:focus {
-  outline: none;
-  border-color: #770307;
+    outline: none;
+    border-color: #a50000; /* Matching your red accent color */
+    background-color: #333;
 }
 
 /* File Input Styling */
-input[type="file"] {
-  background: #252525;
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #444;
-  color: #ccc;
+.file-input-wrapper {
+    padding: 15px;
+    border: 2px dashed #444;
+    border-radius: 6px;
+    text-align: center;
+    background-color: #2a2a2a;
+    transition: border-color 0.3s;
 }
 
+.file-input-wrapper:hover {
+    border-color: #a50000;
+}
+
+/* Submit Button */
 .submit-btn {
-  width: 100%;
-  padding: 15px;
-  background-color: #770307;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-weight: 700;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: 0.3s;
-  margin-top: 20px;
+    width: 100%;
+    padding: 14px;
+    background-color: #a50000; /* Brand Color */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
 }
 
 .submit-btn:hover {
-  background-color: #a0050a;
+    background-color: #800000;
+}
+
+.submit-btn:disabled {
+    background-color: #555;
+    cursor: not-allowed;
 }

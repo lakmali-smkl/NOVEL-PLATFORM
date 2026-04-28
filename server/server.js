@@ -60,15 +60,23 @@ app.post('/login', async (req, res) => {
 
 app.post('/api/novels', upload.fields([{ name: 'coverPhoto' }, { name: 'textFile' }]), async (req, res) => {
   try {
-    const { title, content, authorName, authorSpeech } = req.body;
+    // 1. Destructure authorId from req.body
+    const { title, content, authorName, authorSpeech, authorId } = req.body;
+    
     const newNovel = new Novel({
-      title, content, author: authorName, authorSpeech,
+      title, 
+      content, 
+      author: authorName, 
+      authorSpeech,
+      authorId, // 2. Add this field
       coverPhoto: req.files['coverPhoto'] ? req.files['coverPhoto'][0].path : null,
       textFile: req.files['textFile'] ? req.files['textFile'][0].path : null
     });
+    
     await newNovel.save();
     res.status(201).json({ message: "Novel saved successfully!" });
   } catch (error) {
+    console.error("Save Error:", error); // Check this in your terminal
     res.status(500).json({ error: "Failed to save novel" });
   }
 });
@@ -78,6 +86,14 @@ app.get('/api/novels', async (req, res) => {
     const novels = await Novel.find().sort({ createdAt: -1 });
     res.json(novels);
   } catch (error) { res.status(500).json({ error: "Failed to fetch novels" }); }
+});
+
+// Get novels by specific author (for writer's publications)
+app.get('/api/novels/author/:authorId', async (req, res) => {
+  try {
+    const novels = await Novel.find({ authorId: req.params.authorId }).sort({ createdAt: -1 });
+    res.json(novels);
+  } catch (error) { res.status(500).json({ error: "Failed to fetch author novels" }); }
 });
 
 app.get('/api/novels/:id', async (req, res) => {
@@ -92,16 +108,23 @@ app.get('/api/novels/:id', async (req, res) => {
 
 app.post('/api/articles', upload.fields([{ name: 'coverPhoto' }, { name: 'textFile' }]), async (req, res) => {
   try {
-    const { title, content, authorName } = req.body;
+    // Multer puts text fields in req.body and files in req.files
+    const { title, content, authorName, authorId } = req.body; 
+
     const newArticle = new Article({
-      title, content, author: authorName,
+      title, 
+      content, 
+      author: authorName,
+      authorId: authorId, // Ensure this isn't undefined
       coverPhoto: req.files['coverPhoto'] ? req.files['coverPhoto'][0].path : null,
       textFile: req.files['textFile'] ? req.files['textFile'][0].path : null
     });
+
     await newArticle.save();
     res.status(201).json({ message: "Article saved successfully!" });
   } catch (error) {
-    res.status(500).json({ error: "Failed to save article" });
+    console.error("Save Error:", error); // This helps you see the specific error in terminal
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -110,6 +133,14 @@ app.get('/api/articles', async (req, res) => {
     const articles = await Article.find().sort({ createdAt: -1 });
     res.json(articles);
   } catch (error) { res.status(500).json({ error: "Failed to fetch articles" }); }
+});
+
+// Get articles by specific author (for writer's publications)
+app.get('/api/articles/author/:authorId', async (req, res) => {
+  try {
+    const articles = await Article.find({ authorId: req.params.authorId }).sort({ createdAt: -1 });
+    res.json(articles);
+  } catch (error) { res.status(500).json({ error: "Failed to fetch author articles" }); }
 });
 
 app.get('/api/articles/:id', async (req, res) => {

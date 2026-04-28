@@ -24,11 +24,18 @@ const AddNovel = ({ user }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const authorId = user?._id;
+    if (!authorId) {
+      alert("User is not logged in properly. Please refresh.");
+      return;
+    }
+
     const data = new FormData();
     data.append('title', formData.title);
     data.append('content', formData.content);
     data.append('authorName', formData.authorName);
     data.append('authorSpeech', formData.authorSpeech);
+    data.append('authorId', authorId);
     if (coverPhoto) data.append('coverPhoto', coverPhoto);
     if (textFile) data.append('textFile', textFile);
 

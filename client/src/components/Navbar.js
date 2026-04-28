@@ -7,7 +7,7 @@ const Navbar = ({ user, setUser, toggleSidebar }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const isDashboard = location.pathname.includes('dashboard') || location.pathname.includes('add-novel');
+  
   const isLibraryPage = location.pathname === '/library';
 
   const handleLogout = () => {
@@ -33,13 +33,7 @@ const Navbar = ({ user, setUser, toggleSidebar }) => {
       <ul className="nav-right">
         {user ? (
           <>
-            {user.isWriter && !isDashboard && !isLibraryPage &&(
-              <li>
-                <Link to="/dashboard/add-creation" className="nav-link writer-link">
-                  + Add Novel
-                </Link>
-              </li>
-            )}
+            
             <li>
               <button onClick={handleLogout} className="nav-btn">Logout</button>
             </li>

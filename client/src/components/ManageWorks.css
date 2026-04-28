@@ -1,0 +1,84 @@
+/* Container for the table section */
+.action-card.full-width {
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 30px;
+    margin: 20px 0;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.action-card h3 {
+    color: #ffffff;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    font-weight: 600;
+    border-left: 4px solid #a50000;
+    padding-left: 15px;
+}
+
+/* Table Styling */
+.works-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: #e0e0e0;
+    font-size: 0.95rem;
+}
+
+/* Header styling */
+.works-table th {
+    text-align: left;
+    padding: 15px;
+    background-color: #252525;
+    color: #a0a0a0;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.8rem;
+    border-bottom: 2px solid #333;
+}
+
+/* Row styling */
+.works-table td {
+    padding: 18px 15px;
+    border-bottom: 1px solid #2a2a2a;
+    vertical-align: middle;
+}
+
+/* Subtle hover effect for rows */
+.works-table tr:hover {
+    background-color: #222222;
+    transition: background 0.2s ease;
+}
+
+/* Title column specific styling */
+.works-table td:first-child {
+    font-weight: 600;
+    color: #fff;
+}
+
+/* Small Button Styling */
+.writer-btn-small {
+    background-color: transparent;
+    color: #a50000;
+    border: 1px solid #a50000;
+    padding: 6px 16px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.writer-btn-small:hover {
+    background-color: #a50000;
+    color: #fff;
+    box-shadow: 0 0 10px rgba(165, 0, 0, 0.3);
+}
+
+/* Empty state message */
+.action-card p {
+    color: #777;
+    font-style: italic;
+    padding: 20px 0;
+}
