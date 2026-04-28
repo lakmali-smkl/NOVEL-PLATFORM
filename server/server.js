@@ -8,8 +8,18 @@ const User = require('./models/User');
 const Novel = require('./models/Novel');
 const Article = require('./models/Article');
 
-const upload = multer({ dest: 'uploads/' });
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + '-' + file.originalname);
+  }
+});
+const upload = multer({ storage: storage });
+
 const app = express();
+
 
 app.use(cors());
 app.use(express.json());
@@ -115,7 +125,7 @@ app.post('/api/articles', upload.fields([{ name: 'coverPhoto' }, { name: 'textFi
       title, 
       content, 
       author: authorName,
-      authorId: authorId, // Ensure this isn't undefined
+      authorId: authorId,
       coverPhoto: req.files['coverPhoto'] ? req.files['coverPhoto'][0].path : null,
       textFile: req.files['textFile'] ? req.files['textFile'][0].path : null
     });
@@ -123,7 +133,7 @@ app.post('/api/articles', upload.fields([{ name: 'coverPhoto' }, { name: 'textFi
     await newArticle.save();
     res.status(201).json({ message: "Article saved successfully!" });
   } catch (error) {
-    console.error("Save Error:", error); // This helps you see the specific error in terminal
+    console.error("Save Error:", error); 
     res.status(500).json({ error: error.message });
   }
 });

@@ -18,6 +18,13 @@ const ArticleList = () => {
       {articles.length > 0 ? (
         articles.map(article => (
           <div key={article._id} className="article-card" style={{ padding: '20px', border: '1px solid #ddd', margin: '10px 0' }}>
+            {article.coverPhoto && (
+              <img 
+                src={`http://localhost:5000/${article.coverPhoto}`} 
+                alt={article.title} 
+                style={{ width: '100%', height: 'auto', marginBottom: '10px' }} 
+              />
+            )}
             <h3>{article.title}</h3>
             <p><strong>By:</strong> {article.author}</p>
             <p>{article.content?.substring(0, 100)}...</p>

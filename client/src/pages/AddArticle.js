@@ -9,23 +9,18 @@ const AddArticle = ({ user }) => {
     });
     const [coverPhoto, setCoverPhoto] = useState(null);
 
-    // Handle text input changes
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    // Handle file selection
     const handleFileChange = (e) => {
         setCoverPhoto(e.target.files[0]);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        // 1. FIX: Define the variable first by grabbing the _id from the user prop
         const authorId = user?._id;
 
-        // 2. NOW you can safely check if it exists
         if (!authorId) {
             alert("User is not logged in properly. Please refresh.");
             return;
@@ -35,8 +30,7 @@ const AddArticle = ({ user }) => {
         data.append('title', formData.title);
         data.append('content', formData.content);
         data.append('authorName', formData.authorName);
-        data.append('authorId', authorId); // Use the variable you defined above
-        
+        data.append('authorId', authorId); 
         if (coverPhoto) {
             data.append('coverPhoto', coverPhoto);
         }
@@ -49,7 +43,6 @@ const AddArticle = ({ user }) => {
 
             if (response.ok) {
                 alert("Article published successfully!");
-                // Clear the form
                 setFormData({ title: '', content: '', authorName: '' });
                 setCoverPhoto(null); // Clear the image too
                 e.target.reset();

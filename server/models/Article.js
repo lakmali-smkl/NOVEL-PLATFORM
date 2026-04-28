@@ -10,7 +10,8 @@ const articleSchema = new mongoose.Schema({
         ref: 'User', 
         required: true 
     },
-    
+    coverPhoto: { type: String }, 
+    textFile: { type: String },   
     category: { type: String }, // Optional field for articles
     createdAt: { type: Date, default: Date.now },
 
