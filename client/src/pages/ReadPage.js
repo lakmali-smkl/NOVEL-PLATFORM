@@ -82,11 +82,11 @@ const ReadPage = () => {
         
         <div className="interaction-bar">
             <button onClick={handleFavorite}>
-                {isFavorite ? '❤️ Favorited' : '🤍 Add to Favorites'}
+                {isFavorite ? '❤️' : '🤍'}
             </button>
             
             <button onClick={handleLike} style={{ color: isLiked ? 'red' : 'black' }}>
-                {isLiked ? 'Liked 👍' : 'Like 👍'}
+                {isLiked ? 'Liked' : '👍'}
             </button>
         </div>
 

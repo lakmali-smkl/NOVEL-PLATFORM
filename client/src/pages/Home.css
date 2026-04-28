@@ -99,23 +99,23 @@
 
 .trending-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 30px;
+  padding: 20px;
 }
 
 .novel-card {
-  background: #1e1e1e;
-  border-radius: 12px;
-  padding: 0;
-  overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: var(--card-bg);
   border: 1px solid #333;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: var(--transition);
 }
 
 .novel-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 24px rgba(0,0,0,0.5);
-  border-color: #770307;
+  transform: translateY(-10px);
+  border-color: var(--brand-red);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
 .novel-card img {

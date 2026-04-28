@@ -19,7 +19,7 @@ const Navbar = ({ user, setUser, toggleSidebar }) => {
   return (
     <nav className="navbar">
       <div className="nav-left">
-        {user && (
+        {user && !user.isAdmin && (
           <button className="menu-btn" onClick={toggleSidebar}>
             ☰
           </button>

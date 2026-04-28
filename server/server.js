@@ -199,12 +199,14 @@ app.delete('/api/users/:userId/favorites/:contentId', async (req, res) => {
     const user = await User.findByIdAndUpdate(
       userId,
       { $pull: { favorites: { contentId: contentId } } },
-      { new: true }
+      { returnDocument: 'after' } // <--- CHANGE THIS LINE
     );
-    if (!user) return res.status(404).json({ error: "User not found" });
-    res.json({ message: "Favorite removed", favorites: user.favorites });
+    
+    if (!user) return res.status(404).json({ message: "User not found" });
+    
+    res.json({ message: "Removed successfully", favorites: user.favorites });
   } catch (error) {
-    res.status(500).json({ error: "Failed to remove favorite" });
+    res.status(500).json({ error: error.message });
   }
 });
 

@@ -54,7 +54,7 @@ const AdminDashboard = ({ user }) => {
         {/* Stats Card */}
         <div className="action-card">
           <h3>Site Stats</h3>
-          <p>See how many people are reading your work.</p>
+          <p>Analyze traffic and see how many people are reading your work.</p>
           <button className="admin-btn secondary">View Analytics</button>
         </div>
       </div>

@@ -1,20 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom'; // Added Navigate here
 import './Home.css';
 import myVideo from './backgroundVideo.mp4';
 
 const Home = ({ user }) => {
   const [trending, setTrending] = useState([]);
+  const API_BASE_URL = 'http://localhost:5000'; // Define this once for easy maintenance
 
-  // Fetch data only if user is logged in
+  // 1. All Hooks must be at the top level
   useEffect(() => {
-    if (user) {
-      fetch('http://localhost:5000/api/novels')
+    // Only fetch for logged-in regular users
+    if (user && !user.isAdmin) {
+      fetch(`${API_BASE_URL}/api/novels`)
         .then(res => res.json())
         .then(data => setTrending(data.slice(0, 3)))
         .catch(err => console.error("Error loading trending:", err));
     }
   }, [user]);
+
+  // 2. Admin Guard: Redirect before rendering the home content
+  if (user && user.isAdmin) {
+    return <Navigate to="/admin-dashboard" replace />;
+  }
 
   // --- VIEW 1: Logged In (Discovery) ---
   if (user) {
@@ -31,7 +38,8 @@ const Home = ({ user }) => {
             {trending.length > 0 ? (
               trending.map(item => (
                 <div key={item._id} className="novel-card">
-                  <img src={`http://localhost:5000/${item.coverPhoto}`} alt={item.title} />
+                  {/* Correctly template the image URL */}
+                  <img src={`${API_BASE_URL}/${item.coverPhoto}`} alt={item.title} />
                   <h3>{item.title}</h3>
                   <Link to={`/read/novel/${item._id}`} className="read-now-btn">Read Now</Link>
                 </div>

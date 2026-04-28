@@ -33,9 +33,10 @@ const Favorites = () => {
       
       if (response.ok) {
         // Filter the UI using contentId since that's what your state uses
-        setFavs(favs.filter(item => item.contentId !== contentId));
+        setFavs(prevFavs => prevFavs.filter(item => item.contentId !== contentId));
       } else {
-        console.error("Failed to delete from server");
+        const errorData = await response.json();
+        console.error("Server error:", errorData.message);
       }
     } catch (err) {
       console.error("Delete failed:", err);
@@ -51,17 +52,23 @@ const Favorites = () => {
           favs.map(item => (
             <div key={item.contentId} className="fav-card">
               <h3>{item.title}</h3>
-              <Link to={`/read/${item.type}/${item.contentId}`}>Read Now</Link>
+
+
+              <div className="fav-actions">
+              <Link to={`/read/${item.type}/${item.contentId}`} className="read-btn">
+                Read Now
+              </Link>
               <button 
-              className="delete-btn" 
+                className="delete-btn" 
                 onClick={() => handleDelete(item.contentId)}
               >
-                Remove Favorite
+                Remove
               </button>
+            </div>
             </div>
           ))
         ) : (
-          <p>You haven't saved any favorites yet!</p>
+          <p>No favorites saved yet.</p>
         )}
       </div>
     </div>

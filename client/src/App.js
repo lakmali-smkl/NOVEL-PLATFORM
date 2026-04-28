@@ -40,9 +40,7 @@ function App() {
       {/* Global Sidebar for regular users */}
       {showSidebar && (
         <aside className={`sidebar ${isSidebarOpen ? 'active' : ''}`}>
-          <button className="close-btn" onClick={() => setIsSidebarOpen(false)}>
-            ✕
-          </button>
+         
           <div className="sidebar-header">
             <h3>Account</h3>
           </div>
