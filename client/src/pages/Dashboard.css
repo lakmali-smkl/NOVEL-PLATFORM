@@ -1,18 +1,3 @@
-/* --- Hamburger Button (Fixed top-left) --- */
-.hamburger-btn {
-  position: fixed;
-  top: 15px;
-  left: 15px;
-  z-index: 1000;
-  background: #770307da;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  font-size: 20px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
 /* --- Sidebar Styles --- */
 .sidebar {
   position: fixed;
@@ -20,19 +5,30 @@
   left: -250px; /* Hidden by default */
   width: 250px;
   height: 100vh;
-  flex-shrink: 0;
   background-color: #770307da;
-  z-index: 1001; /* Higher than the hamburger button */
+  z-index: 1001;
   transition: 0.3s ease-in-out;
-  padding-top: 10px;
-}
-
-.hamburger-btn {
-  z-index: 1002; /* Ensure this is the highest number so it's never covered */
+  padding-top: 80px;
 }
 
 .sidebar.active {
   left: 0;
+}
+
+/* Desktop: hide sidebar, user clicks menu to open */
+@media (min-width: 769px) {
+  .sidebar {
+    display: none;
+  }
+  
+  .sidebar.active {
+    display: block;
+    left: 0;
+  }
+  
+  .close-btn {
+    display: block;
+  }
 }
 
 /* --- Close Button (Inside Sidebar) --- */
@@ -70,44 +66,12 @@
 /* --- Main Content --- */
 .content {
   padding: 20px;
+  padding-top: 100px;
 }
 
-/* Responsive adjustment */
-@media (min-width: 769px) {
-  .dashboard-container {
-    padding-top: 80px; /* Ensures content clears the top bar on desktop */
-  }
-
-  .hamburger-btn {
-    display: none; /* Hide hamburger on desktop */
-  }
-  .sidebar {
-    position: relative; /* Sidebar stays in layout on desktop */
-    left: 0;
-    z-index: 1;
-  }
-  .content {
-    flex-grow: 1; /* Forces the content to fill the remaining screen width */
-    padding: 20px;
-    display: block;
-  }
-  .close-btn {
-    display: none; /* Hide 'X' on desktop */
-  }
-}
-
+/* Dashboard container for pages under /dashboard */
 .dashboard-container {
-  display: flex;       /* This enables Flexbox */
-  width: 100%;
-  min-height: 100vh;   
-  padding-top: 70px;
-  overflow-x: hidden;  /* Prevents horizontal scrollbars */
-}
-
-
-.content {
-  flex-grow: 1;        /* This is the key: it forces content to fill the rest of the screen */
   padding: 20px;
-  width: 100%;         
-  overflow-y: auto;
+  padding-top: 100px;
+  min-height: 100vh;
 }
