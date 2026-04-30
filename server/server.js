@@ -252,6 +252,25 @@ app.delete('/api/users/:userId/favorites/:contentId', async (req, res) => {
   }
 });
 
+// Delete a Novel
+app.delete('/api/novels/:id', async (req, res) => {
+  try {
+    await Novel.findByIdAndDelete(req.params.id);
+    res.json({ message: "Novel deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Delete failed" });
+  }
+});
+
+// Delete an Article
+app.delete('/api/articles/:id', async (req, res) => {
+  try {
+    await Article.findByIdAndDelete(req.params.id);
+    res.json({ message: "Article deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Delete failed" });
+  }
+});
 
 // Start Server
 const PORT = process.env.PORT || 5000;

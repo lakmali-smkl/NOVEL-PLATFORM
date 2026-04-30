@@ -3,7 +3,7 @@ import React from 'react';
 import { Link , useNavigate , useLocation} from 'react-router-dom';
 import './Navbar.css';
 
-const Navbar = ({ user, setUser, toggleSidebar }) => {
+const Navbar = ({ user, setUser, toggleSidebar ,closeSidebar }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -11,6 +11,9 @@ const Navbar = ({ user, setUser, toggleSidebar }) => {
   const isLibraryPage = location.pathname === '/library';
 
   const handleLogout = () => {
+    if (closeSidebar) {
+      closeSidebar();
+    }
     setUser(null);
     localStorage.removeItem('user'); 
     navigate('/'); 
@@ -19,7 +22,7 @@ const Navbar = ({ user, setUser, toggleSidebar }) => {
   return (
     <nav className="navbar">
       <div className="nav-left">
-        {user && !user.isWriter && (
+        {user && (
           <button className="menu-btn" onClick={toggleSidebar}>
             ☰
           </button>

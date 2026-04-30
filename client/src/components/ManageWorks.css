@@ -57,23 +57,61 @@
     color: #fff;
 }
 
-/* Small Button Styling */
+/* Container for the buttons to keep them side-by-side */
+.action-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+/* Base Small Button Styling */
 .writer-btn-small {
-    background-color: transparent;
-    color: #a50000;
-    border: 1px solid #a50000;
-    padding: 6px 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 80px;
+    padding: 8px 14px;
     border-radius: 4px;
     font-size: 0.85rem;
     font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: transparent;
 }
 
-.writer-btn-small:hover {
+/* Edit Button (Gold/Yellow or Blue accents often work, but staying with Red/White for your theme) */
+.edit-btn {
+    color: #ffffff;
+    border: 1px solid #444;
+    background-color: #222;
+}
+
+.edit-btn:hover {
+    background-color: #fff;
+    color: #000;
+    border-color: #fff;
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+/* Delete Button (Aggressive Red) */
+.delete-btn {
+    color: #ff4d4d;
+    border: 1px solid #a50000;
+    background-color: rgba(165, 0, 0, 0.1);
+}
+
+.delete-btn:hover {
     background-color: #a50000;
     color: #fff;
-    box-shadow: 0 0 10px rgba(165, 0, 0, 0.3);
+    box-shadow: 0 0 15px rgba(165, 0, 0, 0.4);
+    transform: translateY(-2px);
+}
+
+/* Click Animation */
+.writer-btn-small:active {
+    transform: scale(0.92);
 }
 
 /* Empty state message */

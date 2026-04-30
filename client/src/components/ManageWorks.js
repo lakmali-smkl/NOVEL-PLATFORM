@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import './ManageWorks.css';
 
 const ManageWorks = ({ user }) => {
   const [works, setWorks] = useState([]);
-  const navigate = useNavigate();
+  
 
   useEffect(() => {
     const fetchWorks = async () => {
@@ -35,13 +35,6 @@ const ManageWorks = ({ user }) => {
     if (user) fetchWorks();
   }, [user]);
 
-  const handleEdit = (work) => {
-    if (work.type === 'novel') {
-      navigate(`/edit-novel/${work._id}`);
-    } else {
-      navigate(`/edit-article/${work._id}`);
-    }
-  };
 
   return (
     <div className="action-card full-width">
@@ -55,7 +48,6 @@ const ManageWorks = ({ user }) => {
               <th>Title</th>
               <th>Type</th>
               <th>Date Created</th>
-              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -64,13 +56,7 @@ const ManageWorks = ({ user }) => {
                 <td>{work.title}</td>
                 <td>{work.type ? work.type.charAt(0).toUpperCase() + work.type.slice(1) : 'Unknown'}</td>
                 <td>{new Date(work.createdAt).toLocaleDateString()}</td>
-                <td>
-                  <button 
-                    className="writer-btn-small" 
-                    onClick={() => handleEdit(work)}
-                  >
-                    Edit
-                  </button>
+                <td className="action-buttons">
                 </td>
               </tr>
             ))}

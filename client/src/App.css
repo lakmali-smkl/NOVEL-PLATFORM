@@ -62,3 +62,9 @@ body {
 .app-main-layout {
   padding-top: 80px;
 }
+
+.no-transition, 
+.no-transition * {
+  transition: none !important; 
+  animation: none !important;
+}

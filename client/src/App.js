@@ -18,12 +18,26 @@ import ReadLater from './pages/ReadLater';
 import ReadingHistory from './pages/ReadingHistory';
 import Settings from './pages/Settings';
 import EditArticle from './pages/EditArticle';
+import WriterSidebar from './pages/WriterSidebar';
 import './App.css';
 
 function App() {
   const [user, setUser] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+  const closeSidebar = () => setIsSidebarOpen(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleLogout = () => {
+    setIsLoggingOut(true); // Step 1: Disable animations immediately
+    
+    localStorage.removeItem('user'); // Step 2: Clear storage
+    setUser(null); // Step 3: Clear state
+    setIsSidebarOpen(false); // Step 4: Close sidebar[cite: 5]
+
+    // Step 5: Reset the flag after a short delay so login/sidebar works normally later
+    setTimeout(() => setIsLoggingOut(false), 500);
+  };
 
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
@@ -32,64 +46,77 @@ function App() {
     }
   }, []);
 
-  // Only show sidebar for logged-in non-writer users
-  const showSidebar = user && !user.isWriter;
+  // This effect watches the 'user' state specifically
+  useEffect(() => {
+    if (!user) {
+      setIsSidebarOpen(false);
+    }
+  }, [user]); 
+
+  const showRegularSidebar = user && !user.isWriter;
+  const showWriterSidebar = user && user.isWriter; // Only for Writers
 
   return (
-    <>
+    <div className={isLoggingOut ? "no-transition" : ""}>
       <Navbar 
         user={user} 
         setUser={setUser} 
+        handleLogout={handleLogout} // Use the new function here[cite: 5]
         toggleSidebar={toggleSidebar} 
+        closeSidebar={closeSidebar}
       />
-      
-      {/* Global Sidebar for regular users */}
-      {showSidebar && (
-        <aside className={`sidebar ${isSidebarOpen ? 'active' : ''}`}>
-         
-          <div className="sidebar-header">
-            <h3>Account</h3>
-          </div>
-          <ul>
-            <li><Link to="/dashboard/profile" onClick={() => setIsSidebarOpen(false)}>👤 Profile</Link></li>
-            <li><Link to="/dashboard/favorites" onClick={() => setIsSidebarOpen(false)}>❤️ Favorites</Link></li>
-            <li><Link to="/dashboard/read-later" onClick={() => setIsSidebarOpen(false)}>🔖 Read Later</Link></li>
-            <li><Link to="/dashboard/history" onClick={() => setIsSidebarOpen(false)}>🕒 Reading History</Link></li>
-            
-            <div className="sidebar-divider"></div>
-            
+
+      <aside className={`sidebar ${showWriterSidebar ? 'writer-theme' : ''} ${isSidebarOpen ? 'active' : ''}`}>
+        
+        {/* REGULAR USER LINKS */}
+        {showRegularSidebar && (
+          <>
             <div className="sidebar-header">
-              <h3>Creative</h3>
+              <h3>Account</h3>
             </div>
-            <li><Link to="/dashboard/my-novels" onClick={() => setIsSidebarOpen(false)}>✍️ My Publications</Link></li>
-            <li><Link to="/dashboard/settings" onClick={() => setIsSidebarOpen(false)}>⚙️ Settings</Link></li>
-          </ul>
-        </aside>
-      )}
-      
-      <Routes>
-        <Route path="/" element={<Home user={user} />} />
-        <Route path="/login" element={<Login setUser={setUser} />} />
-        <Route path="/register" element={<Register />} />
-        
-        <Route path="/dashboard" element={<Dashboard />}>
-          <Route path="favorites" element={<Favorites />} />
-          <Route path="profile" element={<Profile />} />
-          <Route path="my-novels" element={<MyPublications />} />
-          <Route path="read-later" element={<ReadLater />} />
-          <Route path="history" element={<ReadingHistory />} />
-          <Route path="settings" element={<Settings />} />
-        </Route>
-        
-        <Route path="/writer-dashboard" element={<WriterDashboard user={user} />} />
-        <Route path="/add-novel" element={<AddNovel user={user} />} />
-        <Route path="/add-article" element={<AddArticle user={user} />} />
-        <Route path="/library" element={<Library />} />
-        <Route path="/read/:type/:id" element={<ReadPage />} />
-        <Route path="/edit-novel/:id" element={<EditNovel user={user} />} />
-        <Route path="/edit-article/:id" element={<EditArticle />} />
-      </Routes>
-    </>
+            <ul>
+              <li><Link to="/dashboard/profile" onClick={closeSidebar}>👤 Profile</Link></li>
+              <li><Link to="/dashboard/favorites" onClick={closeSidebar}>❤️ Favorites</Link></li>
+              <li><Link to="/dashboard/read-later" onClick={closeSidebar}>🔖 Read Later</Link></li>
+              <li><Link to="/dashboard/history" onClick={closeSidebar}>🕒 Reading History</Link></li>
+              <div className="sidebar-divider"></div>
+              <div className="sidebar-header"><h3>Creative</h3></div>
+              <li><Link to="/dashboard/settings" onClick={closeSidebar}>⚙️ Settings</Link></li>
+            </ul>
+          </>
+        )}
+
+        {/* WRITER PORTAL LINKS (Now using the separate file)[cite: 3, 5] */}
+        {showWriterSidebar && (
+          <WriterSidebar user={user} closeSidebar={closeSidebar} />
+        )}
+      </aside>
+
+      <div className={(showRegularSidebar || showWriterSidebar) && isSidebarOpen ? "main-content-shifted" : ""}>
+        <Routes>
+          <Route path="/" element={<Home user={user} />} />
+          <Route path="/login" element={<Login setUser={setUser} />} />
+          <Route path="/register" element={<Register />} />
+          
+          <Route path="/dashboard" element={<Dashboard />}>
+            <Route path="favorites" element={<Favorites />} />
+            <Route path="profile" element={<Profile />} />
+            <Route path="my-novels" element={<MyPublications />} />
+            <Route path="read-later" element={<ReadLater />} />
+            <Route path="history" element={<ReadingHistory />} />
+            <Route path="settings" element={<Settings />} />
+          </Route>
+          
+          <Route path="/writer-dashboard" element={<WriterDashboard user={user} />} />
+          <Route path="/add-novel" element={<AddNovel user={user} />} />
+          <Route path="/add-article" element={<AddArticle user={user} />} />
+          <Route path="/library" element={<Library />} />
+          <Route path="/read/:type/:id" element={<ReadPage />} />
+          <Route path="/edit-novel/:id" element={<EditNovel user={user} />} />
+          <Route path="/edit-article/:id" element={<EditArticle />} />
+        </Routes>
+      </div>
+    </div>
   );
 }
 
