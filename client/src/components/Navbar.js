@@ -1,14 +1,32 @@
 // Navbar.js
-import React from 'react';
+import React , { useState, useEffect } from 'react';
 import { Link , useNavigate , useLocation} from 'react-router-dom';
+import axios from 'axios';
 import './Navbar.css';
 
 const Navbar = ({ user, setUser, toggleSidebar ,closeSidebar }) => {
   const navigate = useNavigate();
   const location = useLocation();
-
+  const [unreadCount, setUnreadCount] = useState(0);
   
   const isLibraryPage = location.pathname === '/library';
+
+  useEffect(() => {
+    const fetchUnreadCount = async () => {
+      if (user?._id) {
+        try {
+          const res = await axios.get(`http://localhost:5000/api/notifications/unread/${user._id}`);
+          setUnreadCount(res.data.count);
+        } catch (err) {
+          console.error("Error fetching unread notifications", err);
+        }
+      }
+    };
+
+    fetchUnreadCount();
+    const interval = setInterval(fetchUnreadCount, 60000); // Check every 1 minute
+    return () => clearInterval(interval);
+  }, [user]);
 
   const handleLogout = () => {
     if (closeSidebar) {
@@ -36,6 +54,14 @@ const Navbar = ({ user, setUser, toggleSidebar ,closeSidebar }) => {
       <ul className="nav-right">
         {user ? (
           <>
+
+            {/* NOTIFICATION BELL */}
+            <li className="nav-item">
+              <Link to="/notifications" className="nav-link notif-wrapper">
+                <span className="notif-icon">🔔</span>
+                {unreadCount > 0 && <span className="notif-badge">{unreadCount}</span>}
+              </Link>
+            </li>
             
             <li>
               <button onClick={handleLogout} className="nav-btn">Logout</button>

@@ -1,24 +1,36 @@
 import React, { useEffect, useState } from 'react';
-import { Link, Navigate } from 'react-router-dom'; // Added Navigate here
+import { Link, Navigate } from 'react-router-dom'; 
 import './Home.css';
 import myVideo from './backgroundVideo.mp4';
 
 const Home = ({ user }) => {
   const [trending, setTrending] = useState([]);
-  const API_BASE_URL = 'http://localhost:5000'; // Define this once for easy maintenance
+  const [announcements, setAnnouncements] = useState([]);
+  const API_BASE_URL = 'http://localhost:5000'; 
 
-  // 1. All Hooks must be at the top level
   useEffect(() => {
-    // Only fetch for logged-in regular users
-    if (user && !user.isWriter) {
+    if (user && !user.isWriter && !user.isAdmin) {
       fetch(`${API_BASE_URL}/api/novels`)
         .then(res => res.json())
         .then(data => setTrending(data.slice(0, 3)))
         .catch(err => console.error("Error loading trending:", err));
     }
+
+    if (user) {
+      fetch(`http://localhost:5000/api/announcements`)
+        .then(res => {
+        if (!res.ok) throw new Error("Route not found on server");
+        return res.json();
+      })
+        .then(data => setAnnouncements(data))
+        .catch(err => console.error("Error loading announcements:", err));
+    }
   }, [user]);
 
-  // 2. writer Guard: Redirect before rendering the home content
+  if (user && user.isAdmin) {
+    return <Navigate to="/admin-dashboard" replace />;
+  }
+
   if (user && user.isWriter) {
     return <Navigate to="/writer-dashboard" replace />;
   }
@@ -32,13 +44,42 @@ const Home = ({ user }) => {
           <p>Ready to discover something new today?</p>
         </header>
 
+        {announcements.length > 0 && (
+          <div className="announcement-wrapper">
+            {announcements.map((ann) => (
+              <div key={ann._id} className="ann-terminal-card">
+                <div className="ann-scanline"></div>
+                
+                <div className="ann-indicator-rail">
+                  <div className="ann-status-pulse"></div>
+                  <div className="ann-rail-line"></div>
+                </div>
+
+                <div className="ann-main-body">
+                  <div className="ann-meta-row">
+                    <div className="ann-tag">
+                      <span className="ann-tag-dot"></span>
+                      Announcement
+                    </div>
+                    <div className="ann-timestamp">
+                      {new Date(ann.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} — {new Date(ann.createdAt).toLocaleDateString()}
+                    </div>
+                  </div>
+                  
+                  <h4 className="ann-headline">{ann.title}</h4>
+                  <p className="ann-text">{ann.message}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
         <section className="trending-section">
           <h2 className="section-title">🔥 Trending Now</h2>
           <div className="trending-grid">
             {trending.length > 0 ? (
               trending.map(item => (
                 <div key={item._id} className="novel-card">
-                  {/* Correctly template the image URL */}
                   <img src={`${API_BASE_URL}/${item.coverPhoto}`} alt={item.title} />
                   <h3>{item.title}</h3>
                   <Link to={`/read/novel/${item._id}`} className="read-now-btn">Read Now</Link>

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './AdminDashboard.css';
 
 const AdminDashboard = () => {
+    const navigate = useNavigate();
     // 1. Initialize with 0s so the UI doesn't crash on first render
     const [stats, setStats] = useState({
         totalUsers: 0,
@@ -11,6 +13,28 @@ const AdminDashboard = () => {
     });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    const handlePostAnnouncement = async () => {
+        const title = prompt("📢 Announcement Title (e.g., System Update):");
+        const message = prompt("📝 Message for the users:");
+        
+        if (title && message) {
+            try {
+                const response = await fetch('http://localhost:5000/api/admin/announcements', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, message, type: 'priority' })
+                });
+                if (response.ok) {
+                    alert("🚀 Announcement is now live on all user dashboards!");
+                } else {
+                    alert("❌ Failed to post. Check server connection.");
+                }
+            } catch (err) {
+                console.error("Announcement Error:", err);
+            }
+        }
+    };
 
     useEffect(() => {
         const fetchStats = async () => {
@@ -22,8 +46,6 @@ const AdminDashboard = () => {
                 }
 
                 const data = await response.json();
-                
-                // 2. Ensure data exists before setting state
                 if (data) {
                     setStats({
                         totalUsers: data.totalUsers || 0,
@@ -42,46 +64,58 @@ const AdminDashboard = () => {
         fetchStats();
     }, []);
 
-    // 3. Conditional Rendering (Prevents "Uncaught Error")
     if (loading) return <div className="admin-loader">Initializing Dashboard...</div>;
     if (error) return <div className="admin-error">Error: {error}</div>;
 
     return (
         <div className="admin-main-content">
             <header className="admin-welcome">
-                <h1>System Overview</h1>
-                <p>Welcome back, Administrator.</p>
+                <h1>Command Center</h1>
+                <p>Real-time platform metrics and management.</p>
             </header>
 
             <div className="admin-stats-container">
                 <div className="admin-stat-box blue">
-                    <h3>{stats.totalUsers}</h3>
-                    <p>Total Registered Users</p>
+                    <p>👥 Total Users</p>
+                    <h3>{stats.totalUsers.toLocaleString()}</h3>
                 </div>
                 <div className="admin-stat-box red">
-                    <h3>{stats.totalWriters}</h3>
-                    <p>Verified Writers</p>
+                    <p>✍️ Verified Writers</p>
+                    <h3>{stats.totalWriters.toLocaleString()}</h3>
                 </div>
                 <div className="admin-stat-box gold">
-                    <h3>{stats.pendingApprovals}</h3>
-                    <p>Pending Applications</p>
+                    <p>⏳ Pending Approval</p>
+                    <h3>{stats.pendingApprovals.toLocaleString()}</h3>
                 </div>
                 <div className="admin-stat-box green">
-                    <h3>{stats.totalWorks}</h3>
-                    <p>Total Publications</p>
+                    <p>📚 Total Publications</p>
+                    <h3>{stats.totalWorks.toLocaleString()}</h3>
                 </div>
             </div>
             
-            {/* Split View */}
             <div className="admin-split-view">
                 <div className="admin-recent-users">
-                    <h3>Management</h3>
-                    <p>Quick access to user controls.</p>
+                    <h3>🛡️ Platform Management</h3>
+                    <p>Broadcasting tools and system health.</p>
+                    
+                    {/* NEW: Announcement Button */}
+                    <button className="admin-action-secondary" onClick={handlePostAnnouncement}>
+                        Create Site Announcement
+                    </button>
+
+                    <div style={{marginTop: '20px', color: '#555'}}>
+                        System status: <span style={{color: '#2ecc71'}}>Optimal</span>
+                    </div>
                 </div>
+
                 <div className="admin-pending-tasks">
-                    <h3>Immediate Actions</h3>
-                    <button className="action-alert-btn">
-                        Review {stats.pendingApprovals} Writer Requests
+                    <h3>⚠️ Priority Tasks</h3>
+                    <p>Approval queue requires attention.</p>
+                    <button 
+                        className="action-alert-btn"
+                        onClick={() => navigate('/admin/writer-requests')}
+                    >
+                        Review {stats.pendingApprovals} Requests
                     </button>
                 </div>
             </div>

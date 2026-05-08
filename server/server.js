@@ -8,6 +8,8 @@ const User = require('./models/User');
 const Novel = require('./models/Novel');
 const Article = require('./models/Article');
 const WriterRequest = require('./models/WriterRequest');
+const Notification = require('./models/Notification'); 
+const Announcement = require('./models/Announcement');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -294,19 +296,6 @@ app.post('/api/favorites', async (req, res) => {
   }
 });
 
-app.post('/api/:type/:id/like', async (req, res) => {
-  const { userId } = req.body;
-  const Model = req.params.type === 'novel' ? Novel : Article;
-  const item = await Model.findById(req.params.id);
-  if (!item) return res.status(404).json({ error: "Not found" });
-  
-  if (item.likes.includes(userId)) item.likes.pull(userId);
-  else item.likes.push(userId);
-  
-  await item.save();
-  res.json({ likesCount: item.likes.length });
-});
-
 app.get('/api/users/:email', async (req, res) => {
   try {
     const user = await User.findOne({ email: req.params.email });
@@ -407,6 +396,112 @@ app.delete('/api/articles/:id', async (req, res) => {
     res.json({ message: "Article deleted successfully" });
   } catch (error) {
     res.status(500).json({ error: "Delete failed" });
+  }
+});
+
+//notification
+app.post('/api/:type/:id/like', async (req, res) => {
+  const { userId } = req.body;
+  const Model = req.params.type === 'novel' ? Novel : Article;
+  
+  try {
+    const item = await Model.findById(req.params.id);
+    if (!item) return res.status(404).json({ error: "Content not found" });
+
+    const likingUser = await User.findById(userId);
+    const likerName = likingUser ? likingUser.username : "A reader";
+
+    const isLiking = !item.likes.includes(userId);
+    
+    if (isLiking) {
+      item.likes.push(userId);
+
+      // CRITICAL CHECK: Does authorId exist and is it different from the liker?
+      if (item.authorId && item.authorId.toString() !== userId) {
+        const newNotif = new Notification({
+          recipient: item.authorId,
+          sender: userId,
+          type: 'like',
+          contentId: item._id,
+          message: `${likerName} liked your ${req.params.type}: "${item.title}"`
+        });
+        
+        const saved = await newNotif.save();
+      } 
+    } else {
+      item.likes.pull(userId);
+    }
+
+    await item.save();
+    res.json({ likesCount: item.likes.length });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Get all notifications for a user
+app.get('/api/notifications/:userId', async (req, res) => {
+  try {
+    const notifications = await Notification.find({ recipient: req.params.userId })
+      .sort({ createdAt: -1 })
+      .limit(20);
+    res.json(notifications || []); // Return empty array if null
+  } catch (error) {
+    console.error("Get Notif Error:", error);
+    res.status(500).json({ error: "Failed to fetch notifications" });
+  }
+});
+
+// Delete a single notification
+app.delete('/api/notifications/:id', async (req, res) => {
+  try {
+    const deleted = await Notification.findByIdAndDelete(req.params.id);
+    if (!deleted) return res.status(404).json({ error: "Notification not found" });
+    res.json({ message: "Notification deleted" });
+  } catch (error) {
+    console.error("Delete Notif Error:", error);
+    res.status(500).json({ error: "Failed to delete notification" });
+  }
+});
+
+// Mark as read
+app.put('/api/notifications/read-all/:userId', async (req, res) => {
+  await Notification.updateMany({ recipient: req.params.userId }, { isRead: true });
+  res.status(200).send("Updated");
+});
+
+// Get count of unread notifications
+app.get('/api/notifications/unread/:userId', async (req, res) => {
+  try {
+    const count = await Notification.countDocuments({ 
+      recipient: req.params.userId, 
+      isRead: false 
+    });
+    res.json({ count });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch count" });
+  }
+});
+
+// POST: Admin creates a new announcement
+app.post('/api/admin/announcements', async (req, res) => {
+  try {
+    const { title, message, type } = req.body;
+    const newAnnouncement = new Announcement({ title, message, type });
+    await newAnnouncement.save();
+    res.status(201).json({ message: "Announcement published successfully!" });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to save announcement" });
+  }
+});
+
+// GET: Fetch announcements for the Home page
+app.get('/api/announcements', async (req, res) => {
+  try {
+    const list = await Announcement.find().sort({ createdAt: -1 }).limit(3);
+    res.json(list);
+  } catch (err) {
+    res.status(500).json({ error: "Error fetching announcements" });
   }
 });
 

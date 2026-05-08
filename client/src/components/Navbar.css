@@ -85,3 +85,31 @@
   border-color: #ffffff;
   transform: translateY(-1px);
 }
+
+.notif-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-right: 15px;
+  font-size: 1.2rem;
+}
+
+.notif-badge {
+  position: absolute;
+  top: -5px;
+  right: -8px;
+  background-color: #ff0000; /* Notification Red */
+  color: white;
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(255, 0, 0, 0.6);
+  animation: pulse-red 2s infinite;
+}
+
+@keyframes pulse-red {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7); }
+  70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(255, 0, 0, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 0, 0, 0); }
+}

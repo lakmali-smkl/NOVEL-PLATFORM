@@ -24,6 +24,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import WriterRequests from './pages/WriterRequests'; 
 import UserSidebar from './pages/UserSidebar'; 
 import RequestWriter from './pages/RequestWriter';
+import Notifications from './pages/Notifications';
 
 import './App.css';
 
@@ -140,6 +141,7 @@ function App() {
           <Route path="/read/:type/:id" element={<ReadPage />} />
           <Route path="/edit-novel/:id" element={<EditNovel user={user} />} />
           <Route path="/edit-article/:id" element={<EditArticle />} />
+          <Route path="/notifications" element={<Notifications user={user} />} />
         </Routes>
       </div>
     </div>
