@@ -6,12 +6,23 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   hintQuestion: { type: String, required: true },
   hintAnswer: { type: String, required: true },
+  
   isWriter: { type: Boolean, default: false },
+  isAdmin: { type: Boolean, default: false }, // New: Admin capability
+  hasSeenWelcome: { type: Boolean, default: false },
+  writerRequestStatus: { 
+    type: String, 
+    enum: ['none', 'pending', 'approved', 'rejected'], 
+    default: 'none' 
+  },
+
   favorites: [{
     contentId: { type: String },
     title: { type: String },
     type: { type: String } // 'novel' or 'article'
-  }]
+  }],
+
+  createdAt: { type: Date, default: Date.now }
 });
 
 module.exports = mongoose.model('User', userSchema);

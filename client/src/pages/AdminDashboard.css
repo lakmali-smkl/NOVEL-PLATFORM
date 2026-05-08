@@ -1,0 +1,62 @@
+.admin-main-content {
+    padding: 30px;
+    background-color: #0f0f0f;
+    min-height: 100vh;
+    color: white;
+}
+
+.admin-welcome h1 {
+    font-size: 2.2rem;
+    color: #fff;
+}
+
+.admin-stats-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.admin-stat-box {
+    padding: 25px;
+    border-radius: 15px;
+    background: #1a1a1a;
+    border-bottom: 4px solid #333;
+    transition: 0.3s;
+}
+
+/* Color accents for importance */
+.admin-stat-box.blue { border-color: #007bff; }
+.admin-stat-box.red { border-color: #a50000; }
+.admin-stat-box.gold { border-color: #ffcc00; }
+
+.admin-stat-box h3 {
+    font-size: 2.5rem;
+    margin: 0;
+    color: #fff;
+}
+
+.admin-stat-box p {
+    color: #888;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+}
+
+.admin-split-view {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    margin-top: 40px;
+}
+
+.action-alert-btn {
+    width: 100%;
+    padding: 15px;
+    background: #ffcc00;
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}

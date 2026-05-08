@@ -25,11 +25,25 @@ const Login = ({ setUser }) => {
         setUser(data.user);
         localStorage.setItem('user', JSON.stringify(data.user));
         
-        const isWriter = data.user.isWriter === true || data.user.isWriter === "true";
-        isWriter ? navigate('/writer-dashboard') : navigate('/');
-      } else {
-        alert(data.message || "Login failed");
-      }
+        // Clear stale localStorage if user has no pending request
+        if (data.user.writerRequestStatus === 'none') {
+          localStorage.removeItem('writerRequestStatus');
+        }
+        
+        if (data.user.isAdmin) {
+          navigate('/admin-dashboard');
+        } 
+        // Priority 2: Writer
+        else if (data.user.isWriter) {
+          navigate('/writer-dashboard');
+        } 
+        // Priority 3: Regular User
+        else
+          navigate('/');
+        } 
+      else {
+              alert(data.message || "Login failed");
+            }
     } catch (error) {
       alert("Cannot connect to server.");
     } finally {

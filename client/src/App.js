@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Navbar from './components/Navbar';
@@ -19,85 +19,110 @@ import ReadingHistory from './pages/ReadingHistory';
 import Settings from './pages/Settings';
 import EditArticle from './pages/EditArticle';
 import WriterSidebar from './pages/WriterSidebar';
+import AdminSidebar from './pages/AdminSidebar'; 
+import AdminDashboard from './pages/AdminDashboard';
+import WriterRequests from './pages/WriterRequests'; 
+import UserSidebar from './pages/UserSidebar'; 
+import RequestWriter from './pages/RequestWriter';
+
 import './App.css';
 
 function App() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    // Load user from localStorage on mount
+    const savedUser = localStorage.getItem('user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
-  const closeSidebar = () => setIsSidebarOpen(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  const handleLogout = () => {
-    setIsLoggingOut(true); // Step 1: Disable animations immediately
-    
-    localStorage.removeItem('user'); // Step 2: Clear storage
-    setUser(null); // Step 3: Clear state
-    setIsSidebarOpen(false); // Step 4: Close sidebar[cite: 5]
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+  const closeSidebar = () => setIsSidebarOpen(false);
 
-    // Step 5: Reset the flag after a short delay so login/sidebar works normally later
+  const handleLogout = () => {
+    setIsLoggingOut(true); 
+    localStorage.removeItem('user'); 
+    setUser(null); 
+    setIsSidebarOpen(false); 
     setTimeout(() => setIsLoggingOut(false), 500);
   };
 
   useEffect(() => {
-    const savedUser = localStorage.getItem('user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
-  }, []);
+  const syncUserRole = async () => {
+    // Only check if the user is logged in and NOT already a writer
+    if (user && !user.isWriter && !user.isAdmin) {
+      try {
+        const response = await fetch(`http://localhost:5000/api/users/status/${user._id}`);
+        
+        if (!response.ok) return; // Exit if server error
+        
+        const data = await response.json();
 
-  // This effect watches the 'user' state specifically
-  useEffect(() => {
-    if (!user) {
-      setIsSidebarOpen(false);
+        if (data.isWriter) {
+          const updatedUser = { ...user, isWriter: true };
+          
+          // These three lines trigger the "Red Theme" switch
+          setUser(updatedUser);
+          localStorage.setItem('user', JSON.stringify(updatedUser));
+          localStorage.removeItem('writerRequestStatus');
+          
+          console.log("Role updated: User is now a Writer.");
+        } else if (data.writerRequestStatus === 'rejected') {
+          // Update user object with rejected status
+          const updatedUser = { ...user, writerRequestStatus: 'rejected' };
+          setUser(updatedUser);
+          localStorage.setItem('user', JSON.stringify(updatedUser));
+          // Clear pending status if request was rejected
+          localStorage.removeItem('writerRequestStatus');
+          console.log("Request rejected: Cleared pending status.");
+        }
+      } catch (err) {
+        console.error("Role sync failed:", err);
+      }
     }
-  }, [user]); 
+  };
 
-  const showRegularSidebar = user && !user.isWriter;
-  const showWriterSidebar = user && user.isWriter; // Only for Writers
+  // Run the check when the component mounts or the user object changes
+  syncUserRole();
+}, [user]); // Important: Re-run if the user object changes
+
+
+  const isAdmin = user && user.isAdmin;
+  const isWriter = user && user.isWriter && !user.isAdmin;
+  const isRegularUser = user && !user.isWriter && !user.isAdmin;
 
   return (
     <div className={isLoggingOut ? "no-transition" : ""}>
       <Navbar 
-        user={user} 
-        setUser={setUser} 
-        handleLogout={handleLogout} // Use the new function here[cite: 5]
-        toggleSidebar={toggleSidebar} 
-        closeSidebar={closeSidebar}
+        user={user} setUser={setUser} 
+        handleLogout={handleLogout} 
+        toggleSidebar={toggleSidebar} closeSidebar={closeSidebar}
       />
 
-      <aside className={`sidebar ${showWriterSidebar ? 'writer-theme' : ''} ${isSidebarOpen ? 'active' : ''}`}>
+      <aside className={`sidebar 
+        ${isAdmin ? 'admin-theme' : ''} 
+        ${isWriter ? 'writer-theme' : ''} 
+        ${isRegularUser ? 'user-theme' : ''} 
+        ${isSidebarOpen ? 'active' : ''}`}>
         
-        {/* REGULAR USER LINKS */}
-        {showRegularSidebar && (
-          <>
-            <div className="sidebar-header">
-              <h3>Account</h3>
-            </div>
-            <ul>
-              <li><Link to="/dashboard/profile" onClick={closeSidebar}>👤 Profile</Link></li>
-              <li><Link to="/dashboard/favorites" onClick={closeSidebar}>❤️ Favorites</Link></li>
-              <li><Link to="/dashboard/read-later" onClick={closeSidebar}>🔖 Read Later</Link></li>
-              <li><Link to="/dashboard/history" onClick={closeSidebar}>🕒 Reading History</Link></li>
-              <div className="sidebar-divider"></div>
-              <div className="sidebar-header"><h3>Creative</h3></div>
-              <li><Link to="/dashboard/settings" onClick={closeSidebar}>⚙️ Settings</Link></li>
-            </ul>
-          </>
-        )}
-
-        {/* WRITER PORTAL LINKS (Now using the separate file)[cite: 3, 5] */}
-        {showWriterSidebar && (
-          <WriterSidebar user={user} closeSidebar={closeSidebar} />
-        )}
+        {isAdmin && <AdminSidebar user={user} closeSidebar={closeSidebar} />}
+        {isWriter && <WriterSidebar user={user} closeSidebar={closeSidebar} />}
+        {isRegularUser && <UserSidebar user={user} closeSidebar={closeSidebar} />}
       </aside>
 
-      <div className={(showRegularSidebar || showWriterSidebar) && isSidebarOpen ? "main-content-shifted" : ""}>
+      <div className={user && isSidebarOpen ? "main-content-shifted" : ""}>
         <Routes>
           <Route path="/" element={<Home user={user} />} />
           <Route path="/login" element={<Login setUser={setUser} />} />
           <Route path="/register" element={<Register />} />
           
+          {isAdmin && (
+            <>
+              <Route path="/admin-dashboard" element={<AdminDashboard />} />
+              <Route path="/admin/writer-requests" element={<WriterRequests />} />
+            </>
+          )}
+
           <Route path="/dashboard" element={<Dashboard />}>
             <Route path="favorites" element={<Favorites />} />
             <Route path="profile" element={<Profile />} />
@@ -105,6 +130,7 @@ function App() {
             <Route path="read-later" element={<ReadLater />} />
             <Route path="history" element={<ReadingHistory />} />
             <Route path="settings" element={<Settings />} />
+            <Route path="request-writer" element={<RequestWriter user={user} />} />
           </Route>
           
           <Route path="/writer-dashboard" element={<WriterDashboard user={user} />} />

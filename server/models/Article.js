@@ -15,6 +15,15 @@ const articleSchema = new mongoose.Schema({
     category: { type: String }, // Optional field for articles
     createdAt: { type: Date, default: Date.now },
 
+    status: { 
+        type: String, 
+        enum: ['draft', 'published'], 
+        default: 'draft' // New works start as drafts by default
+    },
+    views: { 
+        type: Number, 
+        default: 0 
+    },
   
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     comments: [{

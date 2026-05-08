@@ -7,6 +7,7 @@ const multer = require('multer');
 const User = require('./models/User');
 const Novel = require('./models/Novel');
 const Article = require('./models/Article');
+const WriterRequest = require('./models/WriterRequest');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -47,6 +48,7 @@ app.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
+
     if (!user) return res.status(400).json({ message: "User not found" });
     if (user.password !== password) return res.status(400).json({ message: "Invalid credentials" });
     
@@ -58,11 +60,125 @@ app.post('/login', async (req, res) => {
         email: user.email,
         isAdmin: user.isAdmin,
         isWriter: user.isWriter,
+        writerRequestStatus: user.writerRequestStatus,
+        hasSeenWelcome: user.hasSeenWelcome,
         favorites: user.favorites || []
       } 
     });
   } catch (error) {
     res.status(500).json({ error: "Server error during login" });
+  }
+});
+
+// --- Admin Control Routes (NEW SECTION) ---
+
+// Get statistics for Admin Dashboard cards
+app.get('/api/admin/stats', async (req, res) => {
+  try {
+    const totalUsers = await User.countDocuments();
+    const totalWriters = await User.countDocuments({ isWriter: true });
+    const pendingApprovals = await User.countDocuments({ writerRequestStatus: 'pending' });
+    const novelCount = await Novel.countDocuments();
+    const articleCount = await Article.countDocuments();
+
+    res.json({
+      totalUsers,
+      totalWriters,
+      pendingApprovals,
+      totalWorks: novelCount + articleCount
+    });
+  } catch (error) {
+    console.error("Stats API Error:", error);
+    res.status(500).json({ error: "Failed to fetch stats" });
+  }
+});
+
+// POST: Submit a new request
+app.post('/api/writer-requests', async (req, res) => {
+    try {
+        const { userId, username, reason } = req.body;
+
+        // Check if the user already has a pending request (in WriterRequest or User.writerRequestStatus)
+        const existingRequest = await WriterRequest.findOne({ userId, status: 'pending' });
+        const user = await User.findById(userId);
+        
+        if (existingRequest || user?.writerRequestStatus === 'pending') {
+            return res.status(400).json({ message: "You already have a pending request." });
+        }
+
+        const newRequest = new WriterRequest({
+            userId,
+            username,
+            reason
+        });
+
+        await User.findByIdAndUpdate(userId, { writerRequestStatus: 'pending' });
+        await newRequest.save();
+        res.status(200).json({ message: "Request received successfully!" });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Server error while saving request." });
+    }
+});
+
+
+//Get all writer requests pending approval
+app.get('/api/admin/writer-requests', async (req, res) => {
+  try {
+    // Get WriterRequest documents with pending status
+    const writerRequests = await WriterRequest.find({ status: 'pending' });
+    
+    // Get User documents with pending status that don't have a WriterRequest
+    const requestedUserIds = writerRequests.map(wr => wr.userId.toString());
+    const orphanedUsers = await User.find({ 
+      writerRequestStatus: 'pending',
+      _id: { $nin: requestedUserIds }
+    }).select('_id username');
+    
+    // Convert orphaned users to WriterRequest format for consistency
+    const orphanedRequests = orphanedUsers.map(user => ({
+      _id: user._id,
+      userId: user._id,
+      username: user.username,
+      reason: '(No reason provided)',
+      status: 'pending',
+      createdAt: new Date()
+    }));
+    
+    // Combine and return both
+    const allRequests = [...writerRequests, ...orphanedRequests];
+    res.json(allRequests);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch requests" });
+  }
+});
+
+//Admin approval/rejection logic
+app.post('/api/admin/approve-writer/:id', async (req, res) => {
+  const { action } = req.body; 
+  try {
+    const update = action === 'approve' 
+      ? { isWriter: true, writerRequestStatus: 'approved' , hasSeenWelcome: false}
+      : { writerRequestStatus: 'rejected' };
+
+    await User.findByIdAndUpdate(req.params.id, update);
+    await WriterRequest.findOneAndUpdate(
+      { userId: req.params.id, status: 'pending' },
+      { status: action === 'approve' ? 'approved' : 'rejected' }
+    );
+    res.json({ message: `Writer ${action}ed successfully` });
+  } catch (error) {
+    res.status(500).json({ error: "Action failed" });
+  }
+});
+
+// Route to stop showing the welcome message forever
+app.put('/api/users/update-welcome/:userId', async (req, res) => {
+  try {
+    await User.findByIdAndUpdate(req.params.userId, { hasSeenWelcome: true });
+    res.status(200).json({ message: "Welcome status updated" });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to update welcome status" });
   }
 });
 
@@ -201,6 +317,16 @@ app.get('/api/users/:email', async (req, res) => {
   }
 });
 
+app.get('/api/users/status/:id', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).select('isWriter writerRequestStatus');
+    if (!user) return res.status(404).json({ error: "User not found" });
+    res.json({ isWriter: user.isWriter, writerRequestStatus: user.writerRequestStatus });
+  } catch (error) {
+    res.status(500).json({ error: "Server error fetching user status" });
+  }
+});
+
 app.patch('/api/users/:id', async (req, res) => {
   try {
     const { username } = req.body;
@@ -252,6 +378,18 @@ app.delete('/api/users/:userId/favorites/:contentId', async (req, res) => {
   }
 });
 
+//Toggle Publish/Draft status
+app.patch('/api/:type/:id/status', async (req, res) => {
+  const { status } = req.body; 
+  const Model = req.params.type === 'novel' ? Novel : Article;
+  try {
+    await Model.findByIdAndUpdate(req.params.id, { status });
+    res.json({ message: "Status updated successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update status" });
+  }
+});
+
 // Delete a Novel
 app.delete('/api/novels/:id', async (req, res) => {
   try {
@@ -271,6 +409,7 @@ app.delete('/api/articles/:id', async (req, res) => {
     res.status(500).json({ error: "Delete failed" });
   }
 });
+
 
 // Start Server
 const PORT = process.env.PORT || 5000;

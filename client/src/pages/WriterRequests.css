@@ -1,0 +1,58 @@
+.admin-requests-page {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.admin-requests-page h1 {
+  color: #333;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.request-list-item {
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.request-list-item p {
+  margin: 8px 0;
+  color: #555;
+}
+
+.request-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.approve-btn, .reject-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.approve-btn {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.approve-btn:hover {
+  background-color: #45a049;
+}
+
+.reject-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+.reject-btn:hover {
+  background-color: #da190b;
+}
