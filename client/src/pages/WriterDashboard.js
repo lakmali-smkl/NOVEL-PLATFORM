@@ -1,26 +1,49 @@
-import React from 'react';
-import { Navigate } from 'react-router-dom';
-import './WriterDashboard.css'; // We will create this next
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react'; // Added useState and useEffect
+import { Navigate, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import './WriterDashboard.css';
 import ManageWorks from '../components/ManageWorks';
+import WriterWelcome from './WriterWelcome';
 
-const WriterDashboard = ({ user }) => {
+const WriterDashboard = ({ user, setUser }) => { // Added setUser prop to update app-wide state
   const navigate = useNavigate();
+  
+  // 1. Local state to control the modal visibility
+  const [showWelcome, setShowWelcome] = useState(false);
 
-  if (user) {
-    console.log("Is user writer?", user.isWriter);
-    console.log("Type of isWriter:", typeof user.isWriter);
-  }
+  useEffect(() => {
+    // 2. Logic: If writer and hasn't seen welcome, show it
+    if (user?.isWriter && user?.hasSeenWelcome === false) {
+      setShowWelcome(true);
+    }
+  }, [user]);
+
+  // 3. Function to close modal and update database
+  const handleCloseWelcome = async () => {
+    setShowWelcome(false);
+    try {
+      await axios.put(`http://localhost:5000/api/users/update-welcome/${user._id}`);
+      
+      // Update local state so it doesn't pop up again
+      const updatedUser = { ...user, hasSeenWelcome: true };
+      setUser(updatedUser); 
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+    } catch (err) {
+      console.error("Failed to update welcome status", err);
+    }
+  };
 
   if (!user || user.isWriter !== true) {
-    console.log("Redirecting to Home...");
     return <Navigate to="/" />;
   }
 
   return (
     <div className="writer-container">
+      {/* 4. RENDER THE MODAL HERE */}
+      {showWelcome && <WriterWelcome onConfirm={handleCloseWelcome} />}
+
       <header className="writer-header">
-        <h1>writer Control Panel</h1>
+        <h1>Writer Control Panel</h1>
         <p>Welcome back, {user.username}. What are we writing today?</p>
       </header>
 
