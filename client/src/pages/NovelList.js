@@ -14,7 +14,6 @@ const NovelList = () => {
 
   return (
     <div className="novel-gallery">
-      <h2>All Published Novels</h2>
       <div className="novel-grid">
         {novels.map(novel => (
           <div key={novel._id} className="novel-card">

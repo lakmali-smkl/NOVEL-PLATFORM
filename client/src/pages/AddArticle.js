@@ -5,7 +5,8 @@ const AddArticle = ({ user }) => {
     const [formData, setFormData] = useState({
         title: '',
         content: '',
-        authorName: ''
+        authorName: '',
+        status: 'published' // Default to published
     });
     const [coverPhoto, setCoverPhoto] = useState(null);
 
@@ -43,7 +44,7 @@ const AddArticle = ({ user }) => {
 
             if (response.ok) {
                 alert("Article published successfully!");
-                setFormData({ title: '', content: '', authorName: '' });
+                setFormData({ title: '', content: '', authorName: '', status: 'published' });
                 setCoverPhoto(null); // Clear the image too
                 e.target.reset();
             } else {
@@ -105,6 +106,19 @@ const AddArticle = ({ user }) => {
                             onChange={handleFileChange} 
                         />
                     </div>
+                </div>
+
+                <div className="form-group">
+                    <label>Status</label>
+                    <select 
+                        className="writer-input" 
+                        value={formData.status} 
+                        name="status"
+                        onChange={handleChange}
+                    >
+                        <option value="draft">Draft</option>
+                        <option value="published">Published</option>
+                    </select>
                 </div>
 
                 <button type="submit" className="submit-btn">Publish Article</button>

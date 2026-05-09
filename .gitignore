@@ -20,3 +20,9 @@ build/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Local uploads (User cover photos and text files)
+uploads/
+
+# Postman local settings
+.postman/

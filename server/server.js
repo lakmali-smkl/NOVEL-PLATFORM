@@ -189,7 +189,7 @@ app.put('/api/users/update-welcome/:userId', async (req, res) => {
 app.post('/api/novels', upload.fields([{ name: 'coverPhoto' }, { name: 'textFile' }]), async (req, res) => {
   try {
     // 1. Destructure authorId from req.body
-    const { title, content, authorName, authorSpeech, authorId } = req.body;
+    const { title, content, authorName, authorSpeech, authorId, status } = req.body;
     
     const newNovel = new Novel({
       title, 
@@ -198,7 +198,8 @@ app.post('/api/novels', upload.fields([{ name: 'coverPhoto' }, { name: 'textFile
       authorSpeech,
       authorId, // 2. Add this field
       coverPhoto: req.files['coverPhoto'] ? req.files['coverPhoto'][0].path : null,
-      textFile: req.files['textFile'] ? req.files['textFile'][0].path : null
+      textFile: req.files['textFile'] ? req.files['textFile'][0].path : null,
+      status: status || 'draft' // Use provided status or default to draft
     });
     
     await newNovel.save();
@@ -211,7 +212,7 @@ app.post('/api/novels', upload.fields([{ name: 'coverPhoto' }, { name: 'textFile
 
 app.get('/api/novels', async (req, res) => {
   try {
-    const novels = await Novel.find().sort({ createdAt: -1 });
+    const novels = await Novel.find({ status: 'published' }).sort({ createdAt: -1 });
     res.json(novels);
   } catch (error) { res.status(500).json({ error: "Failed to fetch novels" }); }
 });
@@ -228,6 +229,19 @@ app.get('/api/novels/:id', async (req, res) => {
   try {
     const novel = await Novel.findById(req.params.id);
     if (!novel) return res.status(404).json({ error: "Novel not found" });
+
+    // Check if the novel is a draft
+    if (novel.status === 'draft') {
+      // Get the ID of the person trying to view it
+      const requesterId = req.query.userId;
+
+      // If they aren't the author, block access
+      if (!novel.authorId || novel.authorId.toString() !== requesterId) {
+        return res.status(403).json({ error: "This novel is a private draft and cannot be viewed." });
+      }
+    }
+
+    // If it's published OR the requester is the author, show the novel
     res.json(novel);
   } catch (error) { res.status(500).json({ error: "Server error" }); }
 });
@@ -237,13 +251,14 @@ app.get('/api/novels/:id', async (req, res) => {
 app.post('/api/articles', upload.fields([{ name: 'coverPhoto' }, { name: 'textFile' }]), async (req, res) => {
   try {
     // Multer puts text fields in req.body and files in req.files
-    const { title, content, authorName, authorId } = req.body; 
+    const { title, content, authorName, authorId, status } = req.body; 
 
     const newArticle = new Article({
       title, 
       content, 
       author: authorName,
       authorId: authorId,
+      status: status || 'draft', // Use provided status or default to draft
       coverPhoto: req.files['coverPhoto'] ? req.files['coverPhoto'][0].path : null,
       textFile: req.files['textFile'] ? req.files['textFile'][0].path : null
     });
@@ -258,7 +273,7 @@ app.post('/api/articles', upload.fields([{ name: 'coverPhoto' }, { name: 'textFi
 
 app.get('/api/articles', async (req, res) => {
   try {
-    const articles = await Article.find().sort({ createdAt: -1 });
+    const articles = await Article.find({ status: 'published' }).sort({ createdAt: -1 });
     res.json(articles);
   } catch (error) { res.status(500).json({ error: "Failed to fetch articles" }); }
 });
@@ -275,8 +290,23 @@ app.get('/api/articles/:id', async (req, res) => {
   try {
     const article = await Article.findById(req.params.id);
     if (!article) return res.status(404).json({ error: "Article not found" });
+
+    // 1. Check if the article is a draft
+    if (article.status === 'draft') {
+      // 2. Get the ID of the person trying to view it (passed as a query param for now)
+      const requesterId = req.query.userId;
+
+      // 3. If they aren't the author, block access
+      if (!article.authorId || article.authorId.toString() !== requesterId) {
+        return res.status(403).json({ error: "This article is a private draft and cannot be viewed." });
+      }
+    }
+
+    // If it's published OR the requester is the author, show the article
     res.json(article);
-  } catch (error) { res.status(500).json({ error: "Server error" }); }
+  } catch (error) { 
+    res.status(500).json({ error: "Server error" }); 
+  }
 });
 
 // --- User & Interaction Routes ---
@@ -335,7 +365,16 @@ app.patch('/api/users/:id', async (req, res) => {
 // Update a Novel
 app.put('/api/novels/:id', async (req, res) => {
     try {
-      const updatedNovel = await Novel.findByIdAndUpdate(req.params.id, req.body, { returnDocument: 'after' });
+      const novel = await Novel.findById(req.params.id);
+      if (!novel) return res.status(404).json({ error: "Novel not found" });
+
+      // Check if the requester is the author
+      const { userId, ...updateData } = req.body;
+      if (!novel.authorId || novel.authorId.toString() !== userId) {
+        return res.status(403).json({ error: "Access denied. You are not the author of this novel." });
+      }
+
+      const updatedNovel = await Novel.findByIdAndUpdate(req.params.id, updateData, { returnDocument: 'after' });
       res.json({ message: "Novel updated!", data: updatedNovel });
     } catch (error) { res.status(500).json({ error: "Update failed" }); }
   });
@@ -343,7 +382,16 @@ app.put('/api/novels/:id', async (req, res) => {
   // Update an Article
   app.put('/api/articles/:id', async (req, res) => {
     try {
-      const updatedArticle = await Article.findByIdAndUpdate(req.params.id, req.body, { returnDocument: 'after' });
+      const article = await Article.findById(req.params.id);
+      if (!article) return res.status(404).json({ error: "Article not found" });
+
+      // Check if the requester is the author
+      const { userId, ...updateData } = req.body;
+      if (!article.authorId || article.authorId.toString() !== userId) {
+        return res.status(403).json({ error: "Access denied. You are not the author of this article." });
+      }
+
+      const updatedArticle = await Article.findByIdAndUpdate(req.params.id, updateData, { returnDocument: 'after' });
       res.json({ message: "Article updated!", data: updatedArticle });
     } catch (error) { res.status(500).json({ error: "Update failed" }); }
   });

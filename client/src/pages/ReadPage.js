@@ -13,7 +13,8 @@ const ReadPage = () => {
     const user = JSON.parse(localStorage.getItem('user'));
 
     useEffect(() => {
-        fetch(`http://localhost:5000/api/${type}s/${id}`)
+        const url = user ? `http://localhost:5000/api/${type}s/${id}?userId=${user._id}` : `http://localhost:5000/api/${type}s/${id}`;
+        fetch(url)
         .then(res => res.json())
         .then(data => {
             setData(data);

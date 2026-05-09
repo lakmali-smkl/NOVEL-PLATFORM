@@ -5,10 +5,12 @@ import './EditNovel.css';
 const EditNovel = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({ title: '', content: '', authorSpeech: '' });
+  const [formData, setFormData] = useState({ title: '', content: '', authorSpeech: '', status: 'draft' });
 
   useEffect(() => {
-    fetch(`http://localhost:5000/api/novels/${id}`)
+    const user = JSON.parse(localStorage.getItem('user'));
+    const url = user ? `http://localhost:5000/api/novels/${id}?userId=${user._id}` : `http://localhost:5000/api/novels/${id}`;
+    fetch(url)
       .then(res => res.json())
       .then(data => {
         // Only update state if data exists to avoid controlled/uncontrolled input errors
@@ -16,7 +18,8 @@ const EditNovel = () => {
           setFormData({
             title: data.title || '',
             content: data.content || '',
-            authorSpeech: data.authorSpeech || ''
+            authorSpeech: data.authorSpeech || '',
+            status: data.status || 'draft'
           });
         }
       })
@@ -34,11 +37,14 @@ const EditNovel = () => {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user) return alert("Please login first!");
+
     try {
       const response = await fetch(`http://localhost:5000/api/novels/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({ ...formData, userId: user._id })
       });
 
       if (response.ok) {
@@ -89,6 +95,19 @@ const EditNovel = () => {
             name="authorSpeech"
             onChange={handleChange} 
           />
+        </div>
+
+        <div className="edit-form-group">
+          <label>Status</label>
+          <select 
+            className="writer-input" 
+            value={formData.status} 
+            name="status"
+            onChange={handleChange}
+          >
+            <option value="draft">Draft</option>
+            <option value="published">Published</option>
+          </select>
         </div>
 
         <button type="submit" className="save-changes-btn">

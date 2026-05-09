@@ -7,7 +7,8 @@ const AddNovel = ({ user }) => {
     title: '',
     content: '',
     authorName: user?.username || '',
-    authorSpeech: ''
+    authorSpeech: '',
+    status: 'published' // Default to published
   });
   const [coverPhoto, setCoverPhoto] = useState(null);
   const [textFile, setTextFile] = useState(null);
@@ -111,6 +112,19 @@ const AddNovel = ({ user }) => {
             name="authorSpeech" 
             onChange={handleInputChange} 
           />
+        </div>
+
+        <div className="form-group">
+          <label>Status</label>
+          <select 
+            className="writer-input" 
+            value={formData.status} 
+            name="status"
+            onChange={handleInputChange}
+          >
+            <option value="draft">Draft</option>
+            <option value="published">Published</option>
+          </select>
         </div>
 
         <button type="submit" className="submit-btn">Publish Novel</button>
