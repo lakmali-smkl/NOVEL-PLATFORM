@@ -37,6 +37,7 @@ const AddNovel = ({ user }) => {
     data.append('authorName', formData.authorName);
     data.append('authorSpeech', formData.authorSpeech);
     data.append('authorId', authorId);
+    data.append('status', formData.status);
     if (coverPhoto) data.append('coverPhoto', coverPhoto);
     if (textFile) data.append('textFile', textFile);
 

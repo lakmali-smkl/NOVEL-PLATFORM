@@ -32,6 +32,7 @@ const AddArticle = ({ user }) => {
         data.append('content', formData.content);
         data.append('authorName', formData.authorName);
         data.append('authorId', authorId); 
+        data.append('status', formData.status);
         if (coverPhoto) {
             data.append('coverPhoto', coverPhoto);
         }
