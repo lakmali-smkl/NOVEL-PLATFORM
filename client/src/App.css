@@ -10,8 +10,8 @@
 .sidebar {
     position: fixed;
     top: 0;
-    left: -260px; /* Always start hidden */
-    width: 260px;
+    left: -280px; /* Always start hidden */
+    width: 280px;
     height: 100vh;
     z-index: 2000; /* Ensure it is above EVERYTHING */
     transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -22,6 +22,11 @@
 /* This is the ONLY class that should move the sidebar */
 .sidebar.active {
     left: 0 !important;
+}
+
+.main-content-shifted {
+  margin-left: 280px;
+  transition: margin-left 0.3s ease;
 }
 
 .sidebar.admin-theme {

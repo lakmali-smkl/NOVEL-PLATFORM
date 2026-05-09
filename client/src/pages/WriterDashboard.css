@@ -1,122 +1,125 @@
+/* Main Layout Wrapper */
 .writer-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 120px 20px 40px; /* Top padding to clear the fixed navbar */
+  padding: 60px 40px;
+  background-color: #0a0a0a;
   min-height: 100vh;
-  background-color: #0a0a0a; /* Deep dark background */
-  color: #fff;
+  box-sizing: border-box;
 }
 
+/* Page Header */
 .writer-header {
-  margin-bottom: 50px;
-  text-align: left; /* Professional dashboards usually left-align headers */
-  border-left: 6px solid #770307;
+  margin-bottom: 40px;
+  border-left: 4px solid #770307;
   padding-left: 20px;
 }
 
 .writer-header h1 {
-  font-size: 2.8rem;
+  font-size: 2.5rem;
   font-weight: 800;
   letter-spacing: -1px;
-  margin: 0;
 }
 
-.writer-header p {
-  color: #b3b3b3;
-  font-size: 1.1rem;
-  margin-top: 8px;
-}
-
-/* Grid Layout */
+/* The Grid (Fills the middle space) */
 .writer-actions {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(2, 1fr); /* Forces side-by-side on desktop */
   gap: 25px;
+  width: 100%;
 }
 
 /* Action Cards */
 .action-card {
-  background: #1a1a1a; /* Dark gray card */
+  background: #161b22;
   padding: 35px;
-  border-radius: 16px;
-  border: 1px solid #333;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  position: relative;
-  overflow: hidden;
+  transition: all 0.3s ease;
 }
 
-/* Subtle glow effect on hover */
 .action-card:hover {
-  transform: translateY(-8px);
+  transform: translateY(-5px);
   border-color: #770307;
-  box-shadow: 0 15px 30px rgba(119, 3, 7, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
-.action-card h3 {
-  font-size: 1.5rem;
-  margin-bottom: 12px;
-  color: #fff;
-}
-
-.action-card p {
-  color: #a0a0a0;
-  line-height: 1.6;
-  margin-bottom: 25px;
-  font-size: 0.95rem;
-}
-
-/* Buttons */
-.writer-btn {
-  width: 100%;
-  padding: 14px;
-  border-radius: 8px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border: none;
-  font-size: 0.85rem;
-}
-
-.writer-btn:not(.secondary) {
-  background-color: #770307;
-  color: white;
-}
-
-.writer-btn:not(.secondary):hover {
-  background-color: #a0050a;
-  box-shadow: 0 5px 15px rgba(160, 5, 10, 0.4);
-}
-
-.writer-btn.secondary {
-  background-color: transparent;
-  color: #fff;
-  border: 1px solid #444;
-}
-
-.writer-btn.secondary:hover {
-  background-color: #fff;
-  color: #000;
-}
-
+/* Table Section (Bottom) */
 .full-width-section {
-  grid-column: 1 / -1;
-  margin-top: 20px;
+  grid-column: 1 / -1; /* Spans across both grid columns */
+  background: #161b22;
+  border-radius: 12px;
+  padding: 25px;
+  margin-top: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .works-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 15px;
 }
 
-.works-table th, .works-table td {
-  padding: 12px;
+.works-table th {
   text-align: left;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  color: #fff;
+  font-size: 0.75rem;
+  color: #555;
+  text-transform: uppercase;
+  padding: 15px;
+  border-bottom: 1px solid #30363d;
+}
+
+.works-table td {
+  padding: 15px;
+  font-size: 0.9rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+}
+
+/* Base Button Styling */
+.writer-btn {
+  width: 100%;
+  padding: 14px 24px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* Primary Button (The Red Action) */
+.writer-btn:not(.secondary) {
+  background: linear-gradient(135deg, #770307 0%, #a50000 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(119, 3, 7, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.writer-btn:not(.secondary):hover {
+  background: linear-gradient(135deg, #a50000 0%, #cc0000 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(165, 0, 0, 0.5);
+}
+
+.writer-btn:not(.secondary):active {
+  transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(165, 0, 0, 0.4);
+}
+
+/* Secondary Button (Outline/Ghost style) */
+.writer-btn.secondary {
+  background: rgba(255, 255, 255, 0.03);
+  color: #e6edf3;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.writer-btn.secondary:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
 }

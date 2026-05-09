@@ -431,7 +431,7 @@ app.patch('/api/:type/:id/status', async (req, res) => {
 app.delete('/api/novels/:id', async (req, res) => {
   try {
     await Novel.findByIdAndDelete(req.params.id);
-    res.json({ message: "Novel deleted successfully" });
+    
   } catch (error) {
     res.status(500).json({ error: "Delete failed" });
   }
@@ -441,7 +441,7 @@ app.delete('/api/novels/:id', async (req, res) => {
 app.delete('/api/articles/:id', async (req, res) => {
   try {
     await Article.findByIdAndDelete(req.params.id);
-    res.json({ message: "Article deleted successfully" });
+    
   } catch (error) {
     res.status(500).json({ error: "Delete failed" });
   }

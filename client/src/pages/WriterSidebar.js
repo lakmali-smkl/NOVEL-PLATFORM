@@ -7,15 +7,23 @@ const WriterSidebar = ({ user, closeSidebar }) => {
 
   return (
     <div className="writer-sidebar-content">
-      <div className="sidebar-header">
-        <h3>Writer Portal</h3>
-        <p style={{ padding: '0 25px', color: 'var(--text-muted)' }}>{user.username}</p>
+      <div className="sidebar-header" style={{ marginBottom: '20px' }}>
+        <h2>WRITER PORTAL</h2>
+        <p>{user.username}</p>
       </div>
       <ul>
+        <div className="sidebar-header"><h3>Workspace</h3></div>
         <li><Link to="/writer-dashboard" onClick={closeSidebar}>📊 Dashboard</Link></li>
         <li><Link to="/add-article" onClick={closeSidebar}>📝 Create Article</Link></li>
         <li><Link to="/add-novel" onClick={closeSidebar}>📖 Create Novel</Link></li>
         
+        <div className="sidebar-divider"></div>
+
+        <div className="sidebar-header"><h3>Library</h3></div>
+        <li>
+          <Link to="/dashboard/favorites" onClick={closeSidebar}>❤️ My Favorites</Link>
+        </li>
+
         <div className="sidebar-divider"></div>
         
         <div className="sidebar-header"><h3>Management</h3></div>

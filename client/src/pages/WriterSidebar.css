@@ -1,74 +1,97 @@
-.writer-sidebar {
-    width: 260px; /* Slightly wider for better text breathing room */
-    height: 100vh;
-    background: linear-gradient(180deg, #121212 0%, #1a1a1a 100%); /* Depth gradient */
-    border-right: 2px solid #a50000;
-    position: fixed;
-    left: -260px; 
-    top: 0;
-    display: flex;
-    flex-direction: column;
-    padding: 24px 16px;
-    z-index: 1000;
-    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.5);
+/* Sidebar Container */
+.writer-sidebar-content {
+  width: 100%;
+  height: 100%;
+  background: #0d1117;
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  position: relative;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+  padding-top: 60px; /* Matches Dashboard Top Padding */
 }
 
-.writer-sidebar.active {
-    left: 0; 
+/* Section Headers (e.g., WORKSPACE, LIBRARY) */
+.sidebar-header h3 {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #ff3333;
+  padding: 0 25px;
+  margin: 25px 0 10px;
+  font-weight: 800;
+  opacity: 0.9;
 }
 
-.sidebar-header {
-    padding: 0 10px 20px 10px;
-    margin-bottom: 24px;
-    border-bottom: 1px solid rgba(165, 0, 0, 0.2);
+.sidebar-header h2 {
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #ff3333;
+  padding: 0 25px;
+  margin: 25px 0 10px;
+  font-weight: 800;
+  opacity: 0.9;
+}
+/* Navigation Links */
+.writer-sidebar-content ul {
+  list-style: none;
+  padding: 0 15px;
 }
 
-.sidebar-header h4 {
-    color: #ff3333; 
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    font-size: 1.1rem;
-    margin-bottom: 4px;
+.writer-sidebar-content ul li a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  color: #8b949e;
+  text-decoration: none;
+  font-size: 0.9rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.writer-sidebar-content ul li a:hover {
+  background: rgba(255, 51, 51, 0.05);
+  color: #fff;
+  transform: translateX(5px);
+}
+
+/* Active Page State */
+.writer-sidebar-content ul li a.active {
+  background: rgba(255, 51, 51, 0.1);
+  color: #ff3333;
+  font-weight: 600;
+  border: 1px solid rgba(255, 51, 51, 0.2);
+}
+
+.sidebar-divider {
+  height: 1px;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.05), transparent);
+  margin: 15px 25px;
 }
 
 .sidebar-header p {
-    color: #aaaaaa;
-    font-size: 0.75rem;
-    font-style: italic;
-}
-
-.sidebar-nav {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.nav-item {
-    color: #e0e0e0;
-    text-decoration: none;
+    font-size: 0.85rem;
     font-weight: 500;
-    padding: 12px 16px;
-    border-radius: 8px; 
+    color: lch(93.33% 1.7 265.88 / 0.941); 
+    margin-top: 4px;
+    padding: 0;
+    font-style: italic;
+    letter-spacing: 0.9px;
+    opacity: 0.8;
     display: flex;
     align-items: center;
-    gap: 12px;
-    transition: all 0.2s ease;
+    gap: 6px;
 }
 
-.nav-item:hover {
-    background-color: rgba(165, 0, 0, 0.15); 
-    color: #ff3333;
-    padding-left: 22px;
-}
-
-.nav-item.active {
-    background-color: #a50000;
-    color: white;
-    box-shadow: 0 4px 12px rgba(165, 0, 0, 0.3);
-}
-
-
-.no-transition .writer-sidebar {
-    transition: none !important;
+.sidebar-header p::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    background-color: #2dec53; /* Success Green */
+    border-radius: 50%;
+    display: inline-block;
 }

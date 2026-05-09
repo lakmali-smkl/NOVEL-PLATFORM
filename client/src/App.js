@@ -135,13 +135,14 @@ function App() {
           </Route>
           
           <Route path="/writer-dashboard" element={<WriterDashboard user={user} />} />
-          <Route path="/add-novel" element={<AddNovel user={user} />} />
-          <Route path="/add-article" element={<AddArticle user={user} />} />
-          <Route path="/library" element={<Library />} />
-          <Route path="/read/:type/:id" element={<ReadPage />} />
-          <Route path="/edit-novel/:id" element={<EditNovel user={user} />} />
-          <Route path="/edit-article/:id" element={<EditArticle />} />
-          <Route path="/notifications" element={<Notifications user={user} />} />
+            <Route path="/add-novel" element={<AddNovel user={user} />} />
+            <Route path="/add-article" element={<AddArticle user={user} />} />
+            <Route path="/library" element={<Library />} />
+            <Route path="/read/:type/:id" element={<ReadPage />} />
+            <Route path="/edit-novel/:id" element={<EditNovel user={user} />} />
+            <Route path="/edit-article/:id" element={<EditArticle />} />
+            <Route path="/notifications" element={<Notifications user={user} />} />
+            <Route path="favorites" element={<Favorites />} />
         </Routes>
       </div>
     </div>
