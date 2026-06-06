@@ -157,76 +157,7 @@
 }
 
 /* ==========================================================================
-   👥 WRITER APPLICATION HANDLING MANAGEMENT PANELS
-   ========================================================================== */
-.requests-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.request-card {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.5rem;
-  background-color: rgba(15, 23, 42, 0.3);
-  border: 1px solid var(--border-glow-dark);
-  border-radius: var(--radius-input);
-  gap: 2rem;
-  transition: var(--transition-snappy);
-}
-
-.request-card:hover {
-  border-color: #475569;
-  background-color: rgba(15, 23, 42, 0.6);
-}
-
-.request-info h4 {
-  margin: 0 0 0.5rem 0;
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--text-primary-dark);
-}
-
-.reason-text {
-  margin: 0 0 0.75rem 0;
-  font-style: italic;
-  color: #cbd5e1;
-  font-size: 0.95rem;
-  line-height: 1.5;
-  padding-left: 0.75rem;
-  border-left: 2px solid var(--text-secondary-dark);
-}
-
-.timestamp-badge {
-  font-size: 0.8rem;
-  color: var(--text-secondary-dark);
-}
-
-/* Action Control System Buttons */
-.request-actions {
-  display: flex;
-  gap: 0.75rem;
-}
-
-.btn-action {
-  padding: 0.625rem 1.25rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  border-radius: var(--radius-input);
-  cursor: pointer;
-  border: none;
-  transition: var(--transition-snappy);
-}
-
-.btn-action.approve { background-color: #059669; color: white; }
-.btn-action.approve:hover { background-color: #10b981; transform: translateY(-1px); }
-.btn-action.reject { background-color: #dc2626; color: white; }
-.btn-action.reject:hover { background-color: #ef4444; transform: translateY(-1px); }
-
-/* ==========================================================================
-   📢 ANNOUNCEMENT FORM COMPONENTS
+    ANNOUNCEMENT FORM COMPONENTS
    ========================================================================== */
 .admin-form {
   display: flex;
@@ -435,6 +366,5 @@
 @media (max-width: 640px) {
   .growth-workspace { padding: 1.5rem 1rem; }
   .growth-table-row { font-size: 0.85rem; padding: 0.85rem 1rem; }
-  .request-card { flex-direction: column; align-items: stretch; gap: 1rem; }
 }
 

@@ -3,7 +3,6 @@ import './SiteGrowth.css';
 
 const SiteGrowth = () => {
   const [growth, setGrowth] = useState({ users: [], novels: [], articles: [] });
-  const [writerRequests, setWriterRequests] = useState([]);
   const [announcements, setAnnouncements] = useState([]);
   
   // Announcement Form State
@@ -18,18 +17,16 @@ const SiteGrowth = () => {
   // Fetch all administrative metrics and records concurrently
   const loadDashboardData = async () => {
     try {
-      const [growthRes, requestsRes, announcementsRes] = await Promise.all([
+      const [growthRes, announcementsRes] = await Promise.all([
         fetch(`${BASE_URL}/growth`),
-        fetch(`${BASE_URL}/writer-requests`),
         fetch('http://localhost:5000/api/announcements') // Matches root public endpoint
       ]);
 
-      if (!growthRes.ok || !requestsRes.ok || !announcementsRes.ok) {
+      if (!growthRes.ok || !announcementsRes.ok) {
         throw new Error('One or more systemic endpoints failed to respond properly.');
       }
 
       const growthData = await growthRes.json();
-      const requestsData = await requestsRes.json();
       const announcementsData = await announcementsRes.json();
 
       setGrowth({
@@ -37,7 +34,6 @@ const SiteGrowth = () => {
         novels: growthData.novels || [],
         articles: growthData.articles || []
       });
-      setWriterRequests(requestsData || []);
       setAnnouncements(announcementsData || []);
     } catch (err) {
       console.error('Admin panel loading issue:', err);
@@ -50,24 +46,6 @@ const SiteGrowth = () => {
   useEffect(() => {
     loadDashboardData();
   }, []);
-
-  // Handler: Approve or Reject a writer account request promotion
-  const handleWriterAction = async (userId, action) => {
-    try {
-      const response = await fetch(`${BASE_URL}/approve-writer/${userId}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action }) // 'approve' or 'reject'
-      });
-
-      if (!response.ok) throw new Error('Failed to modify user writing status.');
-      
-      // Refresh local array structures cleanly
-      setWriterRequests(prev => prev.filter(req => req.userId !== userId));
-    } catch (err) {
-      alert(err.message);
-    }
-  };
 
   // Handler: Publish an Announcement asset to the ecosystem
   const handlePublishAnnouncement = async (e) => {
@@ -144,45 +122,7 @@ const SiteGrowth = () => {
         </div>
       </div>
 
-      {/* 📝 SECTION 2: WRITER UPGRADE REQUEST BOARD */}
-      <section className="dashboard-section">
-        <h3>Pending Writer Application Requests ({writerRequests.length})</h3>
-        <div className="requests-container">
-          {writerRequests.length === 0 ? (
-            <p className="empty-notice">No pending requests found. Platform applications are fully caught up.</p>
-          ) : (
-            <div className="requests-list">
-              {writerRequests.map((req) => (
-                <div key={req._id} className="request-card">
-                  <div className="request-info">
-                    <h4>{req.username}</h4>
-                    <p className="reason-text">"{req.reason || 'No statement provided by candidate.'}"</p>
-                    <span className="timestamp-badge">
-                      Applied: {new Date(req.createdAt).toLocaleDateString()}
-                    </span>
-                  </div>
-                  <div className="request-actions">
-                    <button 
-                      className="btn-action approve"
-                      onClick={() => handleWriterAction(req.userId, 'approve')}
-                    >
-                      Approve
-                    </button>
-                    <button 
-                      className="btn-action reject"
-                      onClick={() => handleWriterAction(req.userId, 'reject')}
-                    >
-                      Reject
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* 📢 SECTION 3: SYSTEM ANNOUNCEMENT BROADCASTER */}
+      {/* � SECTION 2: SYSTEM ANNOUNCEMENT BROADCASTER */}
       <section className="dashboard-section grid-two-columns">
         <div className="announcement-form-box">
           <h3>Broadcast New System Announcement</h3>
