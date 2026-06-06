@@ -5,6 +5,7 @@ import UserDirectory from './UserDirectory';
 import AdminMainStats from './AdminMainStats'; 
 import WriterRequests from './WriterRequests';
 import ContentOversight from './ContentOversight'; 
+import SiteGrowth from './SiteGrowth';
 
 
 const AdminDashboard = () => {
@@ -39,7 +40,7 @@ const AdminDashboard = () => {
             case 'content-oversight':
                 return <ContentOversight />;
             case 'site-growth':
-                return <div className="placeholder-view">Traffic Analytics and Platform Charts</div>;
+                return <SiteGrowth />;
             default:
                 return <AdminMainStats setActiveTab={setActiveTab} />;
         }

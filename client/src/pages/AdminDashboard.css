@@ -66,20 +66,14 @@
 .admin-stat-box.green { border-left: 4px solid #3498db; }
 
 /* Split View Sections */
-.admin-split-view {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 30px;
-}
-
-.admin-recent-users, .admin-pending-tasks {
+.admin-pending-tasks {
   background: #151515;
   padding: 30px;
   border-radius: 20px;
   border: 1px solid #222;
 }
 
-.admin-recent-users h3, .admin-pending-tasks h3 {
+.admin-pending-tasks h3 {
   margin-top: 0;
   font-size: 1.2rem;
   color: #d26565;

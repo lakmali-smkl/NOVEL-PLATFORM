@@ -88,14 +88,33 @@ function App() {
             localStorage.removeItem('writerRequestStatus');
             
             console.log("Role updated: User is now a Writer.");
-          } else if (roleData.writerRequestStatus === 'rejected') {
-            // Update user object with rejected status
-            const updatedUser = { ...user, writerRequestStatus: 'rejected' };
-            setUser(updatedUser);
-            localStorage.setItem('user', JSON.stringify(updatedUser));
-            // Clear pending status if request was rejected
-            localStorage.removeItem('writerRequestStatus');
-            console.log("Request rejected: Cleared pending status.");
+          } else {
+            const updatedUser = { ...user };
+            let changed = false;
+
+            if (roleData.isWriter && !user.isWriter) {
+              updatedUser.isWriter = true;
+              updatedUser.writerRequestStatus = 'approved';
+              changed = true;
+            }
+
+            if (roleData.writerRequestStatus && roleData.writerRequestStatus !== user.writerRequestStatus) {
+              updatedUser.writerRequestStatus = roleData.writerRequestStatus;
+              changed = true;
+            }
+
+            if (changed) {
+              setUser(updatedUser);
+              localStorage.setItem('user', JSON.stringify(updatedUser));
+            }
+
+            if (roleData.writerRequestStatus !== 'pending') {
+              localStorage.removeItem('writerRequestStatus');
+            }
+
+            if (roleData.writerRequestStatus === 'rejected') {
+              console.log("Request rejected: Cleared pending status.");
+            }
           }
         }
       } catch (err) {
@@ -151,7 +170,7 @@ function App() {
             <Route path="read-later" element={<ReadLater />} />
             <Route path="history" element={<ReadingHistory />} />
             <Route path="settings" element={<Settings />} />
-            <Route path="request-writer" element={<RequestWriter user={user} />} />
+            <Route path="request-writer" element={<RequestWriter user={user} setUser={setUser} />} />
           </Route>
           
           <Route path="/writer-dashboard" element={<WriterDashboard user={user} />} />

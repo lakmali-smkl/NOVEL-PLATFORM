@@ -12,28 +12,6 @@ const AdminMainStats = ({ setActiveTab }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const handlePostAnnouncement = async () => {
-        const title = prompt("📢 Announcement Title (e.g., System Update):");
-        const message = prompt("📝 Message for the users:");
-        
-        if (title && message) {
-            try {
-                const response = await fetch('http://localhost:5000/api/admin/announcements', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ title, message, type: 'priority' })
-                });
-                if (response.ok) {
-                    alert("🚀 Announcement is now live on all user dashboards!");
-                } else {
-                    alert("❌ Failed to post. Check server connection.");
-                }
-            } catch (err) {
-                console.error("Announcement Error:", err);
-            }
-        }
-    };
-
     useEffect(() => {
         const fetchStats = async () => {
             try {
@@ -89,30 +67,15 @@ const AdminMainStats = ({ setActiveTab }) => {
                 </div>
             </div>
             
-            <div className="admin-split-view">
-                <div className="admin-recent-users">
-                    <h3>🛡️ Platform Management</h3>
-                    <p>Broadcasting tools and system health.</p>
-                    
-                    <button className="admin-action-secondary" onClick={handlePostAnnouncement}>
-                        Create Site Announcement
-                    </button>
-
-                    <div style={{marginTop: '20px', color: '#555'}}>
-                        System status: <span style={{color: '#2ecc71'}}>Optimal</span>
-                    </div>
-                </div>
-
-                <div className="admin-pending-tasks">
-                    <h3>⚠️ Priority Tasks</h3>
-                    <p>Approval queue requires attention.</p>
-                    <button 
-                        className="action-alert-btn"
-                        onClick={() => navigate('/admin/writer-requests')}
-                    >
-                        Review {stats.pendingApprovals} Requests
-                    </button>
-                </div>
+            <div className="admin-pending-tasks">
+                <h3>⚠️ Priority Tasks</h3>
+                <p>Approval queue requires attention.</p>
+                <button 
+                    className="action-alert-btn"
+                    onClick={() => navigate('/admin/writer-requests')}
+                >
+                    Review {stats.pendingApprovals} Requests
+                </button>
             </div>
         </div>
     );

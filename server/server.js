@@ -159,7 +159,7 @@ app.post('/api/writer-requests', async (req, res) => {
 
 app.get('/api/admin/writer-requests', async (req, res) => {
   try {
-    const writerRequests = await WriterRequest.find({ status: 'pending' });
+    const writerRequests = await WriterRequest.find().sort({ createdAt: -1 });
     const requestedUserIds = writerRequests.map(wr => wr.userId.toString());
     const orphanedUsers = await User.find({ 
       writerRequestStatus: 'pending',
@@ -174,8 +174,22 @@ app.get('/api/admin/writer-requests', async (req, res) => {
       status: 'pending',
       createdAt: new Date()
     }));
+
+    const handledUsersWithoutRequest = await User.find({
+      writerRequestStatus: { $in: ['approved', 'rejected'] },
+      _id: { $nin: requestedUserIds }
+    }).select('_id username writerRequestStatus');
+
+    const handledRequests = handledUsersWithoutRequest.map(user => ({
+      _id: user._id,
+      userId: user._id,
+      username: user.username,
+      reason: '(Historical request)',
+      status: user.writerRequestStatus,
+      createdAt: new Date()
+    }));
     
-    const allRequests = [...writerRequests, ...orphanedRequests];
+    const allRequests = [...writerRequests, ...orphanedRequests, ...handledRequests];
     res.json(allRequests);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch requests" });
@@ -499,8 +513,8 @@ app.get('/api/notifications/unread/:userId', async (req, res) => {
 
 app.post('/api/admin/announcements', async (req, res) => {
   try {
-    const { title, message, type } = req.body;
-    const newAnnouncement = new Announcement({ title, message, type });
+    const { title, message, type, expiresAt} = req.body;
+    const newAnnouncement = new Announcement({ title, message, type, expiresAt: expiresAt || undefined });
     await newAnnouncement.save();
     res.status(201).json({ message: "Announcement published successfully!" });
   } catch (err) { res.status(500).json({ error: "Failed to save announcement" }); }
@@ -508,9 +522,18 @@ app.post('/api/admin/announcements', async (req, res) => {
 
 app.get('/api/announcements', async (req, res) => {
   try {
-    const list = await Announcement.find().sort({ createdAt: -1 }).limit(3);
+    // 🌟 FIX: Only find announcements where expiresAt is Greater Than or Equal to right now
+    const list = await Announcement.find({
+      expiresAt: { $gte: new Date() }
+    })
+    .sort({ createdAt: -1 })
+    .limit(3);
+    
     res.json(list);
-  } catch (err) { res.status(500).json({ error: "Error fetching announcements" }); }
+  } catch (err) { 
+    console.error("Announcement GET error:", err);
+    res.status(500).json({ error: "Error fetching announcements" }); 
+  }
 });
 
 const PORT = process.env.PORT || 5000;

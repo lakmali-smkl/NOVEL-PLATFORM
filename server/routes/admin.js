@@ -125,4 +125,39 @@ router.delete('/content/:type/:id', async (req, res) => {
     }
 });
 
+// 📈 GET SITE GROWTH TRENDS
+// Full Route: GET /api/admin/growth
+router.get('/growth', async (req, res) => {
+    try {
+        // Define a MongoDB Aggregation pipeline to group documents by date (YYYY-MM-DD)
+        const growthPipeline = [
+            {
+                $group: {
+                    _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+                    count: { $sum: 1 }
+                }
+            },
+            { $sort: { _id: 1 } }, // Sort chronologically (oldest to newest)
+            { $limit: 30 }         // Limit data points to the last 30 days
+        ];
+
+        // Run aggregations across your collections concurrently
+        const [userGrowth, novelGrowth, articleGrowth] = await Promise.all([
+            User.aggregate(growthPipeline),
+            Novel.aggregate(growthPipeline),
+            Article.aggregate(growthPipeline)
+        ]);
+
+        // Send a unified JSON response back to the frontend
+        res.json({
+            users: userGrowth,
+            novels: novelGrowth,
+            articles: articleGrowth
+        });
+    } catch (err) {
+        console.error("Error fetching site growth metrics:", err);
+        res.status(500).json({ error: "Failed to compile site growth analytics matrix." });
+    }
+});
+
 module.exports = router;

@@ -6,6 +6,6 @@ const WriterRequestSchema = new mongoose.Schema({
     reason: String,
     status: { type: String, default: 'pending' }, // pending, approved, rejected
     createdAt: { type: Date, default: Date.now }
-});
+},{ timestamps: true });
 
 module.exports = mongoose.model('WriterRequest', WriterRequestSchema);

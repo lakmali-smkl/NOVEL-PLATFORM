@@ -32,7 +32,7 @@ const articleSchema = new mongoose.Schema({
     text: String,
     createdAt: { type: Date, default: Date.now }
     }]
-});
+},{ timestamps: true });
 
 
 

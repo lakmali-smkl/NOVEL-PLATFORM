@@ -2,20 +2,22 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './RequestWriter.css';
 
-const RequestWriter = ({ user }) => {
+const RequestWriter = ({ user, setUser }) => {
   const [requestStatus, setRequestStatus] = useState('none');
   const [reason, setReason] = useState('');
 
   // Initialize and sync status when user object loads
   useEffect(() => {
-    if (user?.writerRequestStatus) {
-      // Always trust the database value over localStorage
-      if (user.writerRequestStatus !== 'none') {
-        setRequestStatus(user.writerRequestStatus);
-      } else {
-        setRequestStatus('none');
-        localStorage.removeItem('writerRequestStatus');
-      }
+    if (user?.writerRequestStatus && user.writerRequestStatus !== 'none') {
+      setRequestStatus(user.writerRequestStatus);
+      return;
+    }
+
+    const storedStatus = localStorage.getItem('writerRequestStatus');
+    if (storedStatus) {
+      setRequestStatus(storedStatus);
+    } else {
+      setRequestStatus('none');
     }
   }, [user?.writerRequestStatus]);
 
@@ -38,6 +40,12 @@ const RequestWriter = ({ user }) => {
       // 2. Update local UI state
       localStorage.setItem('writerRequestStatus', 'pending');
       setRequestStatus('pending');
+
+      if (setUser && user) {
+        const updatedUser = { ...user, writerRequestStatus: 'pending' };
+        setUser(updatedUser);
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+      }
     } catch (error) {
       console.error("Submission failed:", error);
       alert("Failed to send request. Please try again.");
