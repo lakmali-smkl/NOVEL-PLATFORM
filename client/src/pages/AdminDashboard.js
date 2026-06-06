@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import './AdminDashboard.css';
-import UserDirectory from './UserDirectory'; // Same folder pathing fix!
-import AdminMainStats from './AdminMainStats'; // Implements your current statistics summary screen
+import UserDirectory from './UserDirectory'; 
+import AdminMainStats from './AdminMainStats'; 
 import WriterRequests from './WriterRequests';
+import ContentOversight from './ContentOversight'; 
+
 
 const AdminDashboard = () => {
     // Default the application to show your 'dashboard' summary grid first
@@ -35,7 +37,7 @@ const AdminDashboard = () => {
             case 'writer-requests':
                 return <WriterRequests />;
             case 'content-oversight':
-                return <div className="placeholder-view">Content Flags and Moderation Log</div>;
+                return <ContentOversight />;
             case 'site-growth':
                 return <div className="placeholder-view">Traffic Analytics and Platform Charts</div>;
             default:

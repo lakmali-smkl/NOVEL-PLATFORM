@@ -10,6 +10,7 @@ const Article = require('./models/Article');
 const WriterRequest = require('./models/WriterRequest');
 const Notification = require('./models/Notification'); 
 const Announcement = require('./models/Announcement');
+const adminRoutes = require('./routes/admin');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -23,10 +24,13 @@ const upload = multer({ storage: storage });
 
 const app = express();
 
-
 app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static('uploads'));
+
+// 🗺️ MOUNT ADMIN ROUTER 
+// This automatically adds the '/api/admin' prefix to everything inside routes/admin.js
+app.use('/api/admin', adminRoutes);
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
@@ -37,12 +41,9 @@ mongoose.connect(process.env.MONGO_URI)
 // ==========================================
 // SECURITY GUARD MIDDLEWARE
 // ==========================================
-// This stops suspended users from abusing API calls if they were already logged in
 const checkSuspensionStatus = async (req, res, next) => {
   try {
-    // Look for a userId passed in either the headers, query parameters, or request body
     const userId = req.headers['x-user-id'] || req.query.userId || req.body.userId;
-    
     if (userId && mongoose.Types.ObjectId.isValid(userId)) {
       const user = await User.findById(userId).select('status');
       if (user && user.status === 'suspended') {
@@ -80,7 +81,6 @@ app.post('/login', async (req, res) => {
     if (!user) return res.status(400).json({ message: "User not found" });
     if (user.password !== password) return res.status(400).json({ message: "Invalid credentials" });
     
-    // 🛑 CRITICAL CHECK: Block login if the account status is suspended
     if (user.status === 'suspended') {
       return res.status(403).json({ 
         message: "Access Denied. This account has been suspended by an administrator." 
@@ -105,7 +105,6 @@ app.post('/login', async (req, res) => {
   }
 });
 
-// Helper validation endpoint for React frontend to verify active sessions
 app.get('/api/users/check-status/:id', async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select('status');
@@ -116,9 +115,8 @@ app.get('/api/users/check-status/:id', async (req, res) => {
   }
 });
 
-// --- Admin Control Routes ---
+// --- Admin Control Routes (Core Platform) ---
 
-// Get statistics for Admin Dashboard cards
 app.get('/api/admin/stats', async (req, res) => {
   try {
     const totalUsers = await User.countDocuments();
@@ -139,12 +137,9 @@ app.get('/api/admin/stats', async (req, res) => {
   }
 });
 
-// POST: Submit a new request
 app.post('/api/writer-requests', async (req, res) => {
     try {
         const { userId, username, reason } = req.body;
-
-        // Check if the user already has a pending request (in WriterRequest or User.writerRequestStatus)
         const existingRequest = await WriterRequest.findOne({ userId, status: 'pending' });
         const user = await User.findById(userId);
         
@@ -152,12 +147,7 @@ app.post('/api/writer-requests', async (req, res) => {
             return res.status(400).json({ message: "You already have a pending request." });
         }
 
-        const newRequest = new WriterRequest({
-            userId,
-            username,
-            reason
-        });
-
+        const newRequest = new WriterRequest({ userId, username, reason });
         await User.findByIdAndUpdate(userId, { writerRequestStatus: 'pending' });
         await newRequest.save();
         res.status(200).json({ message: "Request received successfully!" });
@@ -167,21 +157,15 @@ app.post('/api/writer-requests', async (req, res) => {
     }
 });
 
-
-//Get all writer requests pending approval
 app.get('/api/admin/writer-requests', async (req, res) => {
   try {
-    // Get WriterRequest documents with pending status
     const writerRequests = await WriterRequest.find({ status: 'pending' });
-    
-    // Get User documents with pending status that don't have a WriterRequest
     const requestedUserIds = writerRequests.map(wr => wr.userId.toString());
     const orphanedUsers = await User.find({ 
       writerRequestStatus: 'pending',
       _id: { $nin: requestedUserIds }
     }).select('_id username');
     
-    // Convert orphaned users to WriterRequest format for consistency
     const orphanedRequests = orphanedUsers.map(user => ({
       _id: user._id,
       userId: user._id,
@@ -191,7 +175,6 @@ app.get('/api/admin/writer-requests', async (req, res) => {
       createdAt: new Date()
     }));
     
-    // Combine and return both
     const allRequests = [...writerRequests, ...orphanedRequests];
     res.json(allRequests);
   } catch (error) {
@@ -199,7 +182,6 @@ app.get('/api/admin/writer-requests', async (req, res) => {
   }
 });
 
-//Admin approval/rejection logic
 app.post('/api/admin/approve-writer/:id', async (req, res) => {
   const { action } = req.body; 
   try {
@@ -218,7 +200,6 @@ app.post('/api/admin/approve-writer/:id', async (req, res) => {
   }
 });
 
-// Route to stop showing the welcome message forever
 app.put('/api/users/update-welcome/:userId', async (req, res) => {
   try {
     await User.findByIdAndUpdate(req.params.userId, { hasSeenWelcome: true });
@@ -232,24 +213,22 @@ app.put('/api/users/update-welcome/:userId', async (req, res) => {
 
 app.post('/api/novels', upload.fields([{ name: 'coverPhoto' }, { name: 'textFile' }]), async (req, res) => {
   try {
-    // 1. Destructure authorId from req.body
     const { title, content, authorName, authorSpeech, authorId, status } = req.body;
-    
     const newNovel = new Novel({
       title, 
       content, 
       author: authorName, 
       authorSpeech,
-      authorId, // 2. Add this field
+      authorId, 
       coverPhoto: req.files['coverPhoto'] ? req.files['coverPhoto'][0].path : null,
       textFile: req.files['textFile'] ? req.files['textFile'][0].path : null,
-      status: status || 'draft' // Use provided status or default to draft
+      status: status || 'draft'
     });
     
     await newNovel.save();
     res.status(201).json({ message: "Novel saved successfully!" });
   } catch (error) {
-    console.error("Save Error:", error); // Check this in your terminal
+    console.error("Save Error:", error);
     res.status(500).json({ error: "Failed to save novel" });
   }
 });
@@ -261,7 +240,6 @@ app.get('/api/novels', async (req, res) => {
   } catch (error) { res.status(500).json({ error: "Failed to fetch novels" }); }
 });
 
-// Get novels by specific author (for writer's publications)
 app.get('/api/novels/author/:authorId', async (req, res) => {
   try {
     const novels = await Novel.find({ authorId: req.params.authorId }).sort({ createdAt: -1 });
@@ -274,18 +252,12 @@ app.get('/api/novels/:id', async (req, res) => {
     const novel = await Novel.findById(req.params.id);
     if (!novel) return res.status(404).json({ error: "Novel not found" });
 
-    // Check if the novel is a draft
     if (novel.status === 'draft') {
-      // Get the ID of the person trying to view it
       const requesterId = req.query.userId;
-
-      // If they aren't the author, block access
       if (!novel.authorId || novel.authorId.toString() !== requesterId) {
         return res.status(403).json({ error: "This novel is a private draft and cannot be viewed." });
       }
     }
-
-    // If it's published OR the requester is the author, show the novel
     res.json(novel);
   } catch (error) { res.status(500).json({ error: "Server error" }); }
 });
@@ -294,15 +266,13 @@ app.get('/api/novels/:id', async (req, res) => {
 
 app.post('/api/articles', upload.fields([{ name: 'coverPhoto' }, { name: 'textFile' }]), async (req, res) => {
   try {
-    // Multer puts text fields in req.body and files in req.files
     const { title, content, authorName, authorId, status } = req.body; 
-
     const newArticle = new Article({
       title, 
       content, 
       author: authorName,
       authorId: authorId,
-      status: status || 'draft', // Use provided status or default to draft
+      status: status || 'draft',
       coverPhoto: req.files['coverPhoto'] ? req.files['coverPhoto'][0].path : null,
       textFile: req.files['textFile'] ? req.files['textFile'][0].path : null
     });
@@ -322,7 +292,6 @@ app.get('/api/articles', async (req, res) => {
   } catch (error) { res.status(500).json({ error: "Failed to fetch articles" }); }
 });
 
-// Get articles by specific author (for writer's publications)
 app.get('/api/articles/author/:authorId', async (req, res) => {
   try {
     const articles = await Article.find({ authorId: req.params.authorId }).sort({ createdAt: -1 });
@@ -335,22 +304,14 @@ app.get('/api/articles/:id', async (req, res) => {
     const article = await Article.findById(req.params.id);
     if (!article) return res.status(404).json({ error: "Article not found" });
 
-    // 1. Check if the article is a draft
     if (article.status === 'draft') {
-      // 2. Get the ID of the person trying to view it (passed as a query param for now)
       const requesterId = req.query.userId;
-
-      // 3. If they aren't the author, block access
       if (!article.authorId || article.authorId.toString() !== requesterId) {
         return res.status(403).json({ error: "This article is a private draft and cannot be viewed." });
       }
     }
-
-    // If it's published OR the requester is the author, show the article
     res.json(article);
-  } catch (error) { 
-    res.status(500).json({ error: "Server error" }); 
-  }
+  } catch (error) { res.status(500).json({ error: "Server error" }); }
 });
 
 // --- User & Interaction Routes ---
@@ -405,61 +366,51 @@ app.patch('/api/users/:id', async (req, res) => {
   }
 });
 
-
-// Update a Novel
 app.put('/api/novels/:id', async (req, res) => {
-    try {
-      const novel = await Novel.findById(req.params.id);
-      if (!novel) return res.status(404).json({ error: "Novel not found" });
+  try {
+    const novel = await Novel.findById(req.params.id);
+    if (!novel) return res.status(404).json({ error: "Novel not found" });
 
-      // Check if the requester is the author
-      const { userId, ...updateData } = req.body;
-      if (!novel.authorId || novel.authorId.toString() !== userId) {
-        return res.status(403).json({ error: "Access denied. You are not the author of this novel." });
-      }
+    const { userId, ...updateData } = req.body;
+    if (!novel.authorId || novel.authorId.toString() !== userId) {
+      return res.status(403).json({ error: "Access denied. You are not the author of this novel." });
+    }
 
-      const updatedNovel = await Novel.findByIdAndUpdate(req.params.id, updateData, { returnDocument: 'after' });
-      res.json({ message: "Novel updated!", data: updatedNovel });
-    } catch (error) { res.status(500).json({ error: "Update failed" }); }
-  });
+    const updatedNovel = await Novel.findByIdAndUpdate(req.params.id, updateData, { returnDocument: 'after' });
+    res.json({ message: "Novel updated!", data: updatedNovel });
+  } catch (error) { res.status(500).json({ error: "Update failed" }); }
+});
 
-  // Update an Article
-  app.put('/api/articles/:id', async (req, res) => {
-    try {
-      const article = await Article.findById(req.params.id);
-      if (!article) return res.status(404).json({ error: "Article not found" });
+app.put('/api/articles/:id', async (req, res) => {
+  try {
+    const article = await Article.findById(req.params.id);
+    if (!article) return res.status(404).json({ error: "Article not found" });
 
-      // Check if the requester is the author
-      const { userId, ...updateData } = req.body;
-      if (!article.authorId || article.authorId.toString() !== userId) {
-        return res.status(403).json({ error: "Access denied. You are not the author of this article." });
-      }
+    const { userId, ...updateData } = req.body;
+    if (!article.authorId || article.authorId.toString() !== userId) {
+      return res.status(403).json({ error: "Access denied. You are not the author of this article." });
+    }
 
-      const updatedArticle = await Article.findByIdAndUpdate(req.params.id, updateData, { returnDocument: 'after' });
-      res.json({ message: "Article updated!", data: updatedArticle });
-    } catch (error) { res.status(500).json({ error: "Update failed" }); }
-  });
+    const updatedArticle = await Article.findByIdAndUpdate(req.params.id, updateData, { returnDocument: 'after' });
+    res.json({ message: "Article updated!", data: updatedArticle });
+  } catch (error) { res.status(500).json({ error: "Update failed" }); }
+});
 
-
-  // Remove a favorite from a user's profile
 app.delete('/api/users/:userId/favorites/:contentId', async (req, res) => {
   try {
     const { userId, contentId } = req.params;
     const user = await User.findByIdAndUpdate(
       userId,
       { $pull: { favorites: { contentId: contentId } } },
-      { returnDocument: 'after' } // <--- CHANGE THIS LINE
+      { returnDocument: 'after' }
     );
-    
     if (!user) return res.status(404).json({ message: "User not found" });
-    
     res.json({ message: "Removed successfully", favorites: user.favorites });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-//Toggle Publish/Draft status
 app.patch('/api/:type/:id/status', async (req, res) => {
   const { status } = req.body; 
   const Model = req.params.type === 'novel' ? Novel : Article;
@@ -471,44 +422,33 @@ app.patch('/api/:type/:id/status', async (req, res) => {
   }
 });
 
-// Delete a Novel
 app.delete('/api/novels/:id', async (req, res) => {
   try {
     await Novel.findByIdAndDelete(req.params.id);
-    
-  } catch (error) {
-    res.status(500).json({ error: "Delete failed" });
-  }
+    res.json({ message: "Novel deleted successfully" });
+  } catch (error) { res.status(500).json({ error: "Delete failed" }); }
 });
 
-// Delete an Article
 app.delete('/api/articles/:id', async (req, res) => {
   try {
     await Article.findByIdAndDelete(req.params.id);
-    
-  } catch (error) {
-    res.status(500).json({ error: "Delete failed" });
-  }
+    res.json({ message: "Article deleted successfully" });
+  } catch (error) { res.status(500).json({ error: "Delete failed" }); }
 });
 
-//notification
 app.post('/api/:type/:id/like', async (req, res) => {
   const { userId } = req.body;
   const Model = req.params.type === 'novel' ? Novel : Article;
-  
   try {
     const item = await Model.findById(req.params.id);
     if (!item) return res.status(404).json({ error: "Content not found" });
 
     const likingUser = await User.findById(userId);
     const likerName = likingUser ? likingUser.username : "A reader";
-
     const isLiking = !item.likes.includes(userId);
     
     if (isLiking) {
       item.likes.push(userId);
-
-      // CRITICAL CHECK: Does authorId exist and is it different from the liker?
       if (item.authorId && item.authorId.toString() !== userId) {
         const newNotif = new Notification({
           recipient: item.authorId,
@@ -517,8 +457,7 @@ app.post('/api/:type/:id/like', async (req, res) => {
           contentId: item._id,
           message: `${likerName} liked your ${req.params.type}: "${item.title}"`
         });
-        
-        const saved = await newNotif.save();
+        await newNotif.save();
       } 
     } else {
       item.likes.pull(userId);
@@ -526,140 +465,53 @@ app.post('/api/:type/:id/like', async (req, res) => {
 
     await item.save();
     res.json({ likesCount: item.likes.length });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+  } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// Get all notifications for a user
 app.get('/api/notifications/:userId', async (req, res) => {
   try {
     const notifications = await Notification.find({ recipient: req.params.userId })
       .sort({ createdAt: -1 })
       .limit(20);
-    res.json(notifications || []); // Return empty array if null
-  } catch (error) {
-    console.error("Get Notif Error:", error);
-    res.status(500).json({ error: "Failed to fetch notifications" });
-  }
+    res.json(notifications || []);
+  } catch (error) { res.status(500).json({ error: "Failed to fetch notifications" }); }
 });
 
-// Delete a single notification
 app.delete('/api/notifications/:id', async (req, res) => {
   try {
     const deleted = await Notification.findByIdAndDelete(req.params.id);
     if (!deleted) return res.status(404).json({ error: "Notification not found" });
     res.json({ message: "Notification deleted" });
-  } catch (error) {
-    console.error("Delete Notif Error:", error);
-    res.status(500).json({ error: "Failed to delete notification" });
-  }
+  } catch (error) { res.status(500).json({ error: "Failed to delete notification" }); }
 });
 
-// Mark as read
 app.put('/api/notifications/read-all/:userId', async (req, res) => {
   await Notification.updateMany({ recipient: req.params.userId }, { isRead: true });
   res.status(200).send("Updated");
 });
 
-// Get count of unread notifications
 app.get('/api/notifications/unread/:userId', async (req, res) => {
   try {
-    const count = await Notification.countDocuments({ 
-      recipient: req.params.userId, 
-      isRead: false 
-    });
+    const count = await Notification.countDocuments({ recipient: req.params.userId, isRead: false });
     res.json({ count });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch count" });
-  }
+  } catch (error) { res.status(500).json({ error: "Failed to fetch count" }); }
 });
 
-// POST: Admin creates a new announcement
 app.post('/api/admin/announcements', async (req, res) => {
   try {
     const { title, message, type } = req.body;
     const newAnnouncement = new Announcement({ title, message, type });
     await newAnnouncement.save();
     res.status(201).json({ message: "Announcement published successfully!" });
-  } catch (err) {
-    res.status(500).json({ error: "Failed to save announcement" });
-  }
+  } catch (err) { res.status(500).json({ error: "Failed to save announcement" }); }
 });
 
-// GET: Fetch announcements for the Home page
 app.get('/api/announcements', async (req, res) => {
   try {
     const list = await Announcement.find().sort({ createdAt: -1 }).limit(3);
     res.json(list);
-  } catch (err) {
-    res.status(500).json({ error: "Error fetching announcements" });
-  }
+  } catch (err) { res.status(500).json({ error: "Error fetching announcements" }); }
 });
 
-// Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-
-
-// ==========================================
-// NEW: Fetch all users for the User Directory
-// ==========================================
-app.get('/api/admin/users', async (req, res) => {
-  try {
-    // Fetches all users from your MongoDB collections
-    const users = await User.find({}, 'username email isAdmin isWriter status createdAt');
-    res.status(200).json(users);
-  } catch (error) {
-    console.error("Error fetching admin user directory:", error);
-    res.status(500).json({ error: "Failed to fetch user directory database records." });
-  }
-});
-
-// ==========================================
-// NEW: Toggle a user's Writer status
-// ==========================================
-app.patch('/api/admin/users/:id/toggle-writer', async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id);
-    if (!user) return res.status(404).json({ message: "User node not found" });
-
-    // Flip the isWriter boolean flag
-    user.isWriter = !user.isWriter;
-    
-    // Sync writerRequestStatus if relevant
-    if (user.isWriter) {
-      user.writerRequestStatus = 'approved';
-    } else {
-      user.writerRequestStatus = 'none';
-    }
-
-    await user.save();
-    res.status(200).json({ message: "Writer role toggled successfully", isWriter: user.isWriter });
-  } catch (error) {
-    console.error("Error toggling writer status:", error);
-    res.status(500).json({ error: "Failed to update writer credentials." });
-  }
-});
-
-// ==========================================
-// NEW: Suspend or Activate an account's Node status
-// ==========================================
-app.patch('/api/admin/users/:id/status', async (req, res) => {
-  try {
-    const { status } = req.body; // Expects 'active' or 'suspended'
-    
-    const updatedUser = await User.findByIdAndUpdate(
-      req.params.id,
-      { status },
-      { returnDocument: 'after' }
-    );
-
-    if (!updatedUser) return res.status(404).json({ message: "User node not found" });
-    res.status(200).json({ message: `User account is now ${status}`, user: updatedUser });
-  } catch (error) {
-    console.error("Error changing user status context:", error);
-    res.status(500).json({ error: "Failed to change user status state." });
-  }
-});

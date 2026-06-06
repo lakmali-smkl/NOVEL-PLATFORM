@@ -1,0 +1,53 @@
+.oversight-workspace {
+  padding: 5px;
+}
+
+.oversight-header {
+  margin-bottom: 30px;
+}
+
+.oversight-header h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0 0 6px 0;
+  color: #ffffff;
+}
+
+.oversight-header .subtitle {
+  color: #8b949e;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+/* Badge Tweaks to differentiate columns */
+.pill.badge-novel {
+  background: rgba(155, 89, 182, 0.1);
+  color: #9b59b6;
+  border: 1px solid rgba(155, 89, 182, 0.25);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.pill.badge-article {
+  background: rgba(230, 126, 34, 0.1);
+  color: #e67e22;
+  border: 1px solid rgba(230, 126, 34, 0.25);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.author-name-tag {
+  color: #c9d1d9;
+  font-size: 0.9rem;
+}
+
+.oversight-loading, .oversight-error {
+  padding: 60px;
+  text-align: center;
+  color: #8b949e;
+  font-size: 1.1rem;
+}
