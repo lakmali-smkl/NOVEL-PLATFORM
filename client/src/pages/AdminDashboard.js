@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import './AdminDashboard.css';
 import UserDirectory from './UserDirectory'; // Same folder pathing fix!
 import AdminMainStats from './AdminMainStats'; // Implements your current statistics summary screen
+import WriterRequests from './WriterRequests';
 
 const AdminDashboard = () => {
     // Default the application to show your 'dashboard' summary grid first
@@ -32,7 +33,7 @@ const AdminDashboard = () => {
             case 'user-directory':
                 return <UserDirectory />;
             case 'writer-requests':
-                return <div className="placeholder-view">Pending Writer Application Approvals Queue</div>;
+                return <WriterRequests />;
             case 'content-oversight':
                 return <div className="placeholder-view">Content Flags and Moderation Log</div>;
             case 'site-growth':
