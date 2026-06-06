@@ -6,7 +6,7 @@ const AdminSidebar = ({ closeSidebar }) => {
   const location = useLocation();
 
   const menuItems = [
-    { path: '/admin-dashboard', label: 'Dashboard', icon: '📊' },
+    { path: '/admin/dashboard', label: 'Dashboard', icon: '📊' },
     { path: '/admin/writer-requests', label: 'Writer Requests', icon: '🔔' },
     { path: '/admin/manage-users', label: 'User Directory', icon: '👥' },
     { path: '/admin/global-content', label: 'Content Oversight', icon: '📚' },

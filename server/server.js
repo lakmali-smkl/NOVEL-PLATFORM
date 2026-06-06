@@ -33,6 +33,32 @@ mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('Connected to MongoDB librarydb!'))
   .catch((err) => console.error('Could not connect to MongoDB:', err));
 
+
+// ==========================================
+// SECURITY GUARD MIDDLEWARE
+// ==========================================
+// This stops suspended users from abusing API calls if they were already logged in
+const checkSuspensionStatus = async (req, res, next) => {
+  try {
+    // Look for a userId passed in either the headers, query parameters, or request body
+    const userId = req.headers['x-user-id'] || req.query.userId || req.body.userId;
+    
+    if (userId && mongoose.Types.ObjectId.isValid(userId)) {
+      const user = await User.findById(userId).select('status');
+      if (user && user.status === 'suspended') {
+        return res.status(403).json({ 
+          error: "SUSPENDED", 
+          message: "Your account has been suspended. Access denied to platform resources." 
+        });
+      }
+    }
+    next();
+  } catch (error) {
+    next();
+  }
+};
+
+
 // --- Auth Routes ---
 
 app.post('/register', async (req, res) => {
@@ -54,6 +80,13 @@ app.post('/login', async (req, res) => {
     if (!user) return res.status(400).json({ message: "User not found" });
     if (user.password !== password) return res.status(400).json({ message: "Invalid credentials" });
     
+    // 🛑 CRITICAL CHECK: Block login if the account status is suspended
+    if (user.status === 'suspended') {
+      return res.status(403).json({ 
+        message: "Access Denied. This account has been suspended by an administrator." 
+      });
+    }
+
     res.status(200).json({ 
       message: "Login successful!", 
       user: { 
@@ -72,7 +105,18 @@ app.post('/login', async (req, res) => {
   }
 });
 
-// --- Admin Control Routes (NEW SECTION) ---
+// Helper validation endpoint for React frontend to verify active sessions
+app.get('/api/users/check-status/:id', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).select('status');
+    if (!user) return res.status(404).json({ error: "User not found" });
+    res.json({ status: user.status || 'active' });
+  } catch (error) {
+    res.status(500).json({ error: "Server error checking status context" });
+  }
+});
+
+// --- Admin Control Routes ---
 
 // Get statistics for Admin Dashboard cards
 app.get('/api/admin/stats', async (req, res) => {
@@ -559,3 +603,63 @@ app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 
 
+// ==========================================
+// NEW: Fetch all users for the User Directory
+// ==========================================
+app.get('/api/admin/users', async (req, res) => {
+  try {
+    // Fetches all users from your MongoDB collections
+    const users = await User.find({}, 'username email isAdmin isWriter status createdAt');
+    res.status(200).json(users);
+  } catch (error) {
+    console.error("Error fetching admin user directory:", error);
+    res.status(500).json({ error: "Failed to fetch user directory database records." });
+  }
+});
+
+// ==========================================
+// NEW: Toggle a user's Writer status
+// ==========================================
+app.patch('/api/admin/users/:id/toggle-writer', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: "User node not found" });
+
+    // Flip the isWriter boolean flag
+    user.isWriter = !user.isWriter;
+    
+    // Sync writerRequestStatus if relevant
+    if (user.isWriter) {
+      user.writerRequestStatus = 'approved';
+    } else {
+      user.writerRequestStatus = 'none';
+    }
+
+    await user.save();
+    res.status(200).json({ message: "Writer role toggled successfully", isWriter: user.isWriter });
+  } catch (error) {
+    console.error("Error toggling writer status:", error);
+    res.status(500).json({ error: "Failed to update writer credentials." });
+  }
+});
+
+// ==========================================
+// NEW: Suspend or Activate an account's Node status
+// ==========================================
+app.patch('/api/admin/users/:id/status', async (req, res) => {
+  try {
+    const { status } = req.body; // Expects 'active' or 'suspended'
+    
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.id,
+      { status },
+      { returnDocument: 'after' }
+    );
+
+    if (!updatedUser) return res.status(404).json({ message: "User node not found" });
+    res.status(200).json({ message: `User account is now ${status}`, user: updatedUser });
+  } catch (error) {
+    console.error("Error changing user status context:", error);
+    res.status(500).json({ error: "Failed to change user status state." });
+  }
+});

@@ -21,7 +21,7 @@ const WriterSidebar = ({ user, closeSidebar }) => {
 
         <div className="sidebar-header"><h3>Library</h3></div>
         <li>
-          <Link to="/dashboard/favorites" onClick={closeSidebar}>❤️ My Favorites</Link>
+          <Link to="/writer-dashboard/favorites" onClick={closeSidebar}>❤️ My Favorites</Link>
         </li>
 
         <div className="sidebar-divider"></div>

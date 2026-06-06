@@ -16,6 +16,12 @@ const userSchema = new mongoose.Schema({
     default: 'none' 
   },
 
+  status: { 
+    type: String, 
+    enum: ['active', 'suspended'], 
+    default: 'active' 
+  },
+
   favorites: [{
     contentId: { type: String },
     title: { type: String },

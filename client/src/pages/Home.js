@@ -101,7 +101,7 @@ const Home = ({ user }) => {
         <source src={myVideo} type="video/mp4" />
       </video>
       <section className="hero-overlay">
-        <h1>Welcome to My Novel Hub</h1>
+        <h1>Welcome</h1>
         <p>Explore, read, and share your favorite stories.</p>
         <div className="cta-buttons">
           <Link to="/register" className="btn-red">Sign Up</Link>

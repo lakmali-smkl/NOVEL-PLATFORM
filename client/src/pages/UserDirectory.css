@@ -1,0 +1,223 @@
+/* CONTAINER BASE STRUCTURING */
+.directory-workspace {
+  padding: 30px;
+  background-color: #0d1117; /* Matches your dashboard background */
+  min-height: 100%;
+}
+
+.directory-header h2 {
+  color: #ffffff;
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin: 0 0 5px 0;
+}
+
+.directory-header .subtitle {
+  color: #8b949e;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* ADMIN QUICK METRICS ROW */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin: 25px 0;
+}
+
+.metric-card {
+  background-color: #161b22;
+  border: 1px solid #21262d;
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.metric-label {
+  color: #8b949e;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 5px;
+}
+
+.metric-value {
+  color: #f0f6fc;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.metric-value.writers-count { color: #58a6ff; }
+.metric-value.suspended-count { color: #ff3333; }
+
+/* UTILITY BAR INPUTS */
+.filter-action-bar {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.search-input {
+  flex-grow: 1;
+  background-color: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  color: #f0f6fc;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+}
+
+.search-input:focus, .role-select:focus {
+  outline: none;
+  border-color: #58a6ff; /* Matches your glowing blue selection */
+}
+
+.role-select {
+  background-color: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  color: #f0f6fc;
+  padding: 0 14px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+/* DATA DIRECTORY GRID CONFIGURATIONS */
+.table-responsive-wrapper {
+  background-color: #161b22;
+  border: 1px solid #21262d;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.directory-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.directory-table th {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid #30363d;
+  color: #8b949e;
+  font-weight: 600;
+  padding: 14px 20px;
+}
+
+.directory-table td {
+  padding: 14px 20px;
+  border-bottom: 1px solid #21262d;
+  vertical-align: middle;
+}
+
+.directory-table tr:hover {
+  background-color: rgba(255, 255, 255, 0.01);
+}
+
+.row-suspended {
+  background-color: rgba(255, 51, 51, 0.01);
+}
+
+/* CELLS AND PILLS LAYOUT */
+.user-info-cell {
+  display: flex;
+  flex-direction: column;
+}
+
+.cell-username {
+  color: #f0f6fc;
+  font-weight: 600;
+}
+
+.cell-email {
+  color: #8b949e;
+  font-size: 0.8rem;
+}
+
+.roles-pill-container {
+  display: flex;
+  gap: 6px;
+}
+
+.pill {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.badge-admin { background-color: rgba(119, 3, 7, 0.2); color: #ff3333; border: 1px solid rgba(119, 3, 7, 0.4); }
+.badge-writer { background-color: rgba(88, 166, 255, 0.15); color: #58a6ff; border: 1px solid rgba(88, 166, 255, 0.3); }
+.badge-reader { background-color: rgba(139, 148, 158, 0.1); color: #8b949e; border: 1px solid rgba(139, 148, 158, 0.2); }
+
+/* STATUS DOT SIGNALS */
+.status-tag {
+  font-size: 0.8rem;
+  color: #c9d1d9;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-transform: capitalize;
+}
+
+.status-tag.dot-active::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background-color: #2ea44f;
+  border-radius: 50%;
+}
+
+.status-tag.dot-suspended::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background-color: #ff3333;
+  border-radius: 50%;
+}
+
+.date-cell {
+  color: #8b949e;
+  font-family: monospace;
+}
+
+/* INTERACTIVE TABLE CONTROL CTA BUTTONS */
+.action-button-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn-table {
+  background: transparent;
+  border: 1px solid #30363d;
+  color: #c9d1d9;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-grant:hover { border-color: #58a6ff; color: #58a6ff; background: rgba(88, 166, 255, 0.05); }
+.btn-revoke:hover { border-color: #d29922; color: #d29922; background: rgba(210, 153, 34, 0.05); }
+.btn-suspend:hover { border-color: #ff3333; color: #ff3333; background: rgba(255, 51, 51, 0.05); }
+.btn-activate:hover { border-color: #2ea44f; color: #2ea44f; background: rgba(46, 164, 79, 0.05); }
+
+.immutable-label {
+  font-size: 0.8rem;
+  color: #555;
+  font-style: italic;
+  padding: 6px 0;
+}
+
+.table-empty, .directory-loading {
+  text-align: center;
+  padding: 40px;
+  color: #8b949e;
+}

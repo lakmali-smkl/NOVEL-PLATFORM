@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation, useNavigate} from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Navbar from './components/Navbar';
@@ -21,7 +21,6 @@ import EditArticle from './pages/EditArticle';
 import WriterSidebar from './pages/WriterSidebar';
 import AdminSidebar from './pages/AdminSidebar'; 
 import AdminDashboard from './pages/AdminDashboard';
-import WriterRequests from './pages/WriterRequests'; 
 import UserSidebar from './pages/UserSidebar'; 
 import RequestWriter from './pages/RequestWriter';
 import Notifications from './pages/Notifications';
@@ -37,6 +36,9 @@ function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
+  const location = useLocation(); // 💡 Track current route changes
+  const navigate = useNavigate(); // 💡 To programmatically kick out suspended users
+
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const closeSidebar = () => setIsSidebarOpen(false);
 
@@ -49,43 +51,61 @@ function App() {
   };
 
   useEffect(() => {
-  const syncUserRole = async () => {
-    // Only check if the user is logged in and NOT already a writer
-    if (user && !user.isWriter && !user.isAdmin) {
-      try {
-        const response = await fetch(`http://localhost:5000/api/users/status/${user._id}`);
-        
-        if (!response.ok) return; // Exit if server error
-        
-        const data = await response.json();
+    const syncUserRoleAndStatus = async () => {
+      // If no user session exists, skip checks
+      if (!user || !user._id) return;
 
-        if (data.isWriter) {
-          const updatedUser = { ...user, isWriter: true };
+      try {
+        // 1. First, call the backend to check if the user account is active or suspended
+        const statusResponse = await fetch(`http://localhost:5000/api/users/check-status/${user._id}`);
+        if (!statusResponse.ok) return;
+
+        const statusData = await statusResponse.json();
+
+        // 🛑 CRITICAL REJECTION GUARD: Kick out immediately if account status is suspended
+        if (statusData.status === 'suspended') {
+          alert("⚠️ Your account has been suspended by an administrator. Access revoked.");
+          localStorage.removeItem('user');
+          setUser(null);
+          setIsSidebarOpen(false);
+          navigate('/login');
+          return; // Stop further execution
+        }
+
+        // 2. Synchronize permissions / roles if the user is an active standard reader
+        if (!user.isWriter && !user.isAdmin) {
+          const roleResponse = await fetch(`http://localhost:5000/api/users/status/${user._id}`);
+          if (!roleResponse.ok) return; // Exit if server error
           
-          // These three lines trigger the "Red Theme" switch
-          setUser(updatedUser);
-          localStorage.setItem('user', JSON.stringify(updatedUser));
-          localStorage.removeItem('writerRequestStatus');
-          
-          console.log("Role updated: User is now a Writer.");
-        } else if (data.writerRequestStatus === 'rejected') {
-          // Update user object with rejected status
-          const updatedUser = { ...user, writerRequestStatus: 'rejected' };
-          setUser(updatedUser);
-          localStorage.setItem('user', JSON.stringify(updatedUser));
-          // Clear pending status if request was rejected
-          localStorage.removeItem('writerRequestStatus');
-          console.log("Request rejected: Cleared pending status.");
+          const roleData = await roleResponse.json();
+
+          if (roleData.isWriter) {
+            const updatedUser = { ...user, isWriter: true };
+            
+            // These lines trigger the "Red Theme" switch
+            setUser(updatedUser);
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+            localStorage.removeItem('writerRequestStatus');
+            
+            console.log("Role updated: User is now a Writer.");
+          } else if (roleData.writerRequestStatus === 'rejected') {
+            // Update user object with rejected status
+            const updatedUser = { ...user, writerRequestStatus: 'rejected' };
+            setUser(updatedUser);
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+            // Clear pending status if request was rejected
+            localStorage.removeItem('writerRequestStatus');
+            console.log("Request rejected: Cleared pending status.");
+          }
         }
       } catch (err) {
-        console.error("Role sync failed:", err);
+        console.error("Account validation or role sync failed:", err);
       }
-    }
-  };
+    };
 
-  // Run the check when the component mounts or the user object changes
-  syncUserRole();
-}, [user]); // Important: Re-run if the user object changes
+    // Run the validation check when mounting pages or moving between path routes
+    syncUserRoleAndStatus();
+  }, [user, location.pathname, navigate]); // Re-runs on view changing paths or user state mutation
 
 
   const isAdmin = user && user.isAdmin;
@@ -119,8 +139,8 @@ function App() {
           
           {isAdmin && (
             <>
-              <Route path="/admin-dashboard" element={<AdminDashboard />} />
-              <Route path="/admin/writer-requests" element={<WriterRequests />} />
+              <Route path="/admin-dashboard" element={<Navigate to="/admin/dashboard" replace />} />
+              <Route path="/admin/*" element={<AdminDashboard />} />
             </>
           )}
 
@@ -135,14 +155,14 @@ function App() {
           </Route>
           
           <Route path="/writer-dashboard" element={<WriterDashboard user={user} />} />
-            <Route path="/add-novel" element={<AddNovel user={user} />} />
-            <Route path="/add-article" element={<AddArticle user={user} />} />
-            <Route path="/library" element={<Library />} />
-            <Route path="/read/:type/:id" element={<ReadPage />} />
-            <Route path="/edit-novel/:id" element={<EditNovel user={user} />} />
-            <Route path="/edit-article/:id" element={<EditArticle />} />
-            <Route path="/notifications" element={<Notifications user={user} />} />
-            <Route path="favorites" element={<Favorites />} />
+          <Route path="/add-novel" element={<AddNovel user={user} />} />
+          <Route path="/add-article" element={<AddArticle user={user} />} />
+          <Route path="/library" element={<Library />} />
+          <Route path="/read/:type/:id" element={<ReadPage />} />
+          <Route path="/edit-novel/:id" element={<EditNovel user={user} />} />
+          <Route path="/edit-article/:id" element={<EditArticle />} />
+          <Route path="/notifications" element={<Notifications user={user} />} />
+          <Route path="favorites" element={<Favorites />} />
         </Routes>
       </div>
     </div>
