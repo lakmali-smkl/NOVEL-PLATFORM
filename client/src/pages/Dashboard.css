@@ -1,96 +1,86 @@
-/* --- Hamburger Button (Fixed top-left) --- */
-.hamburger-btn {
-  position: fixed;
-  top: 15px;
-  left: 15px;
-  z-index: 1000;
-  background: #770307da;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  font-size: 20px;
-  border-radius: 5px;
-  cursor: pointer;
+
+:root {
+  --primary-color: #770307;
+  --bg-dark: #0a0a0a;
+  --bg-panel: #141414;
+  --text-main: #ffffff;
+  --text-muted: #a0a0a0;
+  --transition-speed: 0.3s;
+  --sidebar-width: 280px;
 }
 
-/* --- Sidebar Styles --- */
 .sidebar {
   position: fixed;
   top: 0;
-  left: -250px; /* Hidden by default */
-  width: 250px;
+  left: calc(var(--sidebar-width) * -1);
+  width: var(--sidebar-width);
   height: 100vh;
-  background-color: #770307da;
-  z-index: 1001; /* Higher than the hamburger button */
-  transition: 0.3s ease-in-out;
-  padding-top: 10px;
+  background-color: var(--bg-dark);
+  z-index: 1001;
+  transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+  padding-top: 80px;
+  border-right: 1px solid #222;
+  box-shadow: 5px 0 15px rgba(0,0,0,0.3);
 }
 
 .sidebar.active {
   left: 0;
 }
 
-/* --- Close Button (Inside Sidebar) --- */
-.close-btn {
-  background: transparent;
-  color: white;
-  border: none;
-  font-size: 28px;
-  padding: 10px 20px;
-  cursor: pointer;
-  display: block;
+.sidebar-header h3 {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  padding: 20px 25px 10px;
+  font-weight: 600;
 }
 
-/* --- Sidebar Links --- */
 .sidebar ul {
   list-style: none;
   padding: 0;
-  margin-top: 20px;
+  margin: 0;
+}
+
+.sidebar-divider {
+  height: 1px;
+  background: #333;
+  margin: 15px 25px;
 }
 
 .sidebar ul li a {
-  display: block;
-  padding: 20px;
-  color: white;
+  display: flex;
+  align-items: center;
+  padding: 15px 25px;
+  color: var(--text-main);
   text-decoration: none;
-  font-weight: bold;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  transition: background 0.3s;
+  font-weight: 500;
+  /*font-size: 1.05rem;*/
+  transition: all 0.2s ease;
 }
 
 .sidebar ul li a:hover {
-  background-color: rgba(124, 8, 8, 0.2);
-}
-
-/* --- Main Content --- */
-.content {
-  padding: 20px;
-}
-
-/* Responsive adjustment */
-@media (min-width: 769px) {
-  .hamburger-btn {
-    display: none; /* Hide hamburger on desktop */
-  }
-  .sidebar {
-    position: relative; /* Sidebar stays in layout on desktop */
-    left: 0;
-  }
-  .close-btn {
-    display: none; /* Hide 'X' on desktop */
-  }
+  background-color: rgba(119, 3, 7, 0.1);
+  color: var(--primary-color);
+  padding-left: 35px; /* Subtle slide animation */
 }
 
 .dashboard-container {
-  display: flex;       /* This enables Flexbox */
-  width: 100%;
-  min-height: 100vh;   /* Keeps the layout filling the screen height */
-  overflow-x: hidden;  /* Prevents horizontal scrollbars */
+  display: flex;
+  min-height: 100vh;
+  background-color: #121212;
 }
 
-
 .content {
-  flex-grow: 1;        /* This is the key: it forces content to fill the rest of the screen */
-  padding: 20px;
-  width: 100%;         /* Ensures content behaves predictably */
+  flex: 1;
+  padding: 40px;
+  padding-top: 100px;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  transition: margin-left 0.3s ease;
+}
+
+.sidebar.active + .dashboard-container .content {
+  margin-left: 280px;
 }

@@ -1,44 +1,266 @@
-/* Home.css */
-
-.home-container {
+/* --- GUEST VIEW (The original video background) --- */
+.guest-view {
   position: relative;
   width: 100%;
-  height: 100vh; /* Full viewport height */
+  height: 100vh; /* Keeps the video full screen */
   overflow: hidden;
 }
 
-.video-background {
+.guest-view .video-background {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover; /* This makes the video fill the screen perfectly */
-  z-index: 0; /* Behind the content */
+  object-fit: cover;
+  z-index: 0;
+  filter: brightness(0.4); /* Optional: darken the video for better text contrast */
 }
 
-.hero-overlay {
+.guest-view .hero-overlay {
   position: relative;
-  z-index: 1; /* In front of the video */
+  z-index: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100%;
-  color: white; /* White text looks better on video */
+  color: white;
   text-align: center;
+  gap: 20px;
 }
 
-.hero-overlay h1 { font-size: 3rem; margin-bottom: 15px; }
-.hero-overlay p { font-size: 1.2rem; margin-bottom: 30px; }
+/* Keep the base button styles global so they always show up in guest mode */
+.cta-buttons { 
+  display: flex; 
+  gap: 20px; 
+  /*position: relative;
+  z-index: 10; /* Ensure they are above the video */
+}
 
-/* The Red Buttons */
-.cta-buttons { display: flex; gap: 20px; }
 .btn-red {
   background-color: #770307da;
   color: white;
   padding: 12px 25px;
-  border-radius: 5px;
+  border-radius: 50px;
   text-decoration: none;
+  font-weight: 600;
+  transition: transform 0.2s, background 0.3s;
+}
+
+.btn-red:hover {
+  background-color: #b2040a;
+  transform: scale(1.05);
+}
+
+/* Ensure the hero-overlay is visible */
+.hero-overlay {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  color: white;
+  text-align: center;
+}
+
+/* --- LOGGED-IN VIEW (The Dashboard) --- */
+.logged-in-view {
+  padding: 40px 20px;
+  padding-top: 100px;
+  max-width: 1200px;
+  margin: 0 auto;
+  z-index: 1;
+  min-height: 100vh; /* Allows scrolling */
+  box-sizing: border-box;
+}
+
+.welcome-banner {
+  background: linear-gradient(135deg, #1e1e1e 0%, #000 100%);
+  border-left: 5px solid #770307; /* Brand accent */
+  color: white;
+  padding: 40px;
+  border-radius: 12px;
+  text-align: center;
+  margin-bottom: 40px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+.welcome-banner h1 span {
+  color: #ff4d4d; /* Username highlight */
+}
+
+.trending-section h2 {
+  color: #fff;
+  margin-bottom: 20px;
+}
+
+.trending-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 30px;
+  padding: 20px;
+}
+
+.novel-card {
+  background: var(--card-bg);
+  border: 1px solid #333;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: var(--transition);
+}
+
+.novel-card:hover {
+  transform: translateY(-10px);
+  border-color: var(--brand-red);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.novel-card img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+}
+
+.novel-card h3 {
+  padding: 15px 15px 5px 15px;
+  color: white;
+  margin: 0;
+}
+
+.read-now-btn {
+  display: block;
+  margin: 15px;
+  background-color: transparent;
+  border: 1px solid #770307;
+  color: #770307;
+  text-align: center;
+  padding: 10px;
+  text-decoration: none;
+  border-radius: 6px;
   font-weight: bold;
+  transition: all 0.3s;
+}
+
+.read-now-btn:hover {
+  background-color: #770307;
+  color: white;
+}
+
+/* --- ENHANCED SYSTEM BROADCAST SECTION --- */
+.announcement-wrapper {
+  max-width: 850px;
+  margin: -30px auto 60px;
+  padding: 0 20px;
+}
+
+.ann-terminal-card {
+  position: relative;
+  background: linear-gradient(145deg, #121212 0%, #080808 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px; /* Sharper corners look more "Pro" than rounded ones */
+  padding: 24px;
+  display: flex;
+  gap: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+  margin-bottom: 25px;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.ann-terminal-card:hover {
+  border-color: rgba(77, 255, 169, 0.4);
+  transform: scale(1.02);
+  background: #141414;
+}
+
+/* Subtle scanline texture */
+.ann-scanline {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.1) 50%
+  ), linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+  background-size: 100% 3px, 3px 100%;
+  pointer-events: none;
+  opacity: 0.3;
+}
+
+/* Vertical Rail Design */
+.ann-indicator-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.ann-rail-line {
+  width: 1px;
+  flex-grow: 1;
+  background: linear-gradient(to bottom, #4dff5c, transparent);
+  opacity: 0.3;
+}
+
+.ann-status-pulse {
+  width: 10px;
+  height: 10px;
+  background: #19d081;
+  border-radius: 2px; /* Square pulse looks more technical */
+  animation: pulse-red 2s infinite;
+}
+
+@keyframes pulse-red {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(9, 150, 75, 0.7); }
+  70% { transform: scale(1.2); box-shadow: 0 0 0 10px rgba(77, 255, 104, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(77, 255, 142, 0); }
+}
+
+.ann-main-body { flex: 1; z-index: 2; }
+
+.ann-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.ann-tag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: #4dff88;
+  letter-spacing: 2px;
+}
+
+.ann-tag-dot {
+  width: 4px;
+  height: 4px;
+  background: #1a5c23;
+  border-radius: 50%;
+}
+
+.ann-timestamp {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1.0rem;
+  color: #dbcdcd;
+}
+
+.ann-headline {
+  font-size: 1.2rem;
+  color: #fff;
+  margin: 0 0 8px 0;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.ann-text {
+  font-size: 0.95rem;
+  color: #cababa;
+  line-height: 1.6;
+  max-width: 90%;
 }

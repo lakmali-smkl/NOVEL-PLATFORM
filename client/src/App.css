@@ -1,3 +1,51 @@
+:root {
+  --brand-red: #770307;
+  --dark-bg: #121212;
+  --card-bg: #1e1e1e;
+  --text-main: #ffffff;
+  --text-muted: #b3b3b3;
+  --transition: all 0.3s ease;
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -280px; /* Always start hidden */
+    width: 280px;
+    height: 100vh;
+    z-index: 2000; /* Ensure it is above EVERYTHING */
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+}
+
+/* This is the ONLY class that should move the sidebar */
+.sidebar.active {
+    left: 0 !important;
+}
+
+.main-content-shifted {
+  margin-left: 280px;
+  transition: margin-left 0.3s ease;
+}
+
+.sidebar.admin-theme {
+    border-right: 2px solid #007bff;
+    background: #121212;
+}
+
+.sidebar.writer-theme {
+    border-right: 2px solid #a50000;
+    background: #121212;
+}
+
+body {
+  background-color: var(--dark-bg);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--text-main);
+  margin: 0;
+}
+
 .App {
   text-align: center;
 }
@@ -35,4 +83,20 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  padding-top: 80px;
+}
+
+.app-main-layout {
+  padding-top: 80px;
+}
+
+.no-transition, 
+.no-transition * {
+  transition: none !important; 
+  animation: none !important;
 }

@@ -1,0 +1,62 @@
+.collection-detail-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  color: #ffffff;
+}
+
+.back-link {
+  color: #3b82f6;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.back-link:hover {
+  color: #60a5fa;
+  text-decoration: underline;
+}
+
+.collection-detail-header h1 {
+  font-size: 2.5rem;
+  margin-top: 15px;
+  margin-bottom: 5px;
+  color: #f3f4f6;
+}
+
+.saved-item-row {
+  background: #1e1e1e;
+  padding: 20px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #333;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.saved-item-row:hover {
+  transform: translateY(-2px);
+  border-color: #4b5563;
+}
+
+.item-info h3 {
+  margin: 0 0 6px 0;
+  font-size: 1.25rem;
+  color: #f9fafb;
+}
+
+.read-now-btn {
+  background: #3b82f6;
+  color: #ffffff;
+  padding: 10px 20px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+
+.read-now-btn:hover {
+  background: #2563eb;
+}

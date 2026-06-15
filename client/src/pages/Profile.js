@@ -54,7 +54,7 @@ const Profile = () => {
           </div>
           <div className="info-row">
             <span>Account Type</span>
-            <p>{user.isAdmin ? "Administrator" : "Reader"}</p>
+            <p>{user.isWriter ? "writeristrator" : "Reader"}</p>
           </div>
 
           <div className="profile-actions" style={{ marginTop: '20px' }}>

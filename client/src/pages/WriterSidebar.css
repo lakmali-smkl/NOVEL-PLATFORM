@@ -1,0 +1,97 @@
+/* Sidebar Container */
+.writer-sidebar-content {
+  width: 100%;
+  height: 100%;
+  background: #0d1117;
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  position: relative;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+  padding-top: 60px; /* Matches Dashboard Top Padding */
+}
+
+/* Section Headers (e.g., WORKSPACE, LIBRARY) */
+.sidebar-header h3 {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #ff3333;
+  padding: 0 25px;
+  margin: 25px 0 10px;
+  font-weight: 800;
+  opacity: 0.9;
+}
+
+.sidebar-header h2 {
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #ff3333;
+  padding: 0 25px;
+  margin: 25px 0 10px;
+  font-weight: 800;
+  opacity: 0.9;
+}
+/* Navigation Links */
+.writer-sidebar-content ul {
+  list-style: none;
+  padding: 0 15px;
+}
+
+.writer-sidebar-content ul li a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  color: #8b949e;
+  text-decoration: none;
+  font-size: 0.9rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.writer-sidebar-content ul li a:hover {
+  background: rgba(255, 51, 51, 0.05);
+  color: #fff;
+  transform: translateX(5px);
+}
+
+/* Active Page State */
+.writer-sidebar-content ul li a.active {
+  background: rgba(255, 51, 51, 0.1);
+  color: #ff3333;
+  font-weight: 600;
+  border: 1px solid rgba(255, 51, 51, 0.2);
+}
+
+.sidebar-divider {
+  height: 1px;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.05), transparent);
+  margin: 15px 25px;
+}
+
+.sidebar-header p {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: lch(93.33% 1.7 265.88 / 0.941); 
+    margin-top: 4px;
+    padding: 0;
+    font-style: italic;
+    letter-spacing: 0.9px;
+    opacity: 0.8;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.sidebar-header p::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    background-color: #2dec53; /* Success Green */
+    border-radius: 50%;
+    display: inline-block;
+}

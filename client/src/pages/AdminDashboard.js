@@ -1,65 +1,58 @@
-import React from 'react';
-import { Navigate } from 'react-router-dom';
-import './AdminDashboard.css'; // We will create this next
-import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import './AdminDashboard.css';
+import UserDirectory from './UserDirectory'; 
+import AdminMainStats from './AdminMainStats'; 
+import WriterRequests from './WriterRequests';
+import ContentOversight from './ContentOversight'; 
+import SiteGrowth from './SiteGrowth';
 
-const AdminDashboard = ({ user }) => {
-  const navigate = useNavigate();
 
-  if (user) {
-    console.log("Is user admin?", user.isAdmin);
-    console.log("Type of isAdmin:", typeof user.isAdmin);
-  }
+const AdminDashboard = () => {
+    // Default the application to show your 'dashboard' summary grid first
+    const [activeTab, setActiveTab] = useState('dashboard');
+    const location = useLocation();
 
-  if (!user || user.isAdmin !== true) {
-    console.log("Redirecting to Home...");
-    return <Navigate to="/" />;
-  }
+    useEffect(() => {
+        const path = location.pathname;
 
-  return (
-    <div className="admin-container">
-      <header className="admin-header">
-        <h1>Admin Control Panel</h1>
-        <p>Welcome back, {user.username}. What are we writing today?</p>
-      </header>
+        if (path.startsWith('/admin/writer-requests')) {
+            setActiveTab('writer-requests');
+        } else if (path.startsWith('/admin/manage-users')) {
+            setActiveTab('user-directory');
+        } else if (path.startsWith('/admin/global-content')) {
+            setActiveTab('content-oversight');
+        } else if (path.startsWith('/admin/analytics')) {
+            setActiveTab('site-growth');
+        } else {
+            setActiveTab('dashboard');
+        }
+    }, [location.pathname]);
 
-      <div className="admin-actions">
-        {/* Manage Novels Card */}
-        <div className="action-card">
-          <h3>Manage Novels</h3>
-          <p>Create, edit, or delete your stories.</p>
-          <button className="admin-btn" onClick={() => navigate('/add-novel')}>
-            Add New Novel
-          </button>
-        </div>
+    const renderMainContent = () => {
+        switch (activeTab) {
+            case 'dashboard':
+                return <AdminMainStats setActiveTab={setActiveTab} />;
+            case 'user-directory':
+                return <UserDirectory />;
+            case 'writer-requests':
+                return <WriterRequests />;
+            case 'content-oversight':
+                return <ContentOversight />;
+            case 'site-growth':
+                return <SiteGrowth />;
+            default:
+                return <AdminMainStats setActiveTab={setActiveTab} />;
+        }
+    };
 
-        <div className="action-card">
-          <h3>Write Article</h3>
-          <p>Share updates or thoughts with your readers.</p>
-          <button className="admin-btn" onClick={() => navigate('/add-article')}>
-            Write New Article
-          </button>
-        </div>
+    return (
+        
+            <main className="admin-main-viewport">
+                {renderMainContent()}
+            </main>
 
-        {/* View Library Card */}
-        <div className="action-card">
-          <h3>Library</h3>
-          <p>View all published novels on your platform.</p>
-          <Link to="/library">
-            <button className="admin-btn">View Library</button>
-          </Link>
-        </div>
-
-        {/* Stats Card */}
-        <div className="action-card">
-          <h3>Site Stats</h3>
-          <p>See how many people are reading your work.</p>
-          <button className="admin-btn secondary">View Analytics</button>
-        </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default AdminDashboard;

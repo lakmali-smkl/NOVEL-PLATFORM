@@ -1,7 +1,8 @@
 .profile-container {
-  padding: 2rem;
   max-width: 900px;
   margin: 0 auto;
+  padding: 40px 20px;
+  color: #eee8e8; /* Sets base text to white */
 }
 
 /* Header styling */
@@ -13,7 +14,7 @@
 .avatar-placeholder {
   width: 100px;
   height: 100px;
-  background-color: #007bff;
+  background: linear-gradient(135deg, #770307 0%, #2a0103 100%);
   color: white;
   border-radius: 50%;
   display: flex;
@@ -22,6 +23,12 @@
   font-size: 3rem;
   font-weight: bold;
   margin: 0 auto 1rem auto;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.email-text {
+  color: #b3b3b3; /* Muted light grey for the email */
+  margin-top: 5px;
 }
 
 /* Responsive Grid */
@@ -32,24 +39,36 @@
 }
 
 .info-card {
-  background: white;
-  padding: 25px;
+  background: #1a1a1a; /* Dark panel background */
+  padding: 30px;
   border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  border: 1px solid #e1e4e8;
+  border: 1px solid #333;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
-/* Content rows */
+.info-card h3 {
+  border-bottom: 1px solid #333;
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+  color: #770307; /* Brand accent color */
+}
+
 .info-row {
   display: flex;
   justify-content: space-between;
-  padding: 12px 0;
-  border-bottom: 1px solid #f0f0f0;
+  padding: 15px 0;
+  border-bottom: 1px solid #222;
 }
 
 .info-row span {
-  color: #6a737d;
+  color: #b3b3b3; /* Muted grey so labels don't distract */
   font-weight: 500;
+}
+
+.info-row p {
+  color: #ffffff !important; /* Forces the text to be pure white */
+  margin: 0;
+  font-weight: 600;
 }
 
 .stat-box {
@@ -79,36 +98,55 @@
 }
 
 .edit-input {
+  background: #2a2a2a;
+  border: 1px solid #770307;
+  color: white;
   padding: 10px;
+  border-radius: 5px;
   font-size: 1.5rem;
-  border: 2px solid #007bff;
-  border-radius: 6px;
-  width: 200px;
   text-align: center;
 }
 
-.edit-btn {
-  background-color: #007bff;
-  color: white;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
+.profile-actions {
+  display: flex;
+  gap: 15px; /* Adds space between the buttons */
+  margin-top: 20px;
+  width: 100%;
+}
+
+/* Buttons */
+.profile-actions button {
+  flex: 1; /* Both buttons will take up 50% of the width each */
+  padding: 12px;
   cursor: pointer;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: opacity 0.2s;
+}
+
+.profile-actions button:hover {
+  opacity: 0.9;
+}
+
+.edit-btn {
+  background-color: transparent;
+  color: #770307;
+  border: 1px solid #770307 !important;
+}
+
+.edit-btn:hover {
+  background-color: #770307;
+  color: white;
 }
 
 .save-btn {
-  background-color: #28a745;
+  background-color: #770307;
   color: white;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
   margin-right: 10px;
 }
 
 .cancel-btn {
-  background-color: #6c757d;
+  background-color: #444;
   color: white;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
 }

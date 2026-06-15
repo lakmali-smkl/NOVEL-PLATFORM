@@ -1,57 +1,93 @@
-/* Library.css or ArticleList.css */
+/* Library.css */
 
 .library-container {
-  background-color: #1a1a1a; /* Dark background for the whole page */
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 100px 20px;
   min-height: 100vh;
-  padding: 40px 20px;
+  background-color: #0a0a0a;
+  color: #fff;
 }
 
 .library-container h1 {
-  color: #ffffff; /* Make "My Library" white */
   text-align: center;
-  margin-bottom: 30px;
+  font-size: 2.5rem;
+  margin-bottom: 40px;
+  letter-spacing: -1px;
 }
 
-/* The Card itself - Making it LIGHT so text is readable */
-.article-card, .novel-card {
-  background-color: #ffffff; /* White card */
-  border-radius: 8px;
-  padding: 25px;
-  margin: 20px auto;
-  max-width: 850px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* Stronger shadow for depth */
-  border: none;
+.library-container h2, 
+.library-container h3 {
+  color: #ffffff !important;
 }
 
-/* Text styles for maximum readability */
-.article-card h3, .novel-card h3 {
-  color: #1a202c; /* Near black for the title */
-  font-size: 1.5rem;
-  margin-bottom: 10px;
+/* Force paragraph text to be legible */
+.library-container p {
+  color: #e0e0e0 !important;
 }
 
-.article-card .author, .novel-card .author {
-  color: #4a5568; /* Dark grey for "By: name" */
-  font-weight: 600;
-  margin-bottom: 15px;
-  display: block;
+/* Ensure the cards themselves have a light background/text contrast */
+.novel-card , .article-card{
+  background: #1a1a1a; /* Dark card background */
+  border: 1px solid #333;
+  color: #ffffff; /* White text inside the card */
+  border-radius: 12px;
+  padding: 15px;
+  transition: transform 0.3s ease;
 }
 
-.article-card p, .novel-card p {
-  color: #2d3748; /* Dark charcoal for the content */
-  line-height: 1.8; /* Extra line spacing for reading comfort */
-  font-size: 1.1rem;
+/* Ensure buttons stand out */
+.read-btn {
+  background-color: #770307 !important;
+  color: #ffffff !important;
+  padding: 10px;
+  border-radius: 6px;
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 10px;
 }
 
-/* Customizing the tab buttons for dark mode */
+/* Tab Navigation Styling */
+.tab-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 50px;
+}
+
 .tab-buttons button {
-  background: #2d3748;
-  color: #a0aec0;
-  border: 1px solid #4a5568;
+  background: transparent;
+  color: #dad2d2;
+  border: 1px solid #333;
+  padding: 12px 30px;
+  border-radius: 50px; /* Pill shape */
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
 }
 
+/* Active State */
 .tab-buttons button.active {
-  background: #ffffff;
-  color: #1a1a1a;
-  border-color: #ffffff;
+  background-color: #770307; /* Your Brand Red */
+  border-color: #770307;
+  color: white;
+  box-shadow: 0 4px 15px rgba(119, 3, 7, 0.3);
+}
+
+.tab-buttons button:hover:not(.active) {
+  border-color: #555;
+  color: #fff;
+}
+
+/* Library Content area */
+.library-content {
+  min-height: 400px;
+  padding: 20px;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }

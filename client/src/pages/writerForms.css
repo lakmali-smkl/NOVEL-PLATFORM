@@ -1,0 +1,95 @@
+/* Container styling */
+.writer-form-container {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 40px;
+    background-color: #1a1a1a; /* Consistent with dark dashboard */
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    color: #ffffff;
+}
+
+.writer-form-container h2 {
+    margin-bottom: 30px;
+    text-align: center;
+    font-weight: 600;
+    color: #e0e0e0;
+}
+
+/* Form Groups */
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #bbb;
+}
+
+/* Common Input/Textarea styling */
+.writer-input,
+.writer-textarea {
+    width: 100%;
+    padding: 12px 16px;
+    background-color: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-sizing: border-box; /* Ensures padding doesn't break width */
+}
+
+.writer-textarea {
+    min-height: 200px;
+    resize: vertical;
+}
+
+/* Focus States (Crucial for Professionalism) */
+.writer-input:focus,
+.writer-textarea:focus {
+    outline: none;
+    border-color: #a50000; /* Matching your red accent color */
+    background-color: #333;
+}
+
+/* File Input Styling */
+.file-input-wrapper {
+    padding: 15px;
+    border: 2px dashed #444;
+    border-radius: 6px;
+    text-align: center;
+    background-color: #2a2a2a;
+    transition: border-color 0.3s;
+}
+
+.file-input-wrapper:hover {
+    border-color: #a50000;
+}
+
+/* Submit Button */
+.submit-btn {
+    width: 100%;
+    padding: 14px;
+    background-color: #a50000; /* Brand Color */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+}
+
+.submit-btn:hover {
+    background-color: #800000;
+}
+
+.submit-btn:disabled {
+    background-color: #555;
+    cursor: not-allowed;
+}

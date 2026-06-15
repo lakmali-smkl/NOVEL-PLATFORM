@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './AddNovel.css';
+import './writerForms.css'; 
 
 const AddNovel = ({ user }) => {
   const [formData, setFormData] = useState({
     title: '',
     content: '',
     authorName: user?.username || '',
-    authorSpeech: ''
+    authorSpeech: '',
+    status: 'published' // Default to published
   });
   const [coverPhoto, setCoverPhoto] = useState(null);
   const [textFile, setTextFile] = useState(null);
@@ -24,56 +25,107 @@ const AddNovel = ({ user }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Use FormData for file uploads
+    const authorId = user?._id;
+    if (!authorId) {
+      alert("User is not logged in properly. Please refresh.");
+      return;
+    }
+
     const data = new FormData();
     data.append('title', formData.title);
     data.append('content', formData.content);
     data.append('authorName', formData.authorName);
     data.append('authorSpeech', formData.authorSpeech);
+    data.append('authorId', authorId);
+    data.append('status', formData.status);
     if (coverPhoto) data.append('coverPhoto', coverPhoto);
     if (textFile) data.append('textFile', textFile);
 
-    const response = await fetch('http://localhost:5000/api/novels', {
-      method: 'POST',
-      body: data // DO NOT set Content-Type header when using FormData
-    });
+    try {
+      const response = await fetch('http://localhost:5000/api/novels', {
+        method: 'POST',
+        body: data
+      });
 
-    if (response.ok) {
-      alert("Novel published successfully!");
-      navigate('/admin-dashboard');
-    } else {
-      alert("Error saving novel.");
+      if (response.ok) {
+        alert("Novel published successfully!");
+        navigate('/writer-dashboard');
+      } else {
+        alert("Error saving novel.");
+      }
+    } catch (error) {
+      console.error("Upload error:", error);
+      alert("Something went wrong.");
     }
   };
 
   return (
-    <div className="add-novel-container">
+    <div className="writer-form-container">
       <h2>Add New Novel</h2>
-      <form onSubmit={handleSubmit} className="novel-form">
+      <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>Title</label>
-          <input name="title" onChange={handleInputChange} required />
+          <input 
+            className="writer-input" 
+            name="title" 
+            onChange={handleInputChange} 
+            required 
+          />
         </div>
 
         <div className="form-group">
           <label>Content (Paste below or upload .txt file)</label>
-          <textarea name="content" onChange={handleInputChange} rows="10" />
-          <input type="file" accept=".txt" onChange={(e) => handleFileChange(e, setTextFile)} />
+          <textarea 
+            className="writer-textarea" 
+            name="content" 
+            onChange={handleInputChange} 
+          />
+          <input 
+            type="file" 
+            accept=".txt" 
+            onChange={(e) => handleFileChange(e, setTextFile)} 
+          />
         </div>
 
         <div className="form-group">
           <label>Cover Photo</label>
-          <input type="file" accept="image/*" onChange={(e) => handleFileChange(e, setCoverPhoto)} />
+          <input 
+            type="file" 
+            accept="image/*" 
+            onChange={(e) => handleFileChange(e, setCoverPhoto)} 
+          />
         </div>
 
         <div className="form-group">
           <label>Author Name</label>
-          <input name="authorName" value={formData.authorName} onChange={handleInputChange} />
+          <input 
+            className="writer-input" 
+            name="authorName" 
+            value={formData.authorName} 
+            onChange={handleInputChange} 
+          />
         </div>
 
         <div className="form-group">
           <label>Author Speech (Bio/Notes)</label>
-          <textarea name="authorSpeech" onChange={handleInputChange} />
+          <textarea 
+            className="writer-textarea" 
+            name="authorSpeech" 
+            onChange={handleInputChange} 
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Status</label>
+          <select 
+            className="writer-input" 
+            value={formData.status} 
+            name="status"
+            onChange={handleInputChange}
+          >
+            <option value="draft">Draft</option>
+            <option value="published">Published</option>
+          </select>
         </div>
 
         <button type="submit" className="submit-btn">Publish Novel</button>

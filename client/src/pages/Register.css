@@ -1,19 +1,84 @@
-/* Add this to Login.css */
-select {
-  display: block;
+/* Register.css */
+
+/* Reusing the dark, glassmorphic layout from your Login page */
+.auth-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
   width: 100%;
-  margin-bottom: 10px;
-  padding: 8px;
-  box-sizing: border-box;
-  background: rgba(255, 255, 255, 0.1); /* Matches your inputs */
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: rgb(214, 212, 212);
-  border-radius: 4px;
+  background: radial-gradient(circle at center, #1a1a1a 0%, #050505 100%);
+  margin: 0;
+}
+
+.login-container {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 40px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+}
+
+.login-container h2 {
+  color: #fff;
+  text-align: center;
+  font-weight: 300;
+  margin-bottom: 30px;
+}
+
+/* Style for all Inputs and the Select Dropdown */
+.login-container input, 
+.login-container select {
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 15px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: #fff;
+  font-size: 1rem;
+  box-sizing: border-box; /* Prevents overflow */
+  transition: all 0.3s ease;
+}
+
+/* Focus states for inputs and select */
+.login-container input:focus, 
+.login-container select:focus {
+  outline: none;
+  border-color: #770307;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Specific fix for the Select Arrow */
+.login-container select {
+  appearance: none; /* Removes browser default arrow */
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+  background-repeat: no-repeat;
+  background-position: right 15px top 50%;
+  background-size: 12px;
   cursor: pointer;
 }
 
-/* Optional: Add a focus effect to show it's selected */
-select:focus, input:focus {
-  outline: none;
-  border-color: #c1043d; /* Highlights in your theme red */
+/* Submit Button */
+.auth-btn {
+  width: 100%;
+  padding: 15px;
+  background: #770307;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+.auth-btn:hover {
+  background: #a0050a;
+  transform: translateY(-2px);
 }

@@ -1,32 +1,38 @@
 import React, { useState } from 'react';
-import './AdminForms.css'; // Importing the separate CSS file
+import './writerForms.css'; // Importing the separate CSS file
 
-const AddArticle = () => {
+const AddArticle = ({ user }) => {
     const [formData, setFormData] = useState({
         title: '',
         content: '',
-        authorName: ''
+        authorName: '',
+        status: 'published' // Default to published
     });
     const [coverPhoto, setCoverPhoto] = useState(null);
 
-    // Handle text input changes
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    // Handle file selection
     const handleFileChange = (e) => {
         setCoverPhoto(e.target.files[0]);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const authorId = user?._id;
 
-        // Use FormData for file uploads
+        if (!authorId) {
+            alert("User is not logged in properly. Please refresh.");
+            return;
+        }
+
         const data = new FormData();
         data.append('title', formData.title);
         data.append('content', formData.content);
         data.append('authorName', formData.authorName);
+        data.append('authorId', authorId); 
+        data.append('status', formData.status);
         if (coverPhoto) {
             data.append('coverPhoto', coverPhoto);
         }
@@ -34,15 +40,13 @@ const AddArticle = () => {
         try {
             const response = await fetch('http://localhost:5000/api/articles', {
                 method: 'POST',
-                // Note: Don't set 'Content-Type' header when sending FormData; 
-                // the browser will set it automatically with the boundary.
                 body: data,
             });
 
             if (response.ok) {
                 alert("Article published successfully!");
-                // Optional: Clear form
-                setFormData({ title: '', content: '', authorName: '' });
+                setFormData({ title: '', content: '', authorName: '', status: 'published' });
+                setCoverPhoto(null); // Clear the image too
                 e.target.reset();
             } else {
                 alert("Error saving article");
@@ -54,13 +58,13 @@ const AddArticle = () => {
     };
 
     return (
-        <div className="admin-form-container">
+        <div className="writer-form-container">
             <h2>Write New Article</h2>
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label>Article Title</label>
                     <input
-                        className="admin-input"
+                        className="writer-input"
                         name="title"
                         type="text"
                         value={formData.title}
@@ -73,7 +77,7 @@ const AddArticle = () => {
                 <div className="form-group">
                     <label>Author Name</label>
                     <input
-                        className="admin-input"
+                        className="writer-input"
                         name="authorName"
                         type="text"
                         value={formData.authorName}
@@ -85,7 +89,7 @@ const AddArticle = () => {
                 <div className="form-group">
                     <label>Content</label>
                     <textarea
-                        className="admin-textarea"
+                        className="writer-textarea"
                         name="content"
                         value={formData.content}
                         placeholder="Start writing your thoughts..."
@@ -103,6 +107,19 @@ const AddArticle = () => {
                             onChange={handleFileChange} 
                         />
                     </div>
+                </div>
+
+                <div className="form-group">
+                    <label>Status</label>
+                    <select 
+                        className="writer-input" 
+                        value={formData.status} 
+                        name="status"
+                        onChange={handleChange}
+                    >
+                        <option value="draft">Draft</option>
+                        <option value="published">Published</option>
+                    </select>
                 </div>
 
                 <button type="submit" className="submit-btn">Publish Article</button>

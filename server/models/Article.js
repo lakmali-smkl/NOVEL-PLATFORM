@@ -4,10 +4,27 @@ const articleSchema = new mongoose.Schema({
     title: { type: String, required: true },
     content: { type: String, required: true },
     author: { type: String, required: true },
+
+    authorId: { 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'User', 
+        required: true 
+    },
+    coverPhoto: { type: String }, 
+    textFile: { type: String },   
     category: { type: String }, // Optional field for articles
     createdAt: { type: Date, default: Date.now },
 
-  // Add these to both Novel.js and Article.js schemas
+    status: { 
+        type: String, 
+        enum: ['draft', 'published'], 
+        default: 'draft' // New works start as drafts by default
+    },
+    views: { 
+        type: Number, 
+        default: 0 
+    },
+  
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     comments: [{
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
@@ -15,7 +32,7 @@ const articleSchema = new mongoose.Schema({
     text: String,
     createdAt: { type: Date, default: Date.now }
     }]
-});
+},{ timestamps: true });
 
 
 
