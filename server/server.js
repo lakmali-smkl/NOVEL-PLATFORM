@@ -11,6 +11,7 @@ const WriterRequest = require('./models/WriterRequest');
 const Notification = require('./models/Notification'); 
 const Announcement = require('./models/Announcement');
 const adminRoutes = require('./routes/admin');
+const Collection = require('./models/Collection');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -536,5 +537,100 @@ app.get('/api/announcements', async (req, res) => {
   }
 });
 
+
+
+/// ==========================================
+// 📁 SEPARATE COLLECTION BACKEND ROUTES
+// ==========================================
+
+// 📥 1. FETCH all collection folders belonging to a specific user
+app.get('/api/collections/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    // Find all standalone collection documents matching this user's ID
+    const userCollections = await Collection.find({ userId });
+    res.status(200).json(userCollections || []);
+  } catch (error) {
+    console.error("Collection Load Error:", error);
+    res.status(500).json({ error: "Error reading collections data profiles" });
+  }
+});
+
+// 🛠️ 2. NEW CREATION ROUTE: Saves a brand new folder document linked to a user
+app.post('/api/collections/create', async (req, res) => {
+  try {
+    const { userId, name, icon } = req.body;
+
+    if (!userId || !name) {
+      return res.status(400).json({ error: "Missing required userId or folder name parameters." });
+    }
+
+    const newCollection = new Collection({
+      userId,             // 🔍 Crucial: Ties this folder to the logged-in user
+      name,
+      icon: icon || '📁',
+      savedItems: []      // Starts empty
+    });
+
+    await newCollection.save();
+    res.status(201).json(newCollection);
+  } catch (error) {
+    console.error("Collection Creation Route Error:", error);
+    res.status(500).json({ error: "Failed to initialize new custom reading shelf." });
+  }
+});
+
+// ➕ 3. POST: Add a novel or article item to a specific collection folder
+app.post('/api/collections/:collectionId/add-item', async (req, res) => {
+  try {
+    const { collectionId } = req.params;
+    const { id, title, type, author } = req.body;
+
+    const collection = await Collection.findById(collectionId);
+    if (!collection) return res.status(404).json({ error: "Collection not found" });
+
+    // Check if item already exists to prevent duplicates
+    const exists = collection.savedItems.some(i => i._id === id);
+    if (exists) return res.status(400).json({ message: "Item already in this collection" });
+
+    // Push and save
+    collection.savedItems.push({ _id: id, title, type, author });
+    await collection.save();
+
+    res.status(200).json({ message: "Saved!", collection });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+// ==========================================
+// 📁 SEPARATE COLLECTION BACKEND ROUTES
+// ==========================================
+
+
+// 🔥 👇 ADD THIS MISSING ROUTE HERE 👇 🔥
+// 🔍 4. GET: Fetch a single collection folder by its ID for the details page
+app.get('/api/collections/single/:collectionId', async (req, res) => {
+  try {
+    const { collectionId } = req.params;
+    
+    // Find the specific collection folder by its unique MongoDB _id
+    const collectionFolder = await Collection.findById(collectionId);
+    
+    if (!collectionFolder) {
+      return res.status(404).json({ error: "Collection folder not found." });
+    }
+    
+    res.status(200).json(collectionFolder);
+  } catch (error) {
+    console.error("Error fetching single collection details:", error);
+    res.status(500).json({ error: "Failed to load collection items details." });
+  }
+});
+
+// ==========================================
+// SERVER SPIN UP
+// ==========================================
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

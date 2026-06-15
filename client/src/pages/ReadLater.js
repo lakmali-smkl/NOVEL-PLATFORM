@@ -1,33 +1,75 @@
-import React, { useState , useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './ReadLater.css';
 
 const ReadLater = ({ user }) => {
-  const [collections, setCollections] = useState(() => {
-    const saved = localStorage.getItem(`collections_${user?._id}`);
-    return saved ? JSON.parse(saved) : [];
-  });
-  
+  const [collections, setCollections] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [newColName, setNewColName] = useState('');
+  const [loading, setLoading] = useState(true);
 
-  // SAVE: Every time collections change, update localStorage
+  // Fallback user authentication data extraction
+  const localUser = JSON.parse(localStorage.getItem('user'));
+  const activeUserId = user?._id || user?.id || localUser?._id || localUser?.id;
+
+  // 📥 Fetch collections from MongoDB
   useEffect(() => {
-    localStorage.setItem(`collections_${user?._id}`, JSON.stringify(collections));
-  }, [collections, user]);
+    if (!activeUserId) {
+      setLoading(false);
+      return;
+    }
 
+    fetch(`http://localhost:5000/api/collections/${activeUserId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setCollections(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error loading user database collections:", err);
+        setLoading(false);
+      });
+  }, [activeUserId]);
+
+  // 🛠️ Save a brand new collection folder document to MongoDB
   const handleAddCollection = () => {
     if (!newColName.trim()) return;
-    const newCollection = {
-      _id: Date.now().toString(),
-      name: newColName,
-      items: 0,
-      icon: '📁'
-    };
-    setCollections([...collections, newCollection]);
-    setNewColName('');
-    setShowModal(false);
+    if (!activeUserId) {
+      alert("Please log in first to create a collection!");
+      return;
+    }
+
+    fetch('http://localhost:5000/api/collections/create', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userId: activeUserId,
+        name: newColName,
+        icon: '📁'
+      })
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to create folder document entry.");
+        return res.json();
+      })
+      .then((newFolderDoc) => {
+        setCollections([...collections, newFolderDoc]);
+        setNewColName('');
+        setShowModal(false);
+      })
+      .catch((err) => {
+        console.error("Database save transaction aborted:", err);
+        alert("Could not sync new folder data with backend database.");
+      });
   };
+
+  if (loading) {
+    return (
+      <div className="writer-container">
+        <p style={{ color: '#fff' }}>Loading custom collections...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="writer-container">
@@ -38,14 +80,15 @@ const ReadLater = ({ user }) => {
 
       <div className="collections-grid">
         {/* ACTION CARD: Opens Modal */}
-        <div className="collection-card create-new" onClick={() => setShowModal(true)}>
-          <div className="card-inner">
-            <span className="plus-icon">+</span>
+        <div className="collection-card create-card" onClick={() => setShowModal(true)}>
+          <div className="card-icon">➕</div>
+          <div className="card-content">
             <h4>New Collection</h4>
+            <p>Create a fresh reading folder</p>
           </div>
         </div>
 
-        {/* DYNAMIC LIST */}
+        {/* DYNAMIC DATABASE LIST */}
         {collections.length === 0 ? (
           <div className="empty-state">
             <p>You haven't created any collections yet.</p>
@@ -53,8 +96,8 @@ const ReadLater = ({ user }) => {
         ) : (
           collections.map((folder) => (
             <Link to={`/dashboard/collections/${folder._id}`} key={folder._id} className="collection-card">
-              <div className="card-badge">{folder.items} items</div>
-              <div className="card-icon">{folder.icon}</div>
+              <div className="card-badge">{folder.savedItems?.length || 0} items</div>
+              <div className="card-icon">{folder.icon || '📁'}</div>
               <div className="card-content">
                 <h4>{folder.name}</h4>
                 <p>View Collection &rarr;</p>

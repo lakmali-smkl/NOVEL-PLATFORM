@@ -24,6 +24,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import UserSidebar from './pages/UserSidebar'; 
 import RequestWriter from './pages/RequestWriter';
 import Notifications from './pages/Notifications';
+import CollectionDetail from './pages/CollectionDetail';
 
 import './App.css';
 
@@ -163,11 +164,12 @@ function App() {
             </>
           )}
 
-          <Route path="/dashboard" element={<Dashboard />}>
+          <Route path="/dashboard" element={<Dashboard user={user} />}>
             <Route path="favorites" element={<Favorites />} />
             <Route path="profile" element={<Profile />} />
             <Route path="my-novels" element={<MyPublications />} />
-            <Route path="read-later" element={<ReadLater />} />
+            <Route path="read-later" element={<ReadLater user={user} />} />
+            <Route path="collections/:collectionId" element={<CollectionDetail />} />
             <Route path="history" element={<ReadingHistory />} />
             <Route path="settings" element={<Settings />} />
             <Route path="request-writer" element={<RequestWriter user={user} setUser={setUser} />} />
