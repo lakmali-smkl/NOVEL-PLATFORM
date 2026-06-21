@@ -3,6 +3,7 @@ import { Routes, Route, Navigate, useLocation, useNavigate} from 'react-router-d
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import WriterDashboard from './pages/WriterDashboard';
@@ -132,6 +133,13 @@ function App() {
   const isWriter = user && user.isWriter && !user.isAdmin;
   const isRegularUser = user && !user.isWriter && !user.isAdmin;
 
+  // Only show footer on user-facing/public routes, excluding administrative sidebars or creation panels
+  const showFooter = !isAdmin && !isWriter && 
+    !location.pathname.startsWith('/admin') && 
+    !location.pathname.startsWith('/writer-dashboard') &&
+    !location.pathname.startsWith('/add-') &&
+    !location.pathname.startsWith('/edit-');
+
   return (
     <div className={isLoggingOut ? "no-transition" : ""}>
       <Navbar 
@@ -151,40 +159,43 @@ function App() {
         {isRegularUser && <UserSidebar user={user} closeSidebar={closeSidebar} />}
       </aside>
 
-      <div className={user && isSidebarOpen ? "main-content-shifted" : ""}>
-        <Routes>
-          <Route path="/" element={<Home user={user} />} />
-          <Route path="/login" element={<Login setUser={setUser} />} />
-          <Route path="/register" element={<Register />} />
-          
-          {isAdmin && (
-            <>
-              <Route path="/admin-dashboard" element={<Navigate to="/admin/dashboard" replace />} />
-              <Route path="/admin/*" element={<AdminDashboard />} />
-            </>
-          )}
+      <div className={`main-layout ${user && isSidebarOpen ? "main-content-shifted" : ""}`}>
+        <div className="content-area">
+          <Routes>
+            <Route path="/" element={<Home user={user} />} />
+            <Route path="/login" element={<Login setUser={setUser} />} />
+            <Route path="/register" element={<Register />} />
+            
+            {isAdmin && (
+              <>
+                <Route path="/admin-dashboard" element={<Navigate to="/admin/dashboard" replace />} />
+                <Route path="/admin/*" element={<AdminDashboard />} />
+              </>
+            )}
 
-          <Route path="/dashboard" element={<Dashboard user={user} />}>
+            <Route path="/dashboard" element={<Dashboard user={user} />}>
+              <Route path="favorites" element={<Favorites />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="my-novels" element={<MyPublications />} />
+              <Route path="read-later" element={<ReadLater user={user} />} />
+              <Route path="collections/:collectionId" element={<CollectionDetail />} />
+              <Route path="history" element={<ReadingHistory />} />
+              <Route path="settings" element={<Settings />} />
+              <Route path="request-writer" element={<RequestWriter user={user} setUser={setUser} />} />
+            </Route>
+            
+            <Route path="/writer-dashboard" element={<WriterDashboard user={user} />} />
+            <Route path="/add-novel" element={<AddNovel user={user} />} />
+            <Route path="/add-article" element={<AddArticle user={user} />} />
+            <Route path="/library" element={<Library />} />
+            <Route path="/read/:type/:id" element={<ReadPage />} />
+            <Route path="/edit-novel/:id" element={<EditNovel user={user} />} />
+            <Route path="/edit-article/:id" element={<EditArticle />} />
+            <Route path="/notifications" element={<Notifications user={user} />} />
             <Route path="favorites" element={<Favorites />} />
-            <Route path="profile" element={<Profile />} />
-            <Route path="my-novels" element={<MyPublications />} />
-            <Route path="read-later" element={<ReadLater user={user} />} />
-            <Route path="collections/:collectionId" element={<CollectionDetail />} />
-            <Route path="history" element={<ReadingHistory />} />
-            <Route path="settings" element={<Settings />} />
-            <Route path="request-writer" element={<RequestWriter user={user} setUser={setUser} />} />
-          </Route>
-          
-          <Route path="/writer-dashboard" element={<WriterDashboard user={user} />} />
-          <Route path="/add-novel" element={<AddNovel user={user} />} />
-          <Route path="/add-article" element={<AddArticle user={user} />} />
-          <Route path="/library" element={<Library />} />
-          <Route path="/read/:type/:id" element={<ReadPage />} />
-          <Route path="/edit-novel/:id" element={<EditNovel user={user} />} />
-          <Route path="/edit-article/:id" element={<EditArticle />} />
-          <Route path="/notifications" element={<Notifications user={user} />} />
-          <Route path="favorites" element={<Favorites />} />
-        </Routes>
+          </Routes>
+        </div>
+        {showFooter && <Footer user={user} />}
       </div>
     </div>
   );
