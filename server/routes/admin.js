@@ -3,6 +3,11 @@ const router = express.Router();
 const User = require('../models/User'); 
 const Novel = require('../models/Novel');     
 const Article = require('../models/Article'); 
+const { auth, admin } = require('../middleware/auth');
+
+// Mount globally for all admin sub-routes
+router.use(auth);
+router.use(admin); 
 
 /**
  * =========================================================================

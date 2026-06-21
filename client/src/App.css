@@ -100,3 +100,13 @@ body {
   transition: none !important; 
   animation: none !important;
 }
+
+.main-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 80px);
+}
+
+.content-area {
+  flex: 1 0 auto;
+}

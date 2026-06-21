@@ -12,6 +12,9 @@ const Notification = require('./models/Notification');
 const Announcement = require('./models/Announcement');
 const adminRoutes = require('./routes/admin');
 const Collection = require('./models/Collection');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const { auth, admin } = require('./middleware/auth');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -25,7 +28,11 @@ const upload = multer({ storage: storage });
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000',
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 app.use('/uploads', express.static('uploads'));
 
@@ -66,7 +73,19 @@ const checkSuspensionStatus = async (req, res, next) => {
 app.post('/register', async (req, res) => {
   try {
     const { username, email, password, hintQuestion, hintAnswer } = req.body;
-    const newUser = new User({ username, email, password, hintQuestion, hintAnswer });
+    
+    // Hash password and hint answer
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedHintAnswer = await bcrypt.hash(hintAnswer.toLowerCase().trim(), 10);
+
+    const newUser = new User({ 
+      username, 
+      email, 
+      password: hashedPassword, 
+      hintQuestion, 
+      hintAnswer: hashedHintAnswer 
+    });
+    
     await newUser.save();
     res.status(201).json({ message: "Success!" });
   } catch (error) {
@@ -80,7 +99,32 @@ app.post('/login', async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) return res.status(400).json({ message: "User not found" });
-    if (user.password !== password) return res.status(400).json({ message: "Invalid credentials" });
+    
+    let isMatch = false;
+    
+    // Check if the password is encrypted (bcrypt hash usually starts with $2a$ or $2b$)
+    const isHashed = user.password.startsWith('$2a$') || user.password.startsWith('$2b$');
+    
+    if (isHashed) {
+      isMatch = await bcrypt.compare(password, user.password);
+    } else {
+      // Legacy user matching plain text password
+      isMatch = user.password === password;
+      
+      // Migrate legacy password: hash it and update the database
+      if (isMatch) {
+        user.password = await bcrypt.hash(password, 10);
+        // Also clean up legacy plain-text hintAnswer if present
+        const isHintHashed = user.hintAnswer && (user.hintAnswer.startsWith('$2a$') || user.hintAnswer.startsWith('$2b$'));
+        if (!isHintHashed && user.hintAnswer) {
+          user.hintAnswer = await bcrypt.hash(user.hintAnswer.toLowerCase().trim(), 10);
+        }
+        await user.save();
+        console.log(`Migrated legacy user ${user.username} to hashed password.`);
+      }
+    }
+
+    if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
     
     if (user.status === 'suspended') {
       return res.status(403).json({ 
@@ -88,8 +132,16 @@ app.post('/login', async (req, res) => {
       });
     }
 
+    // Sign JWT token
+    const token = jwt.sign(
+      { id: user._id, isAdmin: user.isAdmin, isWriter: user.isWriter },
+      process.env.JWT_SECRET || 'super_secure_jwt_key_novel_platform_123',
+      { expiresIn: '7d' }
+    );
+
     res.status(200).json({ 
       message: "Login successful!", 
+      token,
       user: { 
         _id: user._id,
         username: user.username, 
@@ -102,6 +154,7 @@ app.post('/login', async (req, res) => {
       } 
     });
   } catch (error) {
+    console.error("Login Error:", error);
     res.status(500).json({ error: "Server error during login" });
   }
 });
