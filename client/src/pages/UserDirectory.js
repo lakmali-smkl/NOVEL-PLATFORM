@@ -11,7 +11,11 @@ const UserDirectory = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/admin/users');
+        const response = await fetch('http://localhost:5000/api/admin/users', {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
         if (response.ok) {
           const data = await response.json();
           setUsers(data);
@@ -36,7 +40,10 @@ const UserDirectory = () => {
     try {
       const res = await fetch(`http://localhost:5000/api/admin/users/${userId}/toggle-writer`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
       });
 
       if (!res.ok) {
@@ -59,7 +66,10 @@ const UserDirectory = () => {
     try {
       const res = await fetch(`http://localhost:5000/api/admin/users/${userId}/status`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
         body: JSON.stringify({ status: newStatus })
       });
 

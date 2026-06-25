@@ -1,14 +1,14 @@
 // Navbar.js
-import React , { useState, useEffect } from 'react';
-import { Link , useNavigate , useLocation} from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import './Navbar.css';
 
-const Navbar = ({ user, setUser, toggleSidebar ,closeSidebar }) => {
+const Navbar = ({ user, setUser, toggleSidebar, closeSidebar }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [unreadCount, setUnreadCount] = useState(0);
-  
+
   const isLibraryPage = location.pathname === '/library';
 
   useEffect(() => {
@@ -33,9 +33,10 @@ const Navbar = ({ user, setUser, toggleSidebar ,closeSidebar }) => {
       closeSidebar();
     }
     setUser(null);
-    localStorage.removeItem('user'); 
-    navigate('/'); 
-  }; 
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    navigate('/');
+  };
 
   return (
     <nav className="navbar">
@@ -62,7 +63,7 @@ const Navbar = ({ user, setUser, toggleSidebar ,closeSidebar }) => {
                 {unreadCount > 0 && <span className="notif-badge">{unreadCount}</span>}
               </Link>
             </li>
-            
+
             <li>
               <button onClick={handleLogout} className="nav-btn">Logout</button>
             </li>

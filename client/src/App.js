@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, Navigate, useLocation, useNavigate} from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Navbar from './components/Navbar';
@@ -20,9 +20,9 @@ import ReadingHistory from './pages/ReadingHistory';
 import Settings from './pages/Settings';
 import EditArticle from './pages/EditArticle';
 import WriterSidebar from './pages/WriterSidebar';
-import AdminSidebar from './pages/AdminSidebar'; 
+import AdminSidebar from './pages/AdminSidebar';
 import AdminDashboard from './pages/AdminDashboard';
-import UserSidebar from './pages/UserSidebar'; 
+import UserSidebar from './pages/UserSidebar';
 import RequestWriter from './pages/RequestWriter';
 import Notifications from './pages/Notifications';
 import CollectionDetail from './pages/CollectionDetail';
@@ -45,10 +45,11 @@ function App() {
   const closeSidebar = () => setIsSidebarOpen(false);
 
   const handleLogout = () => {
-    setIsLoggingOut(true); 
-    localStorage.removeItem('user'); 
-    setUser(null); 
-    setIsSidebarOpen(false); 
+    setIsLoggingOut(true);
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    setUser(null);
+    setIsSidebarOpen(false);
     setTimeout(() => setIsLoggingOut(false), 500);
   };
 
@@ -78,17 +79,17 @@ function App() {
         if (!user.isWriter && !user.isAdmin) {
           const roleResponse = await fetch(`http://localhost:5000/api/users/status/${user._id}`);
           if (!roleResponse.ok) return; // Exit if server error
-          
+
           const roleData = await roleResponse.json();
 
           if (roleData.isWriter) {
             const updatedUser = { ...user, isWriter: true };
-            
+
             // These lines trigger the "Red Theme" switch
             setUser(updatedUser);
             localStorage.setItem('user', JSON.stringify(updatedUser));
             localStorage.removeItem('writerRequestStatus');
-            
+
             console.log("Role updated: User is now a Writer.");
           } else {
             const updatedUser = { ...user };
@@ -133,18 +134,14 @@ function App() {
   const isWriter = user && user.isWriter && !user.isAdmin;
   const isRegularUser = user && !user.isWriter && !user.isAdmin;
 
-  // Only show footer on user-facing/public routes, excluding administrative sidebars or creation panels
-  const showFooter = !isAdmin && !isWriter && 
-    !location.pathname.startsWith('/admin') && 
-    !location.pathname.startsWith('/writer-dashboard') &&
-    !location.pathname.startsWith('/add-') &&
-    !location.pathname.startsWith('/edit-');
+  // Only show footer on the home page when the user is not logged in
+  const showFooter = !user && location.pathname === '/';
 
   return (
     <div className={isLoggingOut ? "no-transition" : ""}>
-      <Navbar 
-        user={user} setUser={setUser} 
-        handleLogout={handleLogout} 
+      <Navbar
+        user={user} setUser={setUser}
+        handleLogout={handleLogout}
         toggleSidebar={toggleSidebar} closeSidebar={closeSidebar}
       />
 
@@ -153,7 +150,7 @@ function App() {
         ${isWriter ? 'writer-theme' : ''} 
         ${isRegularUser ? 'user-theme' : ''} 
         ${isSidebarOpen ? 'active' : ''}`}>
-        
+
         {isAdmin && <AdminSidebar user={user} closeSidebar={closeSidebar} />}
         {isWriter && <WriterSidebar user={user} closeSidebar={closeSidebar} />}
         {isRegularUser && <UserSidebar user={user} closeSidebar={closeSidebar} />}
@@ -165,7 +162,7 @@ function App() {
             <Route path="/" element={<Home user={user} />} />
             <Route path="/login" element={<Login setUser={setUser} />} />
             <Route path="/register" element={<Register />} />
-            
+
             {isAdmin && (
               <>
                 <Route path="/admin-dashboard" element={<Navigate to="/admin/dashboard" replace />} />
@@ -183,7 +180,7 @@ function App() {
               <Route path="settings" element={<Settings />} />
               <Route path="request-writer" element={<RequestWriter user={user} setUser={setUser} />} />
             </Route>
-            
+
             <Route path="/writer-dashboard" element={<WriterDashboard user={user} />} />
             <Route path="/add-novel" element={<AddNovel user={user} />} />
             <Route path="/add-article" element={<AddArticle user={user} />} />

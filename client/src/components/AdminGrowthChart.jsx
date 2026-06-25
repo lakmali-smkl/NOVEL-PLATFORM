@@ -19,7 +19,11 @@ const AdminGrowthChart = () => {
     const fetchGrowthData = async () => {
       try {
         // Note: Assumes proxy or baseUrl handles your backend location
-        const response = await fetch('/api/admin/growth');
+        const response = await fetch('http://localhost:5000/api/admin/growth', {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
         if (!response.ok) throw new Error('Failed to fetch analytics data');
         
         const data = await response.json();

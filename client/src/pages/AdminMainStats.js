@@ -15,7 +15,11 @@ const AdminMainStats = ({ setActiveTab }) => {
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                const response = await fetch('http://localhost:5000/api/admin/stats');
+                const response = await fetch('http://localhost:5000/api/admin/stats', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
                 if (!response.ok) {
                     throw new Error(`Server responded with ${response.status}`);
                 }

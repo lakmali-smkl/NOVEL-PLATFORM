@@ -18,7 +18,11 @@ const SiteGrowth = () => {
   const loadDashboardData = async () => {
     try {
       const [growthRes, announcementsRes] = await Promise.all([
-        fetch(`${BASE_URL}/growth`),
+        fetch(`${BASE_URL}/growth`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }),
         fetch('http://localhost:5000/api/announcements') // Matches root public endpoint
       ]);
 
@@ -55,7 +59,10 @@ const SiteGrowth = () => {
     try {
       const response = await fetch(`${BASE_URL}/announcements`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
         body: JSON.stringify(newAnnouncement)
       });
 

@@ -11,7 +11,11 @@ const WriterRequests = () => {
   // Load all writer application records
   useEffect(() => {
     const fetchRequests = async () => {
-      const res = await axios.get('http://localhost:5000/api/admin/writer-requests');
+      const res = await axios.get('http://localhost:5000/api/admin/writer-requests', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
       setRequests(res.data);
     };
     fetchRequests();
@@ -22,6 +26,10 @@ const WriterRequests = () => {
       // 1. Approve or reject writer request in backend
       const response = await axios.post(`http://localhost:5000/api/admin/approve-writer/${userId}`, {
         action: action
+      }, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
       });
       
       if (response.status === 200) {
