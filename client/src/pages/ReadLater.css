@@ -1,76 +1,330 @@
+/* ============================================================
+   MY COLLECTIONS (ReadLater) — Professional Dark Theme
+   ============================================================ */
+
+/* ── Container overrides ── */
+/* Inherits writer-container but we ensure it matches the premium dark look */
+.writer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 100px 32px 80px;
+  min-height: 100vh;
+  background: #080a0f;
+  color: #e2e8f0;
+  font-family: 'Inter', sans-serif;
+}
+
+.writer-header {
+  text-align: center;
+  margin-bottom: 48px;
+  animation: colFadeUp 0.6s ease both;
+}
+
+.writer-header h1 {
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  margin: 0 0 10px 0;
+  background: linear-gradient(135deg, #ffffff 30%, rgba(255,255,255,0.55) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.writer-header p {
+  color: #94a3b8;
+  font-size: 1.05rem;
+  margin: 0;
+}
+
+/* ── Grid ── */
 .collections-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 25px;
-  margin-top: 20px;
+  gap: 24px;
+  animation: colFadeUp 0.6s ease 0.15s both;
+}
+
+@keyframes colFadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Collection Card ── */
+.collection-card-wrapper {
+  position: relative;
+  display: block;
 }
 
 .collection-card {
-  background: #161b22;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 16px;
-  padding: 30px;
+  background: #111318;
+  border: 1px solid #1e2330;
+  border-radius: 18px;
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   text-decoration: none;
   position: relative;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
+  height: 100%;
+  box-sizing: border-box;
+  transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1),
+              box-shadow 0.28s ease,
+              border-color 0.28s ease;
+}
+
+/* Top accent line */
+.collection-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #1e2330;
+  transition: background 0.3s ease;
 }
 
 .collection-card:hover {
-  transform: translateY(-8px);
-  border-color: #770307;
-  background: #1c2128;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  transform: translateY(-8px) scale(1.01);
+  border-color: #3b82f6;
+  background: #14171f;
+  box-shadow: 
+    0 20px 48px rgba(0,0,0,0.5),
+    0 0 0 1px rgba(59,130,246,0.15),
+    0 0 24px rgba(59,130,246,0.08);
+}
+
+.collection-card:hover::before {
+  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+}
+
+/* ── Create New Card (Special) ── */
+.collection-card.create-card {
+  background: rgba(59,130,246,0.03);
+  border: 2px dashed #1e2330;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+}
+
+.collection-card.create-card::before {
+  display: none;
+}
+
+.collection-card.create-card:hover {
+  border-color: #3b82f6;
+  background: rgba(59,130,246,0.08);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+}
+
+.collection-card.create-card .card-icon {
+  margin-bottom: 12px;
+  font-size: 2.2rem;
+  opacity: 0.8;
+  transition: transform 0.3s ease;
+}
+
+.collection-card.create-card:hover .card-icon {
+  transform: scale(1.15) rotate(90deg);
+  opacity: 1;
+}
+
+/* ── Card Content ── */
+.card-icon {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  line-height: 1;
 }
 
 .card-badge {
   position: absolute;
-  top: 15px;
-  right: 15px;
-  background: rgba(119, 3, 7, 0.15);
-  color: #ff3333;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 0.7rem;
+  top: 20px;
+  right: 20px;
+  background: rgba(59,130,246,0.12);
+  color: #60a5fa;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.72rem;
   font-weight: 700;
-  border: 1px solid rgba(119, 3, 7, 0.3);
-}
-
-.card-icon {
-  font-size: 2.5rem;
-  margin-bottom: 20px;
+  border: 1px solid rgba(59,130,246,0.25);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
 .card-content h4 {
-  color: #fff;
-  font-size: 1.2rem;
-  margin-bottom: 8px;
+  color: #f1f5f9;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  line-height: 1.3;
 }
 
 .card-content p {
-  color: #8b949e;
+  color: #64748b;
   font-size: 0.85rem;
   margin: 0;
+  font-weight: 500;
+  transition: color 0.2s ease;
 }
 
-/* Create New Button Styling */
-.collection-card.create-new {
-  border: 2px dashed #30363d;
-  background: transparent;
+.collection-card:hover .card-content p {
+  color: #94a3b8;
+}
+
+/* ── Delete Button ── */
+.collection-delete-btn {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  top: auto; /* override previous top positioning */
+  z-index: 10;
+  width: 36px;
+  height: 36px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: rgba(239, 68, 68, 0.0);
+  color: #f87171;
+  font-size: 1.1rem;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s ease, background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
 }
 
-.collection-card.create-new:hover {
-  border-color: #ff3333;
-  color: #ff3333;
+.collection-card-wrapper:hover .collection-delete-btn {
+  opacity: 1;
 }
 
-.plus-icon {
-  font-size: 2.5rem;
-  display: block;
-  margin-bottom: 10px;
+.collection-delete-btn:hover {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.3);
+  transform: scale(1.08);
+}
+
+/* ── Empty State ── */
+.empty-state {
+  grid-column: 1 / -1;
   text-align: center;
+  padding: 60px 20px;
+  background: #111318;
+  border: 1px dashed #1e2330;
+  border-radius: 16px;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+/* ── Modal ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: modalFadeIn 0.2s ease out;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.collection-modal {
+  background: #111318;
+  border: 1px solid #1e2330;
+  border-radius: 16px;
+  padding: 32px;
+  width: 90%;
+  max-width: 420px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.6);
+  animation: modalSlideUp 0.3s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+
+@keyframes modalSlideUp {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.collection-modal h3 {
+  color: #f1f5f9;
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0 0 20px 0;
+}
+
+.collection-modal input {
+  width: 100%;
+  background: #080a0f;
+  border: 1px solid #1e2330;
+  color: #f1f5f9;
+  padding: 14px 16px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  margin-bottom: 24px;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  font-family: inherit;
+}
+
+.collection-modal input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.modal-actions button {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancel-btn {
+  background: transparent;
+  color: #94a3b8;
+  border: 1px solid #1e2330;
+}
+
+.cancel-btn:hover {
+  background: rgba(255,255,255,0.05);
+  color: #f1f5f9;
+}
+
+.create-btn {
+  background: #3b82f6;
+  color: #fff;
+  border: 1px solid #3b82f6;
+}
+
+.create-btn:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+  box-shadow: 0 4px 12px rgba(59,130,246,0.3);
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .writer-container {
+    padding: 80px 16px 40px;
+  }
+  
+  .collections-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
 }

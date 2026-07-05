@@ -700,6 +700,40 @@ app.get('/api/collections/single/:collectionId', async (req, res) => {
 });
 
 // ==========================================
+// 📁 COLLECTION MANAGEMENT — DELETE ROUTES
+// ==========================================
+
+// 🗑️ 5. DELETE: Remove an entire collection folder
+app.delete('/api/collections/:id', async (req, res) => {
+  try {
+    const deleted = await Collection.findByIdAndDelete(req.params.id);
+    if (!deleted) return res.status(404).json({ error: 'Collection not found.' });
+    res.json({ message: 'Collection deleted successfully.' });
+  } catch (error) {
+    console.error('Delete collection error:', error);
+    res.status(500).json({ error: 'Failed to delete collection.' });
+  }
+});
+
+// ✂️ 6. DELETE: Remove a single saved item from inside a collection
+app.delete('/api/collections/:collectionId/items/:itemId', async (req, res) => {
+  try {
+    const { collectionId, itemId } = req.params;
+    const collection = await Collection.findById(collectionId);
+    if (!collection) return res.status(404).json({ error: 'Collection not found.' });
+
+    collection.savedItems = collection.savedItems.filter(
+      (item) => item._id.toString() !== itemId
+    );
+    await collection.save();
+    res.json({ message: 'Item removed from collection.', collection });
+  } catch (error) {
+    console.error('Remove item error:', error);
+    res.status(500).json({ error: 'Failed to remove item.' });
+  }
+});
+
+// ==========================================
 // SERVER SPIN UP
 // ==========================================
 const PORT = process.env.PORT || 5000;

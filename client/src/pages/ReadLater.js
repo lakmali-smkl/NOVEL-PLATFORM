@@ -63,6 +63,22 @@ const ReadLater = ({ user }) => {
       });
   };
 
+  // 🗑️ Delete an entire collection
+  const handleDeleteCollection = async (e, collectionId) => {
+    e.preventDefault(); // don't follow the Link
+    if (!window.confirm('Delete this collection and all its saved items?')) return;
+    try {
+      const res = await fetch(`http://localhost:5000/api/collections/${collectionId}`, {
+        method: 'DELETE'
+      });
+      if (!res.ok) throw new Error('Failed');
+      setCollections(prev => prev.filter(c => c._id !== collectionId));
+    } catch (err) {
+      console.error('Delete collection error:', err);
+      alert('Failed to delete collection. Please try again.');
+    }
+  };
+
   if (loading) {
     return (
       <div className="writer-container">
@@ -95,14 +111,23 @@ const ReadLater = ({ user }) => {
           </div>
         ) : (
           collections.map((folder) => (
-            <Link to={`/dashboard/collections/${folder._id}`} key={folder._id} className="collection-card">
-              <div className="card-badge">{folder.savedItems?.length || 0} items</div>
-              <div className="card-icon">{folder.icon || '📁'}</div>
-              <div className="card-content">
-                <h4>{folder.name}</h4>
-                <p>View Collection &rarr;</p>
-              </div>
-            </Link>
+            <div key={folder._id} className="collection-card-wrapper">
+              <Link to={`/dashboard/collections/${folder._id}`} className="collection-card">
+                <div className="card-badge">{folder.savedItems?.length || 0} items</div>
+                <div className="card-icon">{folder.icon || '📁'}</div>
+                <div className="card-content">
+                  <h4>{folder.name}</h4>
+                  <p>View Collection &rarr;</p>
+                </div>
+              </Link>
+              <button
+                className="collection-delete-btn"
+                onClick={(e) => handleDeleteCollection(e, folder._id)}
+                title="Delete collection"
+              >
+                🗑️
+              </button>
+            </div>
           ))
         )}
       </div>

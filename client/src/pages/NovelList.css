@@ -1,44 +1,163 @@
-.novel-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 20px;
-  padding: 20px;
+/* ============================================================
+   NOVEL LIST — Premium Dark Card Grid
+   ============================================================ */
+
+.novel-gallery {
+  width: 100%;
 }
 
+.novel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 24px;
+  padding: 0;
+}
+
+/* ── Novel Card ── */
 .novel-card {
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  background: #111318;
+  border: 1px solid #1e2330;
+  border-radius: 18px;
   overflow: hidden;
-  background: #fff;
-  transition: transform 0.2s;
+  position: relative;
+  transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1),
+              box-shadow 0.28s ease,
+              border-color 0.28s ease;
+  animation: cardReveal 0.5s ease both;
+}
+
+.novel-card:nth-child(1) { animation-delay: 0ms;   }
+.novel-card:nth-child(2) { animation-delay: 60ms;  }
+.novel-card:nth-child(3) { animation-delay: 120ms; }
+.novel-card:nth-child(4) { animation-delay: 180ms; }
+.novel-card:nth-child(5) { animation-delay: 240ms; }
+.novel-card:nth-child(6) { animation-delay: 300ms; }
+
+@keyframes cardReveal {
+  from { opacity: 0; transform: translateY(20px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)     scale(1); }
 }
 
 .novel-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-8px) scale(1.01);
+  border-color: rgba(119,3,7,0.5);
+  box-shadow:
+    0 24px 50px rgba(0,0,0,0.6),
+    0 0 0 1px rgba(119,3,7,0.2),
+    0 0 30px rgba(119,3,7,0.08);
 }
 
+/* Dark gradient overlay on image */
+.novel-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 45%;
+  background: linear-gradient(to top, rgba(10,10,15,0.95) 0%, transparent 100%);
+  pointer-events: none;
+  border-radius: 0 0 18px 18px;
+}
+
+/* ── Cover image ── */
 .cover-img {
   width: 100%;
-  height: 350px;
+  height: 320px;
   object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
 }
 
+.novel-card:hover .cover-img {
+  transform: scale(1.06);
+}
+
+/* ── Info panel ── */
 .novel-info {
-  padding: 15px;
+  padding: 16px 18px 18px;
+  position: relative;
+  z-index: 1;
 }
 
+.novel-info h3 {
+  color: #f1f5f9 !important;
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 5px 0;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.novel-info .author {
+  color: #64748b !important;
+  font-size: 0.78rem;
+  font-weight: 500;
+  margin: 0 0 8px 0;
+}
+
+.novel-info .excerpt {
+  color: #475569 !important;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  margin: 0 0 14px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ── Read button ── */
 .read-btn {
-  background: #8b0000;
-  color: white;
-  border: none;
-  padding: 8px 15px;
-  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(119,3,7,0.15);
+  color: #f87171 !important;
+  border: 1px solid rgba(119,3,7,0.4);
+  padding: 9px 18px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
   cursor: pointer;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
 }
 
+.read-btn:hover {
+  background: #770307;
+  color: #ffffff !important;
+  border-color: #770307;
+  box-shadow: 0 6px 20px rgba(119,3,7,0.4);
+  transform: translateY(-1px);
+}
+
+/* ── Gallery title ── */
 .novel-gallery h2 {
-  color: #e8eded; /* A bright, professional teal/cyan color */
+  color: #f1f5f9 !important;
   text-align: center;
-  margin-bottom: 30px;
-  font-size: 1.5rem;
+  margin-bottom: 28px;
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+
+/* ── Empty state ── */
+.novel-gallery p {
+  color: #475569 !important;
+  text-align: center;
+  padding: 48px 0;
+  font-size: 0.95rem;
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .novel-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+  }
+
+  .cover-img { height: 220px; }
 }
