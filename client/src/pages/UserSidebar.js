@@ -17,6 +17,11 @@ const UserSidebar = ({ user, closeSidebar }) => {
         <nav className="sidebar-nav">
             <ul>
                 <li>
+                    <Link to="/dashboard" className={`nav-item ${isActive('/dashboard')}`} onClick={closeSidebar}>
+                    <span className="nav-icon">📊</span> Dashboard
+                    </Link>
+                </li>
+                <li>
                     <Link to="/dashboard/profile" className={`nav-item ${isActive('/dashboard/profile')}`} onClick={closeSidebar}>
                     <span className="nav-icon">👤</span> Profile
                     </Link>
