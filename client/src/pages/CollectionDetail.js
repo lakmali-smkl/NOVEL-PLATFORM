@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import './CollectionDetail.css'; 
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import './CollectionDetail.css';
 
 const CollectionDetail = () => {
   const { collectionId } = useParams();
+  const navigate = useNavigate();
   const [collection, setCollection] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 📥 LOAD: Fetch single collection folder details from MongoDB matching the _id
   useEffect(() => {
     fetch(`http://localhost:5000/api/collections/single/${collectionId}`)
       .then((res) => {
@@ -24,7 +24,27 @@ const CollectionDetail = () => {
       });
   }, [collectionId]);
 
+  // ✂️ Remove a single saved item from this collection
+  const handleRemoveItem = async (itemId) => {
+    if (!window.confirm('Remove this item from the collection?')) return;
+    try {
+      const res = await fetch(
+        `http://localhost:5000/api/collections/${collectionId}/items/${itemId}`,
+        { method: 'DELETE' }
+      );
+      if (!res.ok) throw new Error('Failed');
+      setCollection(prev => ({
+        ...prev,
+        savedItems: prev.savedItems.filter(i => i._id !== itemId)
+      }));
+    } catch (err) {
+      console.error('Remove item error:', err);
+      alert('Failed to remove item. Please try again.');
+    }
+  };
+
   if (loading) return <div className="loading-text" style={{ color: '#fff', textAlign: 'center', marginTop: '2rem' }}>Loading collection items...</div>;
+
   if (!collection) return <div className="error-text" style={{ color: '#fff', textAlign: 'center', marginTop: '2rem' }}>Collection not found.</div>;
 
   return (
@@ -51,42 +71,33 @@ const CollectionDetail = () => {
           </div>
         ) : (
           collection.savedItems.map((item) => (
-            <div 
-              key={item._id} 
-              className="saved-item-row" 
-              style={{ 
-                background: '#1e1e1e', 
-                padding: '15px', 
-                borderRadius: '8px', 
-                display: 'flex', 
-                justifyContent: 'space-between', 
-                alignItems: 'center',
-                border: '1px solid #333'
-              }}
+            <div
+              key={item._id}
+              className="saved-item-row"
             >
               <div className="item-info">
-                <h3 style={{ margin: '0 0 5px 0', fontSize: '18px' }}>{item.title}</h3>
-                <p style={{ margin: '0', color: '#888', fontSize: '14px' }}>
-                  By: {item.author || 'Unknown Author'} | <span style={{ textTransform: 'capitalize', color: '#3b82f6' }}>{item.type}</span>
+                <h3>{item.title}</h3>
+                <p>
+                  By: {item.author || 'Unknown Author'} |{' '}
+                  <span className="item-type-badge">{item.type}</span>
                 </p>
               </div>
 
-              {/* 📖 Dynamic Link back to the ReadPage layout component */}
-              <Link 
-                to={`/read/${item.type}/${item._id}`} 
-                className="read-now-btn"
-                style={{
-                  background: '#3b82f6',
-                  color: '#fff',
-                  padding: '8px 16px',
-                  borderRadius: '5px',
-                  textDecoration: 'none',
-                  fontSize: '14px',
-                  fontWeight: 'bold'
-                }}
-              >
-                Read Now &rarr;
-              </Link>
+              <div className="item-actions">
+                <Link
+                  to={`/read/${item.type}/${item._id}`}
+                  className="read-now-btn"
+                >
+                  Read Now &rarr;
+                </Link>
+                <button
+                  className="remove-item-btn"
+                  onClick={() => handleRemoveItem(item._id)}
+                  title="Remove from collection"
+                >
+                  ✕ Remove
+                </button>
+              </div>
             </div>
           ))
         )}

@@ -11,7 +11,11 @@ const ContentOversight = () => {
   // 1. Fetch all works (Novels and Articles combined) from Backend
   const fetchContent = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/admin/content');
+      const response = await fetch('http://localhost:5000/api/admin/content', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
       if (response.ok) {
         const data = await response.json();
         setItems(data);
@@ -41,6 +45,9 @@ const ContentOversight = () => {
     try {
       const res = await fetch(`http://localhost:5000/api/admin/content/${contentType}/${itemId}`, {
         method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
       });
 
       if (!res.ok) {

@@ -24,6 +24,7 @@ const Login = ({ setUser }) => {
       if (response.ok) {
         setUser(data.user);
         localStorage.setItem('user', JSON.stringify(data.user));
+        localStorage.setItem('token', data.token);
         
         // Clear stale localStorage if user has no pending request
         if (data.user.writerRequestStatus === 'none') {

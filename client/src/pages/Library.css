@@ -1,93 +1,155 @@
-/* Library.css */
+/* ============================================================
+   LIBRARY PAGE — Professional Dark Theme
+   JS unchanged — CSS only
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 .library-container {
-  max-width: 1200px;
+  max-width: 1240px;
   margin: 0 auto;
-  padding: 100px 20px;
+  padding: 100px 32px 80px;
   min-height: 100vh;
-  background-color: #0a0a0a;
-  color: #fff;
+  background: #080a0f;
+  color: #e2e8f0;
+  font-family: 'Inter', sans-serif;
+  position: relative;
+  overflow: hidden;
 }
 
+/* Ambient background glow */
+.library-container::before {
+  content: '';
+  position: fixed;
+  top: -200px;
+  right: -200px;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(119,3,7,0.08) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.library-container::after {
+  content: '';
+  position: fixed;
+  bottom: -150px;
+  left: -150px;
+  width: 450px;
+  height: 450px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(99,102,241,0.06) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Page Title ── */
 .library-container h1 {
   text-align: center;
-  font-size: 2.5rem;
-  margin-bottom: 40px;
-  letter-spacing: -1px;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  margin-bottom: 10px;
+  background: linear-gradient(135deg, #ffffff 30%, rgba(255,255,255,0.55) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+  z-index: 1;
+  animation: libFadeUp 0.6s ease both;
 }
 
-.library-container h2, 
-.library-container h3 {
-  color: #ffffff !important;
+/* Subtle eyebrow below title */
+.library-container h1 + .tab-buttons {
+  margin-top: 28px;
 }
 
-/* Force paragraph text to be legible */
-.library-container p {
-  color: #e0e0e0 !important;
-}
-
-/* Ensure the cards themselves have a light background/text contrast */
-.novel-card , .article-card{
-  background: #1a1a1a; /* Dark card background */
-  border: 1px solid #333;
-  color: #ffffff; /* White text inside the card */
-  border-radius: 12px;
-  padding: 15px;
-  transition: transform 0.3s ease;
-}
-
-/* Ensure buttons stand out */
-.read-btn {
-  background-color: #770307 !important;
-  color: #ffffff !important;
-  padding: 10px;
-  border-radius: 6px;
-  text-decoration: none;
-  display: inline-block;
-  margin-top: 10px;
-}
-
-/* Tab Navigation Styling */
+/* ── Tab Switcher ── */
 .tab-buttons {
   display: flex;
   justify-content: center;
-  gap: 15px;
-  margin-bottom: 50px;
+  gap: 8px;
+  margin-bottom: 44px;
+  position: relative;
+  z-index: 1;
+  animation: libFadeUp 0.6s ease 0.1s both;
+}
+
+/* Tab pill track */
+.tab-buttons::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #111318;
+  border: 1px solid #1e2330;
+  border-radius: 999px;
+  z-index: -1;
+  width: fit-content;
+  margin: auto;
+  padding: 0 4px;
 }
 
 .tab-buttons button {
   background: transparent;
-  color: #dad2d2;
-  border: 1px solid #333;
-  padding: 12px 30px;
-  border-radius: 50px; /* Pill shape */
+  color: #64748b;
+  border: none;
+  padding: 11px 36px;
+  border-radius: 999px;
   font-weight: 600;
+  font-size: 0.9rem;
   cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 1rem;
-}
-
-/* Active State */
-.tab-buttons button.active {
-  background-color: #770307; /* Your Brand Red */
-  border-color: #770307;
-  color: white;
-  box-shadow: 0 4px 15px rgba(119, 3, 7, 0.3);
+  letter-spacing: 0.02em;
+  transition: color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  z-index: 2;
 }
 
 .tab-buttons button:hover:not(.active) {
-  border-color: #555;
-  color: #fff;
+  color: #cbd5e1;
 }
 
-/* Library Content area */
+.tab-buttons button.active {
+  background: linear-gradient(135deg, #900309, #770307);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(119,3,7,0.45);
+}
+
+/* ── Library Content ── */
 .library-content {
   min-height: 400px;
-  padding: 20px;
-  animation: fadeIn 0.5s ease;
+  position: relative;
+  z-index: 1;
+  animation: libFadeUp 0.5s ease 0.15s both;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+/* Force text colours inside library */
+.library-container h2,
+.library-container h3 {
+  color: #f1f5f9 !important;
+}
+
+.library-container p {
+  color: #94a3b8 !important;
+}
+
+@keyframes libFadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .library-container {
+    padding: 88px 16px 60px;
+  }
+
+  .tab-buttons {
+    gap: 6px;
+  }
+
+  .tab-buttons button {
+    padding: 10px 24px;
+    font-size: 0.85rem;
+  }
 }

@@ -268,11 +268,28 @@ app.post('/api/admin/approve-writer/:id', async (req, res) => {
   }
 });
 
+// DELETE history record — only removes the WriterRequest doc, does NOT touch User fields
+app.delete('/api/admin/writer-requests/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: "Invalid record ID." });
+    }
+    // Just delete the document; if it doesn't exist (synthetic record) still return 200
+    await WriterRequest.findByIdAndDelete(id);
+    res.json({ message: "Record removed from history." });
+  } catch (error) {
+    console.error("Delete writer-request error:", error);
+    res.status(500).json({ error: "Failed to delete record." });
+  }
+});
+
 app.put('/api/users/update-welcome/:userId', async (req, res) => {
   try {
     await User.findByIdAndUpdate(req.params.userId, { hasSeenWelcome: true });
     res.status(200).json({ message: "Welcome status updated" });
   } catch (err) {
+
     res.status(500).json({ error: "Failed to update welcome status" });
   }
 });
@@ -679,6 +696,40 @@ app.get('/api/collections/single/:collectionId', async (req, res) => {
   } catch (error) {
     console.error("Error fetching single collection details:", error);
     res.status(500).json({ error: "Failed to load collection items details." });
+  }
+});
+
+// ==========================================
+// 📁 COLLECTION MANAGEMENT — DELETE ROUTES
+// ==========================================
+
+// 🗑️ 5. DELETE: Remove an entire collection folder
+app.delete('/api/collections/:id', async (req, res) => {
+  try {
+    const deleted = await Collection.findByIdAndDelete(req.params.id);
+    if (!deleted) return res.status(404).json({ error: 'Collection not found.' });
+    res.json({ message: 'Collection deleted successfully.' });
+  } catch (error) {
+    console.error('Delete collection error:', error);
+    res.status(500).json({ error: 'Failed to delete collection.' });
+  }
+});
+
+// ✂️ 6. DELETE: Remove a single saved item from inside a collection
+app.delete('/api/collections/:collectionId/items/:itemId', async (req, res) => {
+  try {
+    const { collectionId, itemId } = req.params;
+    const collection = await Collection.findById(collectionId);
+    if (!collection) return res.status(404).json({ error: 'Collection not found.' });
+
+    collection.savedItems = collection.savedItems.filter(
+      (item) => item._id.toString() !== itemId
+    );
+    await collection.save();
+    res.json({ message: 'Item removed from collection.', collection });
+  } catch (error) {
+    console.error('Remove item error:', error);
+    res.status(500).json({ error: 'Failed to remove item.' });
   }
 });
 

@@ -10,7 +10,8 @@
   display: flex;
   flex-direction: column;
   z-index: 1000;
-  padding-top: 60px; /* Matches Dashboard Top Padding */
+  padding-top: 60px;
+  /* Matches Dashboard Top Padding */
 }
 
 /* Section Headers (e.g., WORKSPACE, LIBRARY) */
@@ -35,6 +36,7 @@
   font-weight: 800;
   opacity: 0.9;
 }
+
 /* Navigation Links */
 .writer-sidebar-content ul {
   list-style: none;
@@ -74,24 +76,25 @@
 }
 
 .sidebar-header p {
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: lch(93.33% 1.7 265.88 / 0.941); 
-    margin-top: 4px;
-    padding: 0;
-    font-style: italic;
-    letter-spacing: 0.9px;
-    opacity: 0.8;
-    display: flex;
-    align-items: center;
-    gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: lch(93.33% 1.7 265.88 / 0.941);
+  margin-top: 4px;
+  padding: 0;
+  font-style: italic;
+  letter-spacing: 0.9px;
+  opacity: 0.8;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .sidebar-header p::before {
-    content: "";
-    width: 6px;
-    height: 6px;
-    background-color: #2dec53; /* Success Green */
-    border-radius: 50%;
-    display: inline-block;
+  content: "";
+  width: 6px;
+  height: 6px;
+  background-color: #2dec53;
+  /* Success Green */
+  border-radius: 50%;
+  display: inline-block;
 }
