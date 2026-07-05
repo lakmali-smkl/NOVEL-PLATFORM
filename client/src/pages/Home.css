@@ -518,3 +518,256 @@
     padding: 16px 18px;
   }
 }
+
+/* ============================================================
+   HOME DASHBOARD WIDGETS
+   ============================================================ */
+
+/* ── Stats cards row ── */
+.home-stats-dashboard {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin: 16px 32px 32px 32px;
+}
+
+.home-stat-card {
+  background: #111318;
+  border: 1px solid #1e2330;
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.home-stat-card:hover {
+  transform: translateY(-4px);
+  border-color: #3b82f6;
+  box-shadow: 0 12px 25px rgba(59, 130, 246, 0.15);
+}
+
+.home-stat-icon {
+  font-size: 2rem;
+  background: rgba(59, 130, 246, 0.08);
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.home-stat-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.home-stat-number {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #f1f5f9;
+  line-height: 1.2;
+}
+
+.home-stat-label {
+  color: #64748b;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ── Reading Activity & Goals ── */
+.home-activity-section {
+  margin: 0 32px 40px 32px;
+}
+
+.home-info-card {
+  background: #111318;
+  padding: 28px;
+  border-radius: 16px;
+  border: 1px solid #1e2330;
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.2);
+}
+
+.home-info-card h3 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #f1f5f9;
+  margin: 0 0 18px 0;
+  border-bottom: 1px solid #1e2330;
+  padding-bottom: 12px;
+}
+
+/* Streak details */
+.home-streak-widget {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255,255,255,0.01);
+  border: 1px solid #1e2330;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 18px;
+}
+
+.home-streak-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.home-streak-fire {
+  font-size: 2rem;
+  animation: firePulse 1.5s infinite ease-in-out alternate;
+}
+
+.home-streak-txt {
+  display: flex;
+  flex-direction: column;
+}
+
+.home-streak-num {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #ff8c00;
+}
+
+.home-streak-sub {
+  font-size: 0.72rem;
+  color: #64748b;
+}
+
+.home-streak-ring-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.home-progress-ring-wrap {
+  position: relative;
+  width: 48px;
+  height: 48px;
+}
+
+.home-progress-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.home-progress-bg {
+  fill: none;
+  stroke: #1e2330;
+  stroke-width: 3.5;
+}
+
+.home-progress-bar {
+  fill: none;
+  stroke: #3b82f6;
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+.home-progress-percentage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+
+.home-ring-label {
+  display: flex;
+  flex-direction: column;
+}
+
+.home-ring-label strong {
+  font-size: 0.9rem;
+  color: #f1f5f9;
+}
+
+.home-ring-label span {
+  font-size: 0.68rem;
+  color: #64748b;
+}
+
+/* checklist */
+.home-daily-checklist {
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.home-day-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255,255,255,0.01);
+  border: 1px solid #1e2330;
+  padding: 8px 2px;
+  border-radius: 6px;
+}
+
+.home-day-box span:first-child {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.home-check-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid #334155;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.55rem;
+  color: transparent;
+}
+
+.home-day-box.checked {
+  background: rgba(59,130,246,0.06);
+  border-color: rgba(59,130,246,0.3);
+}
+
+.home-day-box.checked span:first-child {
+  color: #60a5fa;
+}
+
+.home-day-box.checked .home-check-dot {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: white;
+  font-weight: 800;
+}
+
+/* ── Responsive overrides ── */
+@media (max-width: 768px) {
+  .home-stats-dashboard {
+    grid-template-columns: 1fr;
+    margin-left: 16px;
+    margin-right: 16px;
+  }
+  .home-activity-section {
+    margin-left: 16px;
+    margin-right: 16px;
+  }
+  .home-streak-widget {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+}

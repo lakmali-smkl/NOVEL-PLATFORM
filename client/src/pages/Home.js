@@ -7,6 +7,7 @@ import RecommendationSection from './RecommendationSection';
 const Home = ({ user }) => {
   const [trending, setTrending] = useState([]);
   const [announcements, setAnnouncements] = useState([]);
+  const [stats, setStats] = useState({ favoritesCount: 0, historyCount: 0, collectionsCount: 0 });
   const API_BASE_URL = 'http://localhost:5000'; 
 
   useEffect(() => {
@@ -18,6 +19,8 @@ const Home = ({ user }) => {
     }
 
     if (user) {
+      const userId = user._id || user.id;
+
       fetch(`http://localhost:5000/api/announcements`)
         .then(res => {
         if (!res.ok) throw new Error("Route not found on server");
@@ -25,6 +28,31 @@ const Home = ({ user }) => {
       })
         .then(data => setAnnouncements(data))
         .catch(err => console.error("Error loading announcements:", err));
+
+      // Favorites Count
+      if (user.favorites) {
+        setStats(prev => ({ ...prev, favoritesCount: user.favorites.length }));
+      }
+
+      // Collections Count
+      fetch(`http://localhost:5000/api/collections/${userId}`)
+        .then(res => res.json())
+        .then(data => {
+          if (Array.isArray(data)) {
+            setStats(prev => ({ ...prev, collectionsCount: data.length }));
+          }
+        })
+        .catch(() => {});
+
+      // History Count
+      fetch(`http://localhost:5000/api/users/${userId}/history`)
+        .then(res => res.json())
+        .then(data => {
+          if (Array.isArray(data)) {
+            setStats(prev => ({ ...prev, historyCount: data.length }));
+          }
+        })
+        .catch(() => {});
     }
   }, [user]);
 
@@ -77,6 +105,70 @@ const Home = ({ user }) => {
 
         {/* ✨ AI Recommendation Engine */}
         <RecommendationSection user={user} />
+
+        {/* 📊 Home Stats Cards */}
+        <div className="home-stats-dashboard">
+          <Link to="/dashboard/favorites" className="home-stat-card">
+            <div className="home-stat-icon">❤️</div>
+            <div className="home-stat-info">
+              <span className="home-stat-number">{stats.favoritesCount}</span>
+              <span className="home-stat-label">Favorites</span>
+            </div>
+          </Link>
+          <Link to="/dashboard/read-later" className="home-stat-card">
+            <div className="home-stat-icon">🔖</div>
+            <div className="home-stat-info">
+              <span className="home-stat-number">{stats.collectionsCount}</span>
+              <span className="home-stat-label">Collections</span>
+            </div>
+          </Link>
+          <Link to="/dashboard/history" className="home-stat-card">
+            <div className="home-stat-icon">🕒</div>
+            <div className="home-stat-info">
+              <span className="home-stat-number">{stats.historyCount}</span>
+              <span className="home-stat-label">Read Stories</span>
+            </div>
+          </Link>
+        </div>
+
+        {/* 🔥 Reading Activity & Goals Widget */}
+        <div className="home-activity-section">
+          <div className="home-info-card">
+            <h3>🔥 Reading Activity & Goals</h3>
+            <div className="home-streak-widget">
+              <div className="home-streak-main">
+                <span className="home-streak-fire">⚡</span>
+                <div className="home-streak-txt">
+                  <span className="home-streak-num">3 Days</span>
+                  <span className="home-streak-sub">Active Streak</span>
+                </div>
+              </div>
+              <div className="home-streak-ring-box">
+                <div className="home-progress-ring-wrap">
+                  <svg className="home-progress-svg" viewBox="0 0 36 36">
+                    <path className="home-progress-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                    <path className="home-progress-bar" strokeDasharray="60, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                  </svg>
+                  <div className="home-progress-percentage">60%</div>
+                </div>
+                <div className="home-ring-label">
+                  <strong>3 of 5</strong>
+                  <span>Weekly Goal</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="home-daily-checklist">
+              <div className="home-day-box checked"><span>M</span><span className="home-check-dot">✓</span></div>
+              <div className="home-day-box checked"><span>T</span><span className="home-check-dot">✓</span></div>
+              <div className="home-day-box checked"><span>W</span><span className="home-check-dot">✓</span></div>
+              <div className="home-day-box"><span>T</span><span className="home-check-dot"></span></div>
+              <div className="home-day-box"><span>F</span><span className="home-check-dot"></span></div>
+              <div className="home-day-box"><span>S</span><span className="home-check-dot"></span></div>
+              <div className="home-day-box"><span>S</span><span className="home-check-dot"></span></div>
+            </div>
+          </div>
+        </div>
 
         <section className="trending-section">
           <h2 className="section-title">🔥 Trending Now</h2>
