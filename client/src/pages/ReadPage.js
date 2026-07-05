@@ -68,6 +68,22 @@ const ReadPage = () => {
             });
     }, [type, id, userId]);
 
+    // 🕒 HISTORY: Log reading activity when data loads successfully
+    useEffect(() => {
+        if (userId && data) {
+            fetch(`http://localhost:5000/api/users/${userId}/history`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contentId: id,
+                    title: data.title,
+                    type: type,
+                    coverPhoto: data.coverPhoto
+                })
+            }).catch(err => console.error("History logging failed:", err));
+        }
+    }, [data, userId, id, type]);
+
     // 🔁 SAVE: Handle saving current item into chosen collection folder
     const handleAddToCollection = async (collectionId) => {
         if (!user) return alert("Please login first!");

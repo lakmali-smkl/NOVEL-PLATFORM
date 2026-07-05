@@ -169,6 +169,59 @@ app.get('/api/users/check-status/:id', async (req, res) => {
   }
 });
 
+// User Settings Update
+app.put('/api/users/:id/settings', async (req, res) => {
+  try {
+    const { username, email, currentPassword, newPassword } = req.body;
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    // If attempting to change password, verify current password
+    if (newPassword) {
+      if (!currentPassword) {
+        return res.status(400).json({ error: "Current password is required to set a new password." });
+      }
+      const isMatch = await bcrypt.compare(currentPassword, user.password);
+      if (!isMatch) {
+        return res.status(400).json({ error: "Incorrect current password." });
+      }
+      // Hash new password
+      user.password = await bcrypt.hash(newPassword, 10);
+    }
+
+    // Update basic info
+    if (username) user.username = username;
+    
+    if (email && email !== user.email) {
+      // Check if new email is already taken
+      const existingEmail = await User.findOne({ email });
+      if (existingEmail && existingEmail._id.toString() !== user._id.toString()) {
+        return res.status(400).json({ error: "Email is already in use by another account." });
+      }
+      user.email = email;
+    }
+
+    await user.save();
+    
+    // Return updated user (excluding password)
+    res.json({ 
+      message: "Settings updated successfully!",
+      user: {
+        _id: user._id,
+        username: user.username,
+        email: user.email,
+        isAdmin: user.isAdmin,
+        isWriter: user.isWriter,
+        writerRequestStatus: user.writerRequestStatus,
+        favorites: user.favorites || []
+      }
+    });
+  } catch (error) {
+    console.error("Settings update error:", error);
+    res.status(500).json({ error: "Failed to update settings" });
+  }
+});
+
 // --- Admin Control Routes (Core Platform) ---
 
 app.get('/api/admin/stats', async (req, res) => {
@@ -730,6 +783,93 @@ app.delete('/api/collections/:collectionId/items/:itemId', async (req, res) => {
   } catch (error) {
     console.error('Remove item error:', error);
     res.status(500).json({ error: 'Failed to remove item.' });
+  }
+});
+
+// ==========================================
+// 🕒 USER READING HISTORY ROUTES
+// ==========================================
+
+// GET: Fetch user history
+app.get('/api/users/:userId/history', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user) return res.status(404).json({ error: "User not found" });
+    
+    // Sort history by lastRead descending (newest first)
+    const history = user.readingHistory.sort((a, b) => b.lastRead - a.lastRead);
+    res.json(history);
+  } catch (error) {
+    console.error("Error fetching history:", error);
+    res.status(500).json({ error: "Failed to fetch history" });
+  }
+});
+
+// POST: Add or update item in history
+app.post('/api/users/:userId/history', async (req, res) => {
+  try {
+    const { contentId, title, type, coverPhoto } = req.body;
+    const user = await User.findById(req.params.userId);
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    // Check if item already exists in history
+    const existingIndex = user.readingHistory.findIndex(item => item.contentId === contentId);
+
+    if (existingIndex > -1) {
+      // Update lastRead
+      user.readingHistory[existingIndex].lastRead = Date.now();
+      // Optionally update other metadata if it changed
+      user.readingHistory[existingIndex].title = title;
+      user.readingHistory[existingIndex].coverPhoto = coverPhoto;
+    } else {
+      // Add new
+      user.readingHistory.push({
+        contentId,
+        title,
+        type,
+        coverPhoto,
+        lastRead: Date.now()
+      });
+    }
+
+    await user.save();
+    res.status(200).json({ message: "History updated" });
+  } catch (error) {
+    console.error("Error updating history:", error);
+    res.status(500).json({ error: "Failed to update history" });
+  }
+});
+
+// DELETE: Remove a single item from history
+app.delete('/api/users/:userId/history/:contentId', async (req, res) => {
+  try {
+    const { userId, contentId } = req.params;
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    user.readingHistory = user.readingHistory.filter(item => item.contentId !== contentId);
+    await user.save();
+    
+    res.status(200).json({ message: "Item removed from history" });
+  } catch (error) {
+    console.error("Error removing from history:", error);
+    res.status(500).json({ error: "Failed to remove item" });
+  }
+});
+
+// DELETE: Clear all history
+app.delete('/api/users/:userId/history', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    user.readingHistory = [];
+    await user.save();
+    
+    res.status(200).json({ message: "History cleared" });
+  } catch (error) {
+    console.error("Error clearing history:", error);
+    res.status(500).json({ error: "Failed to clear history" });
   }
 });
 
