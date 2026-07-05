@@ -170,7 +170,7 @@ app.get('/api/users/check-status/:id', async (req, res) => {
 });
 
 // User Settings Update
-app.put('/api/users/:id/settings', async (req, res) => {
+app.put('/api/users/:id/settings', upload.single('profilePicture'), async (req, res) => {
   try {
     const { username, email, currentPassword, newPassword } = req.body;
     const user = await User.findById(req.params.id);
@@ -201,6 +201,11 @@ app.put('/api/users/:id/settings', async (req, res) => {
       user.email = email;
     }
 
+    // Handle Profile Picture Upload
+    if (req.file) {
+      user.profilePicture = req.file.path.replace(/\\/g, '/'); // Normalize path
+    }
+
     await user.save();
     
     // Return updated user (excluding password)
@@ -213,6 +218,7 @@ app.put('/api/users/:id/settings', async (req, res) => {
         isAdmin: user.isAdmin,
         isWriter: user.isWriter,
         writerRequestStatus: user.writerRequestStatus,
+        profilePicture: user.profilePicture,
         favorites: user.favorites || []
       }
     });

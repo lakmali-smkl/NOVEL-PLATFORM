@@ -193,3 +193,72 @@
     gap: 0;
   }
 }
+
+/* ── Profile Picture Upload Section ── */
+.profile-pic-settings-section {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin: 16px 0 24px 0;
+}
+
+.settings-avatar-preview-wrap {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #080a0f;
+  border: 2px solid #1e2330;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.settings-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.settings-avatar-placeholder {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #3b82f6;
+  text-transform: uppercase;
+}
+
+.upload-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.file-upload-btn {
+  display: inline-block;
+  background: #1e2330;
+  color: #f1f5f9;
+  border: 1px solid #30363d;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease;
+  width: fit-content;
+}
+
+.file-upload-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: #3b82f6;
+  color: white;
+}
+
+.upload-tip {
+  color: #64748b;
+  font-size: 0.8rem;
+  margin: 0;
+}
+

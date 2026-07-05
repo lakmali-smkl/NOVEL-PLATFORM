@@ -36,6 +36,8 @@ const userSchema = new mongoose.Schema({
     lastRead: { type: Date, default: Date.now }
   }],
 
+  profilePicture: { type: String, default: "" },
+
   createdAt: { type: Date, default: Date.now }
 },{ timestamps: true });
 
