@@ -40,7 +40,7 @@ const Login = ({ setUser }) => {
         } 
         // Priority 3: Regular User
         else
-          navigate('/');
+          navigate('/dashboard');
         } 
       else {
               alert(data.message || "Login failed");
