@@ -5,7 +5,6 @@ import Login from './pages/Login';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Register from './pages/Register';
-import DashboardMain from './pages/DashboardMain';
 import Dashboard from './pages/Dashboard';
 import WriterDashboard from './pages/WriterDashboard';
 import AddNovel from './pages/AddNovel';
@@ -173,7 +172,7 @@ function App() {
             )}
 
             <Route path="/dashboard" element={<Dashboard user={user} />}>
-              <Route index element={<DashboardMain />} />
+              <Route index element={<Navigate to="profile" replace />} />
               <Route path="favorites" element={<Favorites />} />
               <Route path="profile" element={<Profile />} />
               <Route path="my-novels" element={<MyPublications />} />
