@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Settings.css';
 
-const Settings = () => {
+const Settings = ({ setUser: setAppUser }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   
@@ -94,6 +94,7 @@ const Settings = () => {
         };
         localStorage.setItem('user', JSON.stringify(updatedUser));
         setUser(updatedUser);
+        if (setAppUser) setAppUser(updatedUser);
         
         // Update preview from server-normalized path
         if (data.user.profilePicture) {

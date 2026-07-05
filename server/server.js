@@ -150,6 +150,7 @@ app.post('/login', async (req, res) => {
         isWriter: user.isWriter,
         writerRequestStatus: user.writerRequestStatus,
         hasSeenWelcome: user.hasSeenWelcome,
+        profilePicture: user.profilePicture || "",
         favorites: user.favorites || []
       } 
     });
