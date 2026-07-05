@@ -28,6 +28,14 @@ const userSchema = new mongoose.Schema({
     type: { type: String } // 'novel' or 'article'
   }],
 
+  readingHistory: [{
+    contentId: { type: String },
+    title: { type: String },
+    type: { type: String }, // 'novel' or 'article'
+    coverPhoto: { type: String },
+    lastRead: { type: Date, default: Date.now }
+  }],
+
   createdAt: { type: Date, default: Date.now }
 },{ timestamps: true });
 

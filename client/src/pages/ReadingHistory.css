@@ -1,0 +1,312 @@
+/* ============================================================
+   READING HISTORY — Premium Dark Theme
+   ============================================================ */
+
+.history-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 80px 32px;
+  min-height: 100vh;
+  background: #080a0f;
+  color: #e2e8f0;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ── Header ── */
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  animation: histFadeUp 0.6s ease both;
+}
+
+.history-title-wrap h1 {
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  margin: 0 0 8px 0;
+  background: linear-gradient(135deg, #ffffff 30%, rgba(255,255,255,0.55) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.history-title-wrap p {
+  color: #94a3b8;
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* Clear All Button */
+.clear-all-btn {
+  background: rgba(239, 68, 68, 0.08);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clear-all-btn:hover {
+  background: #ef4444;
+  color: #fff;
+  border-color: #ef4444;
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+  transform: translateY(-1px);
+}
+
+/* ── Loading & Empty State ── */
+.history-loading {
+  text-align: center;
+  color: #94a3b8;
+  padding: 40px;
+}
+
+.history-empty-state {
+  text-align: center;
+  padding: 80px 20px;
+  background: #111318;
+  border: 1px dashed #1e2330;
+  border-radius: 16px;
+  animation: histFadeUp 0.6s ease 0.1s both;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  opacity: 0.8;
+}
+
+.history-empty-state p {
+  color: #94a3b8;
+  font-size: 1.1rem;
+  margin-bottom: 24px;
+}
+
+.browse-btn {
+  display: inline-block;
+  background: #3b82f6;
+  color: #fff;
+  padding: 12px 28px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.browse-btn:hover {
+  background: #2563eb;
+  transform: translateY(-2px);
+}
+
+/* ── List Layout ── */
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── History Row Card ── */
+.history-item-row {
+  background: #111318;
+  border: 1px solid #1e2330;
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  animation: histFadeUp 0.5s ease both;
+  position: relative;
+  overflow: hidden;
+}
+
+.history-item-row:hover {
+  transform: translateX(4px);
+  border-color: #3b82f6;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+/* Accent gradient line */
+.history-item-row::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: transparent;
+  transition: background 0.3s ease;
+}
+
+.history-item-row:hover::before {
+  background: linear-gradient(to bottom, #3b82f6, #60a5fa);
+}
+
+/* Cover Image Area */
+.history-cover-wrap {
+  position: relative;
+  width: 80px;
+  height: 100px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #1e2330;
+}
+
+.history-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.history-item-row:hover .history-cover {
+  transform: scale(1.1);
+}
+
+.history-cover-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  background: #1e2330;
+}
+
+/* Type Badge */
+.history-type-badge {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  font-size: 0.55rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #fff;
+  letter-spacing: 0.05em;
+  backdrop-filter: blur(4px);
+}
+
+.novel-badge { background: rgba(119,3,7,0.85); }
+.article-badge { background: rgba(99,102,241,0.85); }
+
+/* Text Info */
+.history-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.history-info h3 {
+  color: #f1f5f9;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0 0 6px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.history-time {
+  color: #64748b;
+  font-size: 0.85rem;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Actions */
+.history-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  padding-right: 8px;
+}
+
+.history-resume-btn {
+  background: rgba(59,130,246,0.1);
+  color: #60a5fa;
+  border: 1px solid rgba(59,130,246,0.25);
+  padding: 10px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.history-resume-btn:hover {
+  background: #3b82f6;
+  color: #fff;
+  border-color: #3b82f6;
+  box-shadow: 0 4px 15px rgba(59,130,246,0.3);
+  transform: translateY(-1px);
+}
+
+.history-remove-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: #94a3b8;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.history-item-row:hover .history-remove-btn {
+  color: #f87171;
+}
+
+.history-remove-btn:hover {
+  background: rgba(239, 68, 68, 0.1) !important;
+  color: #ef4444 !important;
+  border-color: rgba(239, 68, 68, 0.2) !important;
+  transform: scale(1.1);
+}
+
+/* ── Animations ── */
+@keyframes histFadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .history-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  .history-item-row {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px;
+  }
+  
+  .history-cover-wrap {
+    width: 100%;
+    height: 140px;
+  }
+  
+  .history-actions {
+    width: 100%;
+    justify-content: space-between;
+    padding: 0;
+    margin-top: 10px;
+  }
+}
