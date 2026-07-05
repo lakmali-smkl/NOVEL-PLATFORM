@@ -8,7 +8,8 @@ const AddNovel = ({ user }) => {
     content: '',
     authorName: user?.username || '',
     authorSpeech: '',
-    status: 'published' // Default to published
+    status: 'published', // Default to published
+    genre: 'other'
   });
   const [coverPhoto, setCoverPhoto] = useState(null);
   const [textFile, setTextFile] = useState(null);
@@ -38,6 +39,7 @@ const AddNovel = ({ user }) => {
     data.append('authorSpeech', formData.authorSpeech);
     data.append('authorId', authorId);
     data.append('status', formData.status);
+    data.append('genre', formData.genre);
     if (coverPhoto) data.append('coverPhoto', coverPhoto);
     if (textFile) data.append('textFile', textFile);
 
@@ -113,6 +115,27 @@ const AddNovel = ({ user }) => {
             name="authorSpeech" 
             onChange={handleInputChange} 
           />
+        </div>
+
+        <div className="form-group">
+          <label>Genre</label>
+          <select 
+            className="writer-input" 
+            value={formData.genre} 
+            name="genre"
+            onChange={handleInputChange}
+          >
+            <option value="fantasy">Fantasy</option>
+            <option value="romance">Romance</option>
+            <option value="thriller">Thriller</option>
+            <option value="mystery">Mystery</option>
+            <option value="sci-fi">Sci-Fi</option>
+            <option value="horror">Horror</option>
+            <option value="adventure">Adventure</option>
+            <option value="historical">Historical</option>
+            <option value="drama">Drama</option>
+            <option value="other">Other</option>
+          </select>
         </div>
 
         <div className="form-group">

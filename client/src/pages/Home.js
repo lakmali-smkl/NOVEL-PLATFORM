@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom'; 
 import './Home.css';
 import myVideo from './backgroundVideo.mp4';
+import RecommendationSection from './RecommendationSection';
 
 const Home = ({ user }) => {
   const [trending, setTrending] = useState([]);
@@ -73,6 +74,9 @@ const Home = ({ user }) => {
             ))}
           </div>
         )}
+
+        {/* ✨ AI Recommendation Engine */}
+        <RecommendationSection user={user} />
 
         <section className="trending-section">
           <h2 className="section-title">🔥 Trending Now</h2>

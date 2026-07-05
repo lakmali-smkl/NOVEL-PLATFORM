@@ -25,6 +25,12 @@ const novelSchema = new mongoose.Schema({
         type: Number, 
         default: 0 
     },
+
+    genre: {
+        type: String,
+        enum: ['fantasy', 'romance', 'thriller', 'mystery', 'sci-fi', 'horror', 'adventure', 'historical', 'drama', 'other'],
+        default: 'other'
+    },
     
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     comments: [{

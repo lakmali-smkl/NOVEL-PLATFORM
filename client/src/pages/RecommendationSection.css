@@ -1,0 +1,271 @@
+/* ============================================================
+   AI RECOMMENDATION SECTION — Premium Dark Theme
+   ============================================================ */
+
+.rec-section {
+  padding: 48px 0 24px;
+  animation: recFadeUp 0.6s ease both;
+}
+
+@keyframes recFadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Header ── */
+.rec-header {
+  padding: 0 32px 24px;
+}
+
+.rec-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.rec-title-group h2 {
+  font-size: clamp(1.4rem, 3vw, 1.9rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #f1f5f9;
+  margin: 0;
+}
+
+.rec-ai-label {
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  flex-shrink: 0;
+}
+
+.rec-subtitle {
+  color: #64748b;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* ── Horizontal Scroll Track ── */
+.rec-scroll-track {
+  display: flex;
+  gap: 20px;
+  padding: 8px 32px 24px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none; /* Firefox */
+}
+
+.rec-scroll-track::-webkit-scrollbar {
+  display: none; /* Chrome */
+}
+
+/* ── Cards ── */
+.rec-card {
+  flex-shrink: 0;
+  width: 200px;
+  background: #111318;
+  border: 1px solid #1e2330;
+  border-radius: 16px;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  animation: cardSlideIn 0.5s ease both;
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes cardSlideIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.rec-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  border-color: #3b82f6;
+  box-shadow: 0 16px 40px rgba(59, 130, 246, 0.2);
+}
+
+/* ── Card Image ── */
+.rec-card-img-wrap {
+  position: relative;
+  width: 100%;
+  height: 160px;
+  overflow: hidden;
+  background: #0d1117;
+  flex-shrink: 0;
+}
+
+.rec-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.rec-card:hover .rec-card-img {
+  transform: scale(1.08);
+}
+
+.rec-card-img-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3.5rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #1e2330 0%, #0d1117 100%);
+  color: #3b82f6;
+}
+
+/* ── Badges overlaying the image ── */
+.rec-ai-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 3px 9px;
+  border-radius: 999px;
+  letter-spacing: 0.05em;
+}
+
+.rec-type-badge {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 999px;
+}
+
+.rec-type-badge.novel {
+  background: rgba(59, 130, 246, 0.18);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.rec-type-badge.article {
+  background: rgba(34, 197, 94, 0.18);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+/* ── Card Body ── */
+.rec-card-body {
+  padding: 14px 14px 16px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.rec-card-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin: 0 0 4px 0;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.rec-card-author {
+  font-size: 0.78rem;
+  color: #64748b;
+  margin: 0 0 8px 0;
+}
+
+.rec-genre-tag {
+  display: inline-block;
+  background: rgba(139, 92, 246, 0.12);
+  color: #a78bfa;
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: capitalize;
+  padding: 2px 8px;
+  border-radius: 999px;
+  margin-bottom: 8px;
+  width: fit-content;
+}
+
+.rec-reason {
+  font-size: 0.72rem;
+  color: #475569;
+  margin: auto 0 10px;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+.rec-card-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 0.75rem;
+  color: #475569;
+  margin-top: auto;
+  padding-top: 8px;
+  border-top: 1px solid #1e2330;
+}
+
+/* ── Loading Skeleton ── */
+.rec-skeleton-row {
+  display: flex;
+  gap: 20px;
+  padding: 0 32px;
+  overflow: hidden;
+}
+
+.rec-skeleton-card {
+  flex-shrink: 0;
+  width: 200px;
+  background: #111318;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #1e2330;
+}
+
+.skeleton-img {
+  width: 100%;
+  height: 160px;
+  background: linear-gradient(90deg, #1e2330 25%, #252d3d 50%, #1e2330 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.skeleton-line {
+  height: 12px;
+  border-radius: 6px;
+  margin: 12px 14px 6px;
+  background: linear-gradient(90deg, #1e2330 25%, #252d3d 50%, #1e2330 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.skeleton-line.short { width: 60%; }
+.skeleton-line.long  { width: 85%; margin-bottom: 14px; }
+
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to   { background-position: -200% 0; }
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .rec-header, .rec-scroll-track {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  .rec-card { width: 170px; }
+  .rec-card-img-wrap { height: 130px; }
+}
