@@ -183,3 +183,189 @@
     justify-content: flex-start;
   }
 }
+
+/* =============================================
+   NOTIFICATION FEED — Previous Requests only
+   ============================================= */
+
+.notif-section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.notif-section-header h2 {
+  margin-bottom: 0;
+}
+
+.notif-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #e0e7ff;
+  color: #3730a3;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 2px 10px;
+  min-width: 28px;
+}
+
+/* Feed list resets */
+.notif-feed {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Each notification row */
+.notif-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 13px 16px;
+  border-radius: 12px;
+  margin-bottom: 4px;
+  border-left: 4px solid transparent;
+  background: #f9fafb;
+  transition: background 0.18s ease, transform 0.15s ease;
+  cursor: default;
+}
+
+.notif-item:last-child {
+  margin-bottom: 0;
+}
+
+.notif-item:hover {
+  background: #f1f5f9;
+  transform: translateX(2px);
+}
+
+/* Approved → green left border */
+.notif-item.notif-approved {
+  border-left-color: #10b981;
+}
+
+/* Rejected → red left border */
+.notif-item.notif-rejected {
+  border-left-color: #ef4444;
+}
+
+/* Circular avatar with initial */
+.notif-avatar {
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
+}
+
+/* Body text area */
+.notif-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.notif-text {
+  margin: 0 0 3px 0;
+  font-size: 0.9rem;
+  color: #374151;
+  line-height: 1.4;
+}
+
+.notif-username {
+  font-weight: 700;
+  color: #111827;
+}
+
+.notif-reason {
+  margin: 0 0 5px 0;
+  font-size: 0.82rem;
+  color: #6b7280;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 420px;
+}
+
+.notif-time {
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #9ca3af;
+  letter-spacing: 0.02em;
+}
+
+/* Right column: badge + delete */
+.notif-right {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+/* Status pill badge */
+.notif-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.notif-badge-approved {
+  background: rgba(16, 185, 129, 0.12);
+  color: #065f46;
+}
+
+.notif-badge-rejected {
+  background: rgba(239, 68, 68, 0.1);
+  color: #991b1b;
+}
+
+/* Trash delete button */
+.notif-delete-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #d1d5db;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+  padding: 0;
+}
+
+.notif-delete-btn svg {
+  width: 15px;
+  height: 15px;
+}
+
+.notif-delete-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+@media (max-width: 600px) {
+  .notif-reason {
+    max-width: 160px;
+  }
+  .notif-right {
+    gap: 6px;
+  }
+}

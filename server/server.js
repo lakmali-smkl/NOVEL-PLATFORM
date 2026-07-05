@@ -268,11 +268,28 @@ app.post('/api/admin/approve-writer/:id', async (req, res) => {
   }
 });
 
+// DELETE history record — only removes the WriterRequest doc, does NOT touch User fields
+app.delete('/api/admin/writer-requests/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: "Invalid record ID." });
+    }
+    // Just delete the document; if it doesn't exist (synthetic record) still return 200
+    await WriterRequest.findByIdAndDelete(id);
+    res.json({ message: "Record removed from history." });
+  } catch (error) {
+    console.error("Delete writer-request error:", error);
+    res.status(500).json({ error: "Failed to delete record." });
+  }
+});
+
 app.put('/api/users/update-welcome/:userId', async (req, res) => {
   try {
     await User.findByIdAndUpdate(req.params.userId, { hasSeenWelcome: true });
     res.status(200).json({ message: "Welcome status updated" });
   } catch (err) {
+
     res.status(500).json({ error: "Failed to update welcome status" });
   }
 });
