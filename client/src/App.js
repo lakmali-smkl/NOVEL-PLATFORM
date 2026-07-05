@@ -9,6 +9,7 @@ import Dashboard from './pages/Dashboard';
 import WriterDashboard from './pages/WriterDashboard';
 import AddNovel from './pages/AddNovel';
 import AddArticle from './pages/AddArticle';
+import WriterDashboardMain from './pages/WriterDashboardMain';
 import Library from './pages/Library';
 import ReadPage from './pages/ReadPage';
 import Favorites from './pages/Favorites';
@@ -177,11 +178,16 @@ function App() {
               <Route path="read-later" element={<ReadLater user={user} />} />
               <Route path="collections/:collectionId" element={<CollectionDetail />} />
               <Route path="history" element={<ReadingHistory />} />
-              <Route path="settings" element={<Settings />} />
+              <Route path="settings" element={<Settings setUser={setUser} />} />
               <Route path="request-writer" element={<RequestWriter user={user} setUser={setUser} />} />
             </Route>
 
-            <Route path="/writer-dashboard" element={<WriterDashboard user={user} />} />
+            <Route path="/writer-dashboard" element={<WriterDashboard user={user} setUser={setUser} />}>
+              <Route index element={<WriterDashboardMain user={user} setUser={setUser} />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="settings" element={<Settings setUser={setUser} />} />
+              <Route path="favorites" element={<Favorites />} />
+            </Route>
             <Route path="/add-novel" element={<AddNovel user={user} />} />
             <Route path="/add-article" element={<AddArticle user={user} />} />
             <Route path="/library" element={<Library />} />
