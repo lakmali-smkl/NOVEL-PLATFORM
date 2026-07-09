@@ -1,27 +1,61 @@
-/* Sidebar Container */
+/* ===================================================
+   Writer Sidebar — Scrollable Fixed Layout
+   =================================================== */
+
+/* The outer .sidebar in App.css is:
+   position: fixed; height: 100vh; display: flex; flex-direction: column; overflow: hidden;
+   So .writer-sidebar-content should be flex: 1, NOT height: 100% */
+
 .writer-sidebar-content {
   width: 100%;
-  height: 100%;
+  flex: 1;                  /* Fill the parent .sidebar flex container */
   background: #0d1117;
   border-right: 1px solid rgba(255, 255, 255, 0.05);
-  position: relative;
-  top: 0;
-  left: 0;
   display: flex;
   flex-direction: column;
+  overflow: hidden;         /* Clip here — only <nav> scrolls */
   z-index: 1000;
-  padding-top: 60px;
-  /* Matches Dashboard Top Padding */
 }
 
-/* Section Headers (e.g., WORKSPACE, LIBRARY) */
+/* ── Sticky header at top ── */
+.writer-sidebar-content .sidebar-top-header {
+  flex-shrink: 0;           /* Never compress, always visible */
+  padding: 70px 25px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+/* ── Scrollable nav region ── */
+.writer-sidebar-content .sidebar-nav {
+  flex: 1;
+  min-height: 0;            /* Critical: lets flex child shrink below content size */
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 10px 0 40px;
+}
+
+/* Custom scrollbar */
+.writer-sidebar-content .sidebar-nav::-webkit-scrollbar {
+  width: 4px;
+}
+.writer-sidebar-content .sidebar-nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+.writer-sidebar-content .sidebar-nav::-webkit-scrollbar-thumb {
+  background: rgba(255,51,51,0.3);
+  border-radius: 4px;
+}
+.writer-sidebar-content .sidebar-nav::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,51,51,0.6);
+}
+
+/* ── Section Headers ── */
 .sidebar-header h3 {
   font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 2px;
   color: #ff3333;
   padding: 0 25px;
-  margin: 25px 0 10px;
+  margin: 20px 0 8px;
   font-weight: 800;
   opacity: 0.9;
 }
@@ -37,10 +71,11 @@
   opacity: 0.9;
 }
 
-/* Navigation Links */
+/* ── Navigation Links ── */
 .writer-sidebar-content ul {
   list-style: none;
   padding: 0 15px;
+  margin: 0;
 }
 
 .writer-sidebar-content ul li a {
@@ -72,13 +107,14 @@
 .sidebar-divider {
   height: 1px;
   background: linear-gradient(to right, rgba(255, 255, 255, 0.05), transparent);
-  margin: 15px 25px;
+  margin: 12px 25px;
 }
 
+/* ── Top header text ── */
 .sidebar-header p {
   font-size: 0.85rem;
   font-weight: 500;
-  color: lch(93.33% 1.7 265.88 / 0.941);
+  color: rgba(240, 240, 255, 0.85);
   margin-top: 4px;
   padding: 0;
   font-style: italic;
@@ -94,7 +130,27 @@
   width: 6px;
   height: 6px;
   background-color: #2dec53;
-  /* Success Green */
   border-radius: 50%;
   display: inline-block;
+  flex-shrink: 0;
+}
+
+/* ── Notification badge pill ── */
+.sidebar-notif-badge {
+  margin-left: auto;
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 100px;
+  min-width: 20px;
+  text-align: center;
+  box-shadow: 0 0 8px rgba(168, 85, 247, 0.6);
+  animation: badgePulse 2s ease-in-out infinite;
+}
+
+@keyframes badgePulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(168, 85, 247, 0.6); }
+  50%       { box-shadow: 0 0 16px rgba(168, 85, 247, 1); }
 }

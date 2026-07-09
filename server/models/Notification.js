@@ -6,6 +6,7 @@ const NotificationSchema = new mongoose.Schema({
     senderName: String, // Store the name here separately for easy access
     type: { type: String, enum: ['like', 'comment', 'system'], required: true },
     contentId: { type: mongoose.Schema.Types.ObjectId }, 
+    contentType: { type: String, enum: ['novel', 'article'] }, 
     message: String,
     isRead: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now }

@@ -1,25 +1,64 @@
+/* ===================================================
+   User Sidebar — Scrollable Fixed Layout
+   =================================================== */
+
 /* User Theme Sidebar - Red Variant */
 .sidebar.user-theme {
   background: linear-gradient(180deg, #0f0808 0%, #1a0f0f 100%);
   border-right: 2px solid #b91c1c;
-  /* Sharp Red accent border */
   box-shadow: 10px 0 30px rgba(0, 0, 0, 0.7);
 }
 
+/* Outer content wrapper — fills the parent .sidebar (flex: 1 child) */
 .user-sidebar-content {
-  padding: 30px 20px;
+  width: 100%;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  overflow: hidden;         /* Clip here — only nav scrolls */
 }
 
-/* Header Section */
+/* ── Sticky header ── */
+.user-sidebar-content .sidebar-top-header {
+  flex-shrink: 0;
+  padding: 30px 20px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  margin-bottom: 10px;
+}
+
+/* Keep existing class for back compat */
 .user-sidebar-content .sidebar-header {
-  margin-bottom: 35px;
+  flex-shrink: 0;
+  margin-bottom: 20px;
   padding-bottom: 20px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
+/* ── Scrollable nav region ── */
+.user-sidebar-content nav {
+  flex: 1;
+  min-height: 0;            /* Critical: lets flex child shrink & scroll */
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 40px;
+}
+
+/* Custom scrollbar */
+.user-sidebar-content nav::-webkit-scrollbar {
+  width: 4px;
+}
+.user-sidebar-content nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+.user-sidebar-content nav::-webkit-scrollbar-thumb {
+  background: rgba(185, 28, 28, 0.4);
+  border-radius: 4px;
+}
+.user-sidebar-content nav::-webkit-scrollbar-thumb:hover {
+  background: rgba(185, 28, 28, 0.7);
+}
+
+/* ── Badge ── */
 .user-badge {
   background: linear-gradient(90deg, #7f1d1d66, #b91c1c66);
   color: #f87171;
@@ -44,48 +83,85 @@
   font-weight: 800;
 }
 
-/* Nav Links */
+/* ── Section labels inside nav ── */
+.user-sidebar-content .sidebar-section-label {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #b91c1c;
+  padding: 0 20px;
+  margin: 18px 0 6px;
+  font-weight: 800;
+  opacity: 0.8;
+}
+
+/* ── Nav Links ── */
+.user-sidebar-content ul {
+  list-style: none;
+  padding: 0 10px;
+  margin: 0;
+}
+
 .user-sidebar-content .nav-item {
   text-decoration: none;
   color: #d1d5db;
-  padding: 14px 20px;
-  margin-bottom: 10px;
+  padding: 12px 18px;
+  margin-bottom: 4px;
   border-radius: 8px;
   display: flex;
   align-items: center;
-  gap: 16px;
-  font-size: 1rem;
+  gap: 14px;
+  font-size: 0.95rem;
   font-weight: 500;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Hover Effect */
 .user-sidebar-content .nav-item:hover {
   background: rgba(185, 28, 28, 0.1);
   color: #fff;
-  transform: translateX(8px);
+  transform: translateX(6px);
 }
 
-/* Active State: Deep Red Gradient */
 .user-sidebar-content .nav-item.active {
   background: linear-gradient(90deg, #991b1b 0%, #4e0707 100%);
   color: #ffffff;
   font-weight: 600;
-  box-shadow: 0 10px 20px rgba(153, 27, 27, 0.4);
+  box-shadow: 0 6px 16px rgba(153, 27, 27, 0.4);
 }
 
 .nav-icon {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   transition: transform 0.3s ease;
+  flex-shrink: 0;
 }
 
 .nav-item:hover .nav-icon {
   transform: scale(1.1);
 }
 
-/* Divider */
+/* ── Divider ── */
 .sidebar-divider {
   height: 1px;
   background: linear-gradient(90deg, rgba(185, 28, 28, 0.3) 0%, transparent 100%);
-  margin: 25px 10px;
+  margin: 10px 15px;
+}
+
+/* ── Notification badge pill ── */
+.sidebar-notif-badge {
+  margin-left: auto;
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 100px;
+  min-width: 20px;
+  text-align: center;
+  box-shadow: 0 0 8px rgba(168, 85, 247, 0.6);
+  animation: badgePulse 2s ease-in-out infinite;
+}
+
+@keyframes badgePulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(168, 85, 247, 0.6); }
+  50%       { box-shadow: 0 0 16px rgba(168, 85, 247, 1); }
 }

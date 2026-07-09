@@ -8,6 +8,7 @@ const Navbar = ({ user, setUser, toggleSidebar, closeSidebar }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [unreadCount, setUnreadCount] = useState(0);
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
 
   const isLibraryPage = location.pathname === '/library';
 
@@ -27,6 +28,17 @@ const Navbar = ({ user, setUser, toggleSidebar, closeSidebar }) => {
     const interval = setInterval(fetchUnreadCount, 60000); // Check every 1 minute
     return () => clearInterval(interval);
   }, [user]);
+
+  const toggleTheme = () => {
+    const nextTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(nextTheme);
+    localStorage.setItem('theme', nextTheme);
+    if (nextTheme === 'light') {
+      document.body.classList.add('light-theme');
+    } else {
+      document.body.classList.remove('light-theme');
+    }
+  };
 
   const handleLogout = () => {
     if (closeSidebar) {
@@ -53,6 +65,13 @@ const Navbar = ({ user, setUser, toggleSidebar, closeSidebar }) => {
       </div>
 
       <ul className="nav-right">
+        {/* THEME TOGGLE */}
+        <li className="nav-item">
+          <button onClick={toggleTheme} className="theme-toggle-btn" title="Toggle Theme">
+            {theme === 'light' ? '🌙' : '☀️'}
+          </button>
+        </li>
+
         {user ? (
           <>
 
