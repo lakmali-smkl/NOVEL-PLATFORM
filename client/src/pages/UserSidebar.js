@@ -1,17 +1,32 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import axios from 'axios';
+import SidebarProfile from './SidebarProfile';
 import './UserSidebar.css';
 
 const UserSidebar = ({ user, closeSidebar }) => {
   const location = useLocation();
+  const [unreadCount, setUnreadCount] = useState(0);
   const isActive = (path) => location.pathname === path ? 'active' : '';
+
+  useEffect(() => {
+    if (!user?._id) return;
+    const fetchCount = async () => {
+      try {
+        const res = await axios.get(`http://localhost:5000/api/notifications/unread/${user._id}`);
+        setUnreadCount(res.data.count || 0);
+      } catch (err) {}
+    };
+    fetchCount();
+    const interval = setInterval(fetchCount, 30000);
+    return () => clearInterval(interval);
+  }, [user]);
 
   return (
     <div className="user-sidebar-content">
-      <div className="sidebar-header">
-        <div className="user-badge">Personal</div>
-        <h3>Explorer</h3>
-        <p>{user?.username || "Reader"}</p>
+      <div className="sidebar-top-header">
+        <div className="user-badge">Reader Portal</div>
+        <SidebarProfile user={user} />
       </div>
 
         <nav className="sidebar-nav">
@@ -34,6 +49,15 @@ const UserSidebar = ({ user, closeSidebar }) => {
                 <li>
                     <Link to="/dashboard/history" className={`nav-item ${isActive('/dashboard/history')}`} onClick={closeSidebar}>
                     <span className="nav-icon">🕒</span> History
+                    </Link>
+                </li>
+
+                <li>
+                    <Link to="/notifications" className={`nav-item ${isActive('/notifications')}`} onClick={closeSidebar}>
+                    <span className="nav-icon">🔔</span> Notifications
+                    {unreadCount > 0 && (
+                      <span className="sidebar-notif-badge">{unreadCount > 9 ? '9+' : unreadCount}</span>
+                    )}
                     </Link>
                 </li>
                 

@@ -602,6 +602,7 @@ app.post('/api/:type/:id/like', async (req, res) => {
           sender: userId,
           type: 'like',
           contentId: item._id,
+          contentType: req.params.type,
           message: `${likerName} liked your ${req.params.type}: "${item.title}"`
         });
         await newNotif.save();
@@ -613,6 +614,100 @@ app.post('/api/:type/:id/like', async (req, res) => {
     await item.save();
     res.json({ likesCount: item.likes.length });
   } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.post('/api/:type/:id/comment', async (req, res) => {
+  const { userId, username, text } = req.body;
+  const Model = req.params.type === 'novel' ? Novel : Article;
+  try {
+    const item = await Model.findById(req.params.id);
+    if (!item) return res.status(404).json({ error: "Content not found" });
+
+    const newComment = {
+      userId,
+      username,
+      text,
+      createdAt: new Date(),
+      replies: []
+    };
+
+    item.comments.push(newComment);
+    await item.save();
+
+    // Trigger Notification: notify the author if another reader leaves a comment
+    if (item.authorId && item.authorId.toString() !== userId) {
+      const newNotif = new Notification({
+        recipient: item.authorId,
+        sender: userId,
+        type: 'comment',
+        contentId: item._id,
+        contentType: req.params.type,
+        message: `${username} commented on your ${req.params.type}: "${item.title}"`
+      });
+      await newNotif.save();
+    }
+
+    res.json(item.comments);
+  } catch (err) {
+    console.error("Comment Error:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/:type/:id/comment/:commentId/reply', async (req, res) => {
+  const { userId, username, text } = req.body;
+  const Model = req.params.type === 'novel' ? Novel : Article;
+  try {
+    const item = await Model.findById(req.params.id);
+    if (!item) return res.status(404).json({ error: "Content not found" });
+
+    const comment = item.comments.id(req.params.commentId);
+    if (!comment) return res.status(404).json({ error: "Comment not found" });
+
+    const newReply = {
+      userId,
+      username,
+      text,
+      createdAt: new Date()
+    };
+
+    if (!comment.replies) {
+      comment.replies = [];
+    }
+    comment.replies.push(newReply);
+    await item.save();
+
+    // Trigger Notification: notify the comment author
+    if (comment.userId && comment.userId.toString() !== userId) {
+      const newNotif = new Notification({
+        recipient: comment.userId,
+        sender: userId,
+        type: 'comment',
+        contentId: item._id,
+        contentType: req.params.type,
+        message: `${username} replied to your comment on "${item.title}"`
+      });
+      await newNotif.save();
+    }
+
+    // Trigger Notification: notify the novel/article author (if they are a different person)
+    if (item.authorId && item.authorId.toString() !== userId && item.authorId.toString() !== comment.userId?.toString()) {
+      const newNotif = new Notification({
+        recipient: item.authorId,
+        sender: userId,
+        type: 'comment',
+        contentId: item._id,
+        contentType: req.params.type,
+        message: `${username} replied to a comment on your ${req.params.type}: "${item.title}"`
+      });
+      await newNotif.save();
+    }
+
+    res.json(item.comments);
+  } catch (err) {
+    console.error("Reply Error:", err);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 app.get('/api/notifications/:userId', async (req, res) => {

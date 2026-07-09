@@ -220,18 +220,211 @@
   clear: both;
 }
 
-.comment-bubble {
-  background: #252525;
-  padding: 15px;
-  border-radius: 12px;
-  margin-bottom: 15px;
-  border-left: 4px solid #770307;
+/* ==========================================================================
+   💬 NESTED COMMENTS AND REPLIES STYLING (Facebook & YouTube inspired)
+   ========================================================================== */
+.comment-card {
+  background: #1e1e1e;
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
 }
 
-.comment-bubble strong {
-  color: #770307;
-  display: block;
-  margin-bottom: 5px;
+.comment-main {
+  display: flex;
+  gap: 12px;
+}
+
+.comment-avatar, .reply-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #770307, #b30006);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.reply-avatar {
+  width: 30px;
+  height: 30px;
+  font-size: 0.8rem;
+}
+
+.comment-details, .reply-details {
+  flex: 1;
+}
+
+.comment-header, .reply-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.comment-username, .reply-username {
+  font-weight: 700;
+  color: #f1f5f9;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.reply-username {
+  font-size: 0.9rem;
+}
+
+.author-badge {
+  background: #770307;
+  color: white;
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.comment-time, .reply-time {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.comment-text, .reply-text {
+  color: #cbd5e1;
+  font-size: 0.925rem;
+  line-height: 1.5;
+  margin: 0 0 10px 0;
+  word-break: break-word;
+}
+
+.reply-text {
+  font-size: 0.875rem;
+}
+
+.comment-actions {
+  display: flex;
+  gap: 16px;
+}
+
+.comment-action-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.comment-action-btn:hover {
+  color: #ff4d4d;
+  background: rgba(255, 77, 77, 0.08);
+}
+
+/* Reply box nested under comment */
+.reply-input-box {
+  margin-top: 12px;
+  background: #252525;
+  border: 1px solid #3a3a3a;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.reply-input-box textarea {
+  width: 100%;
+  height: 70px !important;
+  background: #1a1a1a !important;
+  border: 1px solid #444 !important;
+  border-radius: 6px !important;
+  color: white !important;
+  padding: 10px !important;
+  box-sizing: border-box !important;
+  resize: none !important;
+  margin-bottom: 8px !important;
+  font-family: inherit !important;
+  font-size: 0.875rem !important;
+}
+
+.reply-input-box textarea:focus {
+  border-color: #770307 !important;
+  outline: none !important;
+}
+
+.reply-box-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.reply-cancel-btn {
+  background: transparent;
+  border: 1px solid #444;
+  color: #94a3b8;
+  padding: 6px 14px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2;
+}
+
+.reply-cancel-btn:hover {
+  background: #2f2f2f;
+  color: white;
+}
+
+.reply-submit-btn {
+  background: #770307;
+  color: white;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.reply-submit-btn:hover {
+  background: #9c0c11;
+}
+
+/* Nesting indentation container */
+.replies-container {
+  margin-left: 50px;
+  margin-top: 14px;
+  border-left: 2px solid #2a2a2a;
+  padding-left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.reply-card {
+  display: flex;
+  gap: 10px;
+  background: #181818;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #222;
 }
 
 .read-card h1 {

@@ -27,10 +27,16 @@ const articleSchema = new mongoose.Schema({
   
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     comments: [{
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    username: String,
-    text: String,
-    createdAt: { type: Date, default: Date.now }
+        userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+        username: String,
+        text: String,
+        createdAt: { type: Date, default: Date.now },
+        replies: [{
+            userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+            username: String,
+            text: String,
+            createdAt: { type: Date, default: Date.now }
+        }]
     }]
 },{ timestamps: true });
 

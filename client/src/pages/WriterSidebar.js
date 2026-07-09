@@ -1,22 +1,41 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import axios from 'axios';
+import SidebarProfile from './SidebarProfile';
 import './WriterSidebar.css';
 
 const WriterSidebar = ({ user, closeSidebar }) => {
   const location = useLocation();
-  
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  // Fetch unread count on mount — must be before any early return
+  useEffect(() => {
+    if (!user?._id) return;
+    const fetchCount = async () => {
+      try {
+        const res = await axios.get(`http://localhost:5000/api/notifications/unread/${user._id}`);
+        setUnreadCount(res.data.count || 0);
+      } catch (err) {
+        // silently fail
+      }
+    };
+    fetchCount();
+    const interval = setInterval(fetchCount, 30000);
+    return () => clearInterval(interval);
+  }, [user]);
+
   if (!user || !user.isWriter) return null;
 
   const isActive = (path) => location.pathname === path ? 'active' : '';
 
+
   return (
     <div className="writer-sidebar-content">
-      <div className="sidebar-header" style={{ marginBottom: '20px' }}>
+      <div className="sidebar-top-header">
         <div className="user-badge" style={{ background: 'linear-gradient(135deg, #770307 0%, #2a0103 100%)' }}>
           Writer Portal
         </div>
-        <h3>Workspace</h3>
-        <p>{user.username}</p>
+        <SidebarProfile user={user} />
       </div>
 
       <nav className="sidebar-nav">
@@ -43,6 +62,18 @@ const WriterSidebar = ({ user, closeSidebar }) => {
           <li>
             <Link to="/writer-dashboard/favorites" className={`nav-item ${isActive('/writer-dashboard/favorites')}`} onClick={closeSidebar}>
               <span className="nav-icon">❤️</span> My Favorites
+            </Link>
+          </li>
+
+          <div className="sidebar-divider"></div>
+          
+          <div className="sidebar-header"><h3>Community</h3></div>
+          <li>
+            <Link to="/notifications" className={`nav-item ${isActive('/notifications')}`} onClick={closeSidebar}>
+              <span className="nav-icon">🔔</span> Notifications
+              {unreadCount > 0 && (
+                <span className="sidebar-notif-badge">{unreadCount > 9 ? '9+' : unreadCount}</span>
+              )}
             </Link>
           </li>
 

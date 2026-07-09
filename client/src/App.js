@@ -29,6 +29,7 @@ import Notifications from './pages/Notifications';
 import CollectionDetail from './pages/CollectionDetail';
 
 import './App.css';
+import './theme.css';
 
 function App() {
   const [user, setUser] = useState(() => {
@@ -38,6 +39,17 @@ function App() {
   });
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  // Initialize theme on mount
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    if (savedTheme === 'light') {
+      document.body.classList.add('light-theme');
+    } else {
+      document.body.classList.remove('light-theme');
+    }
+  }, []);
+
 
   const location = useLocation(); // 💡 Track current route changes
   const navigate = useNavigate(); // 💡 To programmatically kick out suspended users

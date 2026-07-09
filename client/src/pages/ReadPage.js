@@ -186,6 +186,40 @@ const ReadPage = () => {
         setCommentText("");
     };
 
+    const [activeReplyCommentId, setActiveReplyCommentId] = useState(null);
+    const [replyText, setReplyText] = useState("");
+    const [visibleReplies, setVisibleReplies] = useState({});
+
+    const handlePostReply = async (commentId) => {
+        if (!user) return alert("Please login to reply!");
+        if (!replyText.trim()) return;
+
+        try {
+            const res = await fetch(`http://localhost:5000/api/${type}/${id}/comment/${commentId}/reply`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: userId, username: user.username, text: replyText })
+            });
+            if (res.ok) {
+                const updatedComments = await res.json();
+                setComments(updatedComments);
+                setReplyText("");
+                setActiveReplyCommentId(null);
+                // Auto-expand replies for this comment
+                setVisibleReplies(prev => ({ ...prev, [commentId]: true }));
+            } else {
+                alert("Failed to submit reply");
+            }
+        } catch (err) {
+            console.error("Error submitting reply:", err);
+            alert("Connection error");
+        }
+    };
+
+    const toggleReplies = (commentId) => {
+        setVisibleReplies(prev => ({ ...prev, [commentId]: !prev[commentId] }));
+    };
+
     if (!data) return <div className="loading">Loading...</div>;
 
     return (
@@ -268,11 +302,117 @@ const ReadPage = () => {
                     <button onClick={handlePostComment} className="post-comment-btn">Post Comment</button>
                     
                     <div className="comment-list">
-                        {comments.map((c, index) => (
-                            <div key={index} className="comment-bubble">
-                                <p><strong>{c.username}:</strong> {c.text}</p>
-                            </div>
-                        ))}
+                        {comments.map((c, index) => {
+                            const commentId = c._id || index;
+                            const isCommentAuthor = data.authorId && c.userId && (data.authorId.toString() === c.userId.toString());
+                            const hasReplies = c.replies && c.replies.length > 0;
+                            const showReplies = !!visibleReplies[commentId];
+
+                            return (
+                                <div key={commentId} className="comment-card">
+                                    <div className="comment-main">
+                                        <div className="comment-avatar">
+                                            {c.username ? c.username.charAt(0).toUpperCase() : '?'}
+                                        </div>
+                                        <div className="comment-details">
+                                            <div className="comment-header">
+                                                <span className="comment-username">
+                                                    {c.username}
+                                                    {isCommentAuthor && <span className="author-badge">Author</span>}
+                                                </span>
+                                                <span className="comment-time">
+                                                    {c.createdAt ? (
+                                                        <>
+                                                            {new Date(c.createdAt).toLocaleDateString()} at {new Date(c.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                        </>
+                                                    ) : 'Just now'}
+                                                </span>
+                                            </div>
+                                            <p className="comment-text">{c.text}</p>
+                                            
+                                            <div className="comment-actions">
+                                                <button 
+                                                    onClick={() => {
+                                                        if (activeReplyCommentId === commentId) {
+                                                            setActiveReplyCommentId(null);
+                                                        } else {
+                                                            setActiveReplyCommentId(commentId);
+                                                            setReplyText("");
+                                                        }
+                                                    }}
+                                                    className="comment-action-btn reply-btn-trigger"
+                                                >
+                                                    ↩ Reply
+                                                </button>
+
+                                                {hasReplies && (
+                                                    <button 
+                                                        onClick={() => toggleReplies(commentId)}
+                                                        className="comment-action-btn toggle-replies-btn"
+                                                    >
+                                                        {showReplies ? `Hide Replies` : `View Replies (${c.replies.length})`}
+                                                    </button>
+                                                )}
+                                            </div>
+
+                                            {/* Reply Input Box */}
+                                            {activeReplyCommentId === commentId && (
+                                                <div className="reply-input-box">
+                                                    <textarea 
+                                                        value={replyText} 
+                                                        onChange={(e) => setReplyText(e.target.value)}
+                                                        placeholder={`Reply to ${c.username}...`}
+                                                    />
+                                                    <div className="reply-box-actions">
+                                                        <button 
+                                                            onClick={() => setActiveReplyCommentId(null)}
+                                                            className="reply-cancel-btn"
+                                                        >
+                                                            Cancel
+                                                        </button>
+                                                        <button 
+                                                            onClick={() => handlePostReply(c._id)}
+                                                            className="reply-submit-btn"
+                                                        >
+                                                            Reply
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* Nested Replies */}
+                                    {hasReplies && showReplies && (
+                                        <div className="replies-container">
+                                            {c.replies.map((reply, rIndex) => {
+                                                const replyId = reply._id || rIndex;
+                                                const isReplyAuthor = data.authorId && reply.userId && (data.authorId.toString() === reply.userId.toString());
+                                                return (
+                                                    <div key={replyId} className="reply-card">
+                                                        <div className="reply-avatar">
+                                                            {reply.username ? reply.username.charAt(0).toUpperCase() : '?'}
+                                                        </div>
+                                                        <div className="reply-details">
+                                                            <div className="reply-header">
+                                                                <span className="reply-username">
+                                                                    {reply.username}
+                                                                    {isReplyAuthor && <span className="author-badge">Author</span>}
+                                                                </span>
+                                                                <span className="reply-time">
+                                                                    {reply.createdAt ? new Date(reply.createdAt).toLocaleDateString() : 'Just now'}
+                                                                </span>
+                                                            </div>
+                                                            <p className="reply-text">{reply.text}</p>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        })}
                     </div>
                 </div>
             </div>

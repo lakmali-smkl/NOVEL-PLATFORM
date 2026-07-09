@@ -9,6 +9,41 @@ const AddArticle = ({ user }) => {
         status: 'published' // Default to published
     });
     const [coverPhoto, setCoverPhoto] = useState(null);
+    const [textFile, setTextFile] = useState(null);
+    const [loadingFile, setLoadingFile] = useState(false);
+
+    const loadPdfJs = () => {
+        return new Promise((resolve, reject) => {
+            if (window.pdfjsLib) {
+                resolve(window.pdfjsLib);
+                return;
+            }
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js';
+            script.onload = () => {
+                window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+                resolve(window.pdfjsLib);
+            };
+            script.onerror = (err) => reject(new Error('Failed to load PDF.js: ' + err.message));
+            document.head.appendChild(script);
+        });
+    };
+
+    const extractTextFromPdf = async (file) => {
+        const pdfjsLib = await loadPdfJs();
+        const arrayBuffer = await file.arrayBuffer();
+        const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+        const pdf = await loadingTask.promise;
+        let fullText = '';
+        
+        for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const textContent = await page.getTextContent();
+            const pageText = textContent.items.map(item => item.str).join(' ');
+            fullText += pageText + '\n\n';
+        }
+        return fullText;
+    };
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -16,6 +51,37 @@ const AddArticle = ({ user }) => {
 
     const handleFileChange = (e) => {
         setCoverPhoto(e.target.files[0]);
+    };
+
+    const handleContentFileChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        setTextFile(file);
+        setLoadingFile(true);
+        try {
+            let text = '';
+            if (file.name.endsWith('.pdf')) {
+                text = await extractTextFromPdf(file);
+            } else if (file.name.endsWith('.txt')) {
+                const reader = new FileReader();
+                text = await new Promise((resolve, reject) => {
+                    reader.onload = (event) => resolve(event.target.result);
+                    reader.onerror = (error) => reject(error);
+                    reader.readAsText(file);
+                });
+            } else {
+                alert('Unsupported file type. Please select a .txt or .pdf file.');
+                setLoadingFile(false);
+                return;
+            }
+            setFormData(prev => ({ ...prev, content: text }));
+        } catch (error) {
+            console.error('Error reading file:', error);
+            alert('Failed to extract content from the selected file.');
+        } finally {
+            setLoadingFile(false);
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -36,6 +102,9 @@ const AddArticle = ({ user }) => {
         if (coverPhoto) {
             data.append('coverPhoto', coverPhoto);
         }
+        if (textFile) {
+            data.append('textFile', textFile);
+        }
 
         try {
             const response = await fetch('http://localhost:5000/api/articles', {
@@ -47,6 +116,7 @@ const AddArticle = ({ user }) => {
                 alert("Article published successfully!");
                 setFormData({ title: '', content: '', authorName: '', status: 'published' });
                 setCoverPhoto(null); // Clear the image too
+                setTextFile(null); // Clear the text file too
                 e.target.reset();
             } else {
                 alert("Error saving article");
@@ -87,15 +157,23 @@ const AddArticle = ({ user }) => {
                 </div>
 
                 <div className="form-group">
-                    <label>Content</label>
+                    <label>Content (Paste below or upload .txt/.pdf file)</label>
                     <textarea
                         className="writer-textarea"
                         name="content"
                         value={formData.content}
-                        placeholder="Start writing your thoughts..."
+                        placeholder={loadingFile ? "Extracting text from file..." : "Start writing your thoughts..."}
                         onChange={handleChange}
+                        disabled={loadingFile}
                         required
                     />
+                    <input 
+                        type="file" 
+                        accept=".txt,.pdf" 
+                        onChange={handleContentFileChange} 
+                        disabled={loadingFile}
+                    />
+                    {loadingFile && <span className="loading-file-indicator" style={{ color: '#f87171', fontSize: '0.85rem', marginTop: '4px', display: 'block' }}>Parsing file, please wait...</span>}
                 </div>
 
                 <div className="form-group">
