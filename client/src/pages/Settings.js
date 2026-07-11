@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTheme, THEMES } from '../ThemeContext';
 import './Settings.css';
 
 const Settings = ({ setUser: setAppUser }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
+  const { theme, setTheme } = useTheme();
   
   // Form fields
   const [username, setUsername] = useState('');
@@ -124,6 +126,40 @@ const Settings = ({ setUser: setAppUser }) => {
       <div className="settings-header">
         <h1>Account Settings</h1>
         <p>Update your personal information, profile picture and security credentials.</p>
+      </div>
+
+      {/* ── THEME PICKER SECTION ── */}
+      <div className="settings-card theme-picker-card">
+        <h2 className="theme-picker-title">🎨 Theme & Appearance</h2>
+        <p className="theme-picker-subtitle">Choose your preferred look. Changes apply instantly.</p>
+        
+        <div className="theme-grid">
+          {THEMES.map((t) => (
+            <button
+              key={t.id}
+              className={`theme-preview-card ${theme === t.id ? 'active' : ''}`}
+              onClick={() => setTheme(t.id)}
+              title={t.name}
+            >
+              {/* Mini preview of the theme */}
+              <div className="theme-preview-visual">
+                <div className="tp-navbar" style={{ background: t.navbar }} />
+                <div className="tp-body" style={{ background: t.bg }}>
+                  <div className="tp-card" style={{ background: t.card, borderColor: t.id === 'snow' ? '#e5e7eb' : 'transparent' }}>
+                    <div className="tp-line" style={{ background: t.text, opacity: 0.6 }} />
+                    <div className="tp-line short" style={{ background: t.text, opacity: 0.3 }} />
+                  </div>
+                  <div className="tp-accent-dot" style={{ background: t.accent }} />
+                </div>
+              </div>
+              <div className="theme-preview-label">
+                <span className="theme-emoji">{t.emoji}</span>
+                <span className="theme-name">{t.name}</span>
+              </div>
+              {theme === t.id && <div className="theme-check">✓</div>}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="settings-card">

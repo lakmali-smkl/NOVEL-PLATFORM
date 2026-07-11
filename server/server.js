@@ -12,6 +12,7 @@ const Article = require('./models/Article');
 const WriterRequest = require('./models/WriterRequest');
 const Notification = require('./models/Notification'); 
 const Announcement = require('./models/Announcement');
+const Message = require('./models/Message');
 const adminRoutes = require('./routes/admin');
 const Collection = require('./models/Collection');
 const bcrypt = require('bcryptjs');
@@ -490,9 +491,9 @@ app.get('/api/users/:email', async (req, res) => {
 
 app.get('/api/users/status/:id', async (req, res) => {
   try {
-    const user = await User.findById(req.params.id).select('isWriter writerRequestStatus');
+    const user = await User.findById(req.params.id).select('isWriter writerRequestStatus username');
     if (!user) return res.status(404).json({ error: "User not found" });
-    res.json({ isWriter: user.isWriter, writerRequestStatus: user.writerRequestStatus });
+    res.json({ isWriter: user.isWriter, writerRequestStatus: user.writerRequestStatus, username: user.username });
   } catch (error) {
     res.status(500).json({ error: "Server error fetching user status" });
   }
@@ -706,6 +707,65 @@ app.post('/api/:type/:id/comment/:commentId/reply', async (req, res) => {
     res.json(item.comments);
   } catch (err) {
     console.error("Reply Error:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Delete a comment (either work author or comment author can delete)
+app.delete('/api/:type/:id/comment/:commentId', async (req, res) => {
+  const { type, id, commentId } = req.params;
+  const { userId } = req.body;
+  const Model = type === 'novel' ? Novel : Article;
+  try {
+    const item = await Model.findById(id);
+    if (!item) return res.status(404).json({ error: "Content not found" });
+
+    const comment = item.comments.id(commentId);
+    if (!comment) return res.status(404).json({ error: "Comment not found" });
+
+    const isCommentAuthor = comment.userId && comment.userId.toString() === userId;
+    const isWorkAuthor = item.authorId && item.authorId.toString() === userId;
+
+    if (!isCommentAuthor && !isWorkAuthor) {
+      return res.status(403).json({ error: "Unauthorized to delete this comment" });
+    }
+
+    item.comments.pull(commentId);
+    await item.save();
+    res.json(item.comments);
+  } catch (err) {
+    console.error("Delete comment error:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Delete a reply (either work author or reply author can delete)
+app.delete('/api/:type/:id/comment/:commentId/reply/:replyId', async (req, res) => {
+  const { type, id, commentId, replyId } = req.params;
+  const { userId } = req.body;
+  const Model = type === 'novel' ? Novel : Article;
+  try {
+    const item = await Model.findById(id);
+    if (!item) return res.status(404).json({ error: "Content not found" });
+
+    const comment = item.comments.id(commentId);
+    if (!comment) return res.status(404).json({ error: "Comment not found" });
+
+    const reply = comment.replies.id(replyId);
+    if (!reply) return res.status(404).json({ error: "Reply not found" });
+
+    const isReplyAuthor = reply.userId && reply.userId.toString() === userId;
+    const isWorkAuthor = item.authorId && item.authorId.toString() === userId;
+
+    if (!isReplyAuthor && !isWorkAuthor) {
+      return res.status(403).json({ error: "Unauthorized to delete this reply" });
+    }
+
+    comment.replies.pull(replyId);
+    await item.save();
+    res.json(item.comments);
+  } catch (err) {
+    console.error("Delete reply error:", err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -1102,6 +1162,174 @@ app.get('/api/recommendations/:userId', async (req, res) => {
     res.status(500).json({ error: "Failed to generate recommendations" });
   }
 });
+
+// ==========================================
+// 💬 DIRECT MESSAGES & CHAT API
+// ==========================================
+
+// Lookup user details by username
+app.get('/api/users/by-username/:username', async (req, res) => {
+  try {
+    const user = await User.findOne({ 
+      username: { $regex: new RegExp(`^${req.params.username}$`, 'i') } 
+    }).select('_id username profilePicture');
+    
+    if (!user) return res.status(404).json({ error: "User not found" });
+    res.json({ user });
+  } catch (error) {
+    console.error("User lookup error:", error);
+    res.status(500).json({ error: "Server error looking up user" });
+  }
+});
+
+// Search users to start a new conversation
+app.get('/api/users/search', async (req, res) => {
+  try {
+    const { q, excludeId } = req.query;
+    if (!q) return res.json({ users: [] });
+
+    const query = {
+      username: { $regex: q, $options: 'i' }
+    };
+    if (excludeId && mongoose.Types.ObjectId.isValid(excludeId)) {
+      query._id = { $ne: excludeId };
+    }
+
+    const users = await User.find(query)
+      .select('_id username profilePicture')
+      .limit(10);
+      
+    res.json({ users });
+  } catch (error) {
+    console.error("User search error:", error);
+    res.status(500).json({ error: "Server error searching users" });
+  }
+});
+
+// Fetch conversation list for a user
+app.get('/api/messages/conversations/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ error: "Invalid user ID" });
+    }
+
+    const messages = await Message.find({
+      $or: [{ sender: userId }, { receiver: userId }]
+    }).sort({ createdAt: -1 });
+
+    const convMap = {};
+    for (const msg of messages) {
+      const otherUserId = msg.sender.toString() === userId ? msg.receiver.toString() : msg.sender.toString();
+      if (!convMap[otherUserId]) {
+        convMap[otherUserId] = {
+          lastMessage: msg.text,
+          lastMessageAt: msg.createdAt,
+          unreadCount: 0
+        };
+      }
+      if (msg.receiver.toString() === userId && !msg.read) {
+        convMap[otherUserId].unreadCount += 1;
+      }
+    }
+
+    const otherUserIds = Object.keys(convMap);
+    const users = await User.find({ _id: { $in: otherUserIds } }).select('username profilePicture');
+    
+    const userMap = {};
+    users.forEach(u => {
+      userMap[u._id.toString()] = u;
+    });
+
+    const conversations = otherUserIds.map(id => {
+      const u = userMap[id];
+      return {
+        userId: id,
+        username: u ? u.username : 'Unknown User',
+        profilePicture: u ? u.profilePicture : '',
+        lastMessage: convMap[id].lastMessage,
+        lastMessageAt: convMap[id].lastMessageAt,
+        unreadCount: convMap[id].unreadCount
+      };
+    }).sort((a, b) => new Date(b.lastMessageAt) - new Date(a.lastMessageAt));
+
+    res.json({ conversations });
+  } catch (error) {
+    console.error("Conversations error:", error);
+    res.status(500).json({ error: "Server error fetching conversations" });
+  }
+});
+
+// Get messages between two users
+app.get('/api/messages/:userId/:otherUserId', async (req, res) => {
+  try {
+    const { userId, otherUserId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(otherUserId)) {
+      return res.status(400).json({ error: "Invalid user IDs" });
+    }
+
+    const messages = await Message.find({
+      $or: [
+        { sender: userId, receiver: otherUserId },
+        { sender: otherUserId, receiver: userId }
+      ]
+    }).sort({ createdAt: 1 });
+
+    res.json({ messages });
+  } catch (error) {
+    console.error("Get messages error:", error);
+    res.status(500).json({ error: "Server error fetching messages" });
+  }
+});
+
+// Send message
+app.post('/api/messages', async (req, res) => {
+  try {
+    const { senderId, receiverId, text } = req.body;
+    if (!senderId || !receiverId || !text) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    const newMsg = new Message({
+      sender: senderId,
+      receiver: receiverId,
+      text: text.trim()
+    });
+
+    await newMsg.save();
+    res.status(201).json({ message: "Message sent!", data: newMsg });
+  } catch (error) {
+    console.error("Send message error:", error);
+    res.status(500).json({ error: "Server error sending message" });
+  }
+});
+
+// Mark messages as read
+app.put('/api/messages/read/:senderId/:receiverId', async (req, res) => {
+  try {
+    const { senderId, receiverId } = req.params;
+    await Message.updateMany(
+      { sender: senderId, receiver: receiverId, read: false },
+      { $set: { read: true } }
+    );
+    res.json({ success: true });
+  } catch (error) {
+    console.error("Read messages error:", error);
+    res.status(500).json({ error: "Server error marking messages as read" });
+  }
+});
+
+// Get total unread count for a user (across all conversations)
+app.get('/api/messages/unread-count/:userId', async (req, res) => {
+  try {
+    const count = await Message.countDocuments({ receiver: req.params.userId, read: false });
+    res.json({ count });
+  } catch (error) {
+    console.error("Unread messages count error:", error);
+    res.status(500).json({ error: "Server error fetching unread count" });
+  }
+});
+
 
 // ==========================================
 // SERVER SPIN UP

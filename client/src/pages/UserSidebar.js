@@ -7,6 +7,7 @@ import './UserSidebar.css';
 const UserSidebar = ({ user, closeSidebar }) => {
   const location = useLocation();
   const [unreadCount, setUnreadCount] = useState(0);
+  const [unreadMsgCount, setUnreadMsgCount] = useState(0);
   const isActive = (path) => location.pathname === path ? 'active' : '';
 
   useEffect(() => {
@@ -15,6 +16,9 @@ const UserSidebar = ({ user, closeSidebar }) => {
       try {
         const res = await axios.get(`http://localhost:5000/api/notifications/unread/${user._id}`);
         setUnreadCount(res.data.count || 0);
+
+        const msgRes = await axios.get(`http://localhost:5000/api/messages/unread-count/${user._id}`);
+        setUnreadMsgCount(msgRes.data.count || 0);
       } catch (err) {}
     };
     fetchCount();
@@ -34,6 +38,14 @@ const UserSidebar = ({ user, closeSidebar }) => {
                 <li>
                     <Link to="/dashboard/profile" className={`nav-item ${isActive('/dashboard/profile')}`} onClick={closeSidebar}>
                     <span className="nav-icon">👤</span> Profile
+                    </Link>
+                </li>
+                <li>
+                    <Link to="/chat" className={`nav-item ${isActive('/chat')}`} onClick={closeSidebar}>
+                    <span className="nav-icon">💬</span> Messages
+                    {unreadMsgCount > 0 && (
+                      <span className="sidebar-notif-badge" style={{ backgroundColor: 'var(--accent, #3b82f6)' }}>{unreadMsgCount > 9 ? '9+' : unreadMsgCount}</span>
+                    )}
                     </Link>
                 </li>
                 <li>

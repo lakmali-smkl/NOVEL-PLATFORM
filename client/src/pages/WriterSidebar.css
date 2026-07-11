@@ -8,44 +8,23 @@
 
 .writer-sidebar-content {
   width: 100%;
-  flex: 1;                  /* Fill the parent .sidebar flex container */
   background: #0d1117;
   border-right: 1px solid rgba(255, 255, 255, 0.05);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;         /* Clip here — only <nav> scrolls */
   z-index: 1000;
+  padding-bottom: 100px;
 }
 
 /* ── Sticky header at top ── */
 .writer-sidebar-content .sidebar-top-header {
-  flex-shrink: 0;           /* Never compress, always visible */
   padding: 70px 25px 20px;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 /* ── Scrollable nav region ── */
 .writer-sidebar-content .sidebar-nav {
-  flex: 1;
-  min-height: 0;            /* Critical: lets flex child shrink below content size */
-  overflow-y: auto;
+  overflow-y: visible;
   overflow-x: hidden;
-  padding: 10px 0 40px;
-}
-
-/* Custom scrollbar */
-.writer-sidebar-content .sidebar-nav::-webkit-scrollbar {
-  width: 4px;
-}
-.writer-sidebar-content .sidebar-nav::-webkit-scrollbar-track {
-  background: transparent;
-}
-.writer-sidebar-content .sidebar-nav::-webkit-scrollbar-thumb {
-  background: rgba(255,51,51,0.3);
-  border-radius: 4px;
-}
-.writer-sidebar-content .sidebar-nav::-webkit-scrollbar-thumb:hover {
-  background: rgba(255,51,51,0.6);
+  padding: 10px 0 20px;
 }
 
 /* ── Section Headers ── */
@@ -151,6 +130,13 @@
 }
 
 @keyframes badgePulse {
-  0%, 100% { box-shadow: 0 0 8px rgba(168, 85, 247, 0.6); }
-  50%       { box-shadow: 0 0 16px rgba(168, 85, 247, 1); }
+
+  0%,
+  100% {
+    box-shadow: 0 0 8px rgba(168, 85, 247, 0.6);
+  }
+
+  50% {
+    box-shadow: 0 0 16px rgba(168, 85, 247, 1);
+  }
 }

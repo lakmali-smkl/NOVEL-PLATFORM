@@ -1,91 +1,196 @@
 /* Favorites.css */
 
 .fav-content {
-  padding: 40px;
-  background-color: #121212; /* Dark background */
+  padding: 80px 40px;
+  background-color: var(--dark-bg, #080a0f);
   min-height: 100vh;
-  color: white;
+  color: var(--text-main, #e2e8f0);
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  box-sizing: border-box;
+}
+
+.fav-header-section {
+  margin-bottom: 40px;
 }
 
 .fav-content h2 {
-  font-size: 2rem;
-  margin-bottom: 30px;
-  border-left: 5px solid #770307;
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin: 0 0 8px 0;
+  border-left: 5px solid var(--accent, #770307);
   padding-left: 15px;
 }
 
-/* The Grid */
+.fav-subtitle {
+  color: var(--text-muted, #94a3b8);
+  font-size: 1.05rem;
+  margin: 0;
+}
+
+/* ── Tab Switcher ── */
+.fav-tabs-container {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 30px;
+  border-bottom: 1px solid var(--border-color, #1e2330);
+  padding-bottom: 14px;
+}
+
+.fav-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--hover-bg, rgba(255, 255, 255, 0.03));
+  border: 1px solid var(--border-color, #1e2330);
+  color: var(--text-main, #e2e8f0);
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fav-tab:hover {
+  background: var(--hover-bg, rgba(255, 255, 255, 0.08));
+  border-color: var(--text-muted, #64748b);
+  transform: translateY(-1px);
+}
+
+.fav-tab.active {
+  background: var(--accent, #3b82f6);
+  color: #ffffff;
+  border-color: var(--accent, #3b82f6);
+  box-shadow: 0 4px 15px var(--accent-glow, rgba(59, 130, 246, 0.3));
+}
+
+.tab-count {
+  font-size: 0.75rem;
+  background: rgba(0, 0, 0, 0.2);
+  color: inherit;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 700;
+}
+
+/* ── The Grid ── */
 .fav-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 25px;
 }
 
-/* The Card */
+/* ── The Card ── */
 .fav-card {
-  background: #1a1a1a;
-  border-radius: 12px;
+  background: var(--card-bg, #111318);
+  border-radius: 16px;
   padding: 25px;
-  border: 1px solid #333;
-  transition: all 0.3s ease;
+  border: 1px solid var(--border-color, #1e2330);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  min-height: 180px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
 
 .fav-card:hover {
-  border-color: #770307;
+  border-color: var(--accent, #770307);
   transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 16px 35px rgba(0, 0, 0, 0.3);
+}
+
+.fav-card-type-tag {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--accent, #3b82f6);
+  margin-bottom: 12px;
+  letter-spacing: 0.05em;
 }
 
 .fav-card h3 {
-  margin: 0 0 20px 0;
-  font-size: 1.3rem;
-  color: #fff;
+  margin: 0 0 24px 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-main, #ffffff);
+  line-height: 1.4;
 }
 
 /* Button Container */
 .fav-actions {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   margin-top: auto;
 }
 
 /* Buttons */
-.fav-actions a, .fav-actions button {
+.fav-actions a, 
+.fav-actions button {
   flex: 1;
   text-align: center;
-  padding: 10px;
-  border-radius: 6px;
-  font-weight: 600;
+  padding: 11px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.9rem;
   text-decoration: none;
   border: none;
   cursor: pointer;
-  transition: 0.3s;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
 }
 
 .read-btn {
-  background-color: #770307;
-  color: white;
+  background-color: var(--accent, #770307);
+  color: white !important;
 }
 
-.read-btn:hover { background-color: #a0050a; }
+.read-btn:hover { 
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px var(--accent-glow, rgba(119, 3, 7, 0.3));
+}
 
 .delete-btn {
   background-color: transparent;
-  color: #ddd7d7ae;
-  border: 1px solid #770307;
-  padding: 8px 15px;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-left: 10px;
+  color: var(--text-muted, #a3a3a3) !important;
+  border: 1px solid var(--border-color, #30363d) !important;
 }
 
 .delete-btn:hover {
-  background-color: #770307;
-  color: white;
-  box-shadow: 0 0 10px rgba(119, 3, 7, 0.4);
+  background-color: rgba(239, 68, 68, 0.1);
+  border-color: #ef4444 !important;
+  color: #f87171 !important;
 }
+
+/* ── Empty State ── */
+.fav-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  grid-column: 1 / -1;
+  color: var(--text-muted, #64748b);
+  text-align: center;
+  background: var(--card-bg, rgba(255, 255, 255, 0.02));
+  border: 1px dashed var(--border-color, #1e2330);
+  border-radius: 16px;
+}
+
+.fav-empty-state .empty-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.fav-empty-state p {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+}

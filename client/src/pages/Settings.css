@@ -7,8 +7,8 @@
   margin: 0 auto;
   padding: 80px 32px;
   min-height: 100vh;
-  background: #080a0f;
-  color: #e2e8f0;
+  background: var(--dark-bg, #080a0f);
+  color: var(--text-main, #e2e8f0);
   font-family: 'Inter', sans-serif;
   animation: settingsFadeIn 0.5s ease both;
 }
@@ -35,18 +35,19 @@
 }
 
 .settings-header p {
-  color: #94a3b8;
+  color: var(--text-muted, #94a3b8);
   font-size: 1.05rem;
   margin: 0;
 }
 
 /* ── Card & Alerts ── */
 .settings-card {
-  background: #111318;
-  border: 1px solid #1e2330;
+  background: var(--card-bg, #111318);
+  border: 1px solid var(--border-color, #1e2330);
   border-radius: 20px;
   padding: 40px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  margin-bottom: 24px;
 }
 
 .settings-alert {
@@ -90,18 +91,18 @@
   left: 0;
   right: 0;
   height: 1px;
-  background: #1e2330;
+  background: var(--border-color, #1e2330);
 }
 
 .form-section h3 {
-  color: #f1f5f9;
+  color: var(--text-main, #f1f5f9);
   font-size: 1.25rem;
   font-weight: 700;
   margin: 0 0 8px 0;
 }
 
 .section-hint {
-  color: #64748b;
+  color: var(--text-muted, #64748b);
   font-size: 0.85rem;
   margin: 0 0 24px 0;
 }
@@ -112,7 +113,7 @@
 
 .form-group label {
   display: block;
-  color: #94a3b8;
+  color: var(--text-muted, #94a3b8);
   font-size: 0.9rem;
   font-weight: 600;
   margin-bottom: 8px;
@@ -120,9 +121,9 @@
 
 .form-group input {
   width: 100%;
-  background: #080a0f;
-  border: 1px solid #1e2330;
-  color: #f1f5f9;
+  background: var(--input-bg, #080a0f);
+  border: 1px solid var(--border-color, #1e2330);
+  color: var(--text-main, #f1f5f9);
   padding: 14px 16px;
   border-radius: 10px;
   font-size: 1rem;
@@ -133,8 +134,8 @@
 
 .form-group input:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+  border-color: var(--accent, #3b82f6);
+  box-shadow: 0 0 0 3px var(--accent-glow, rgba(59,130,246,0.15));
 }
 
 .form-grid {
@@ -151,7 +152,7 @@
 }
 
 .save-btn {
-  background: #3b82f6;
+  background: var(--accent, #3b82f6);
   color: #fff;
   border: none;
   padding: 14px 32px;
@@ -164,9 +165,8 @@
 }
 
 .save-btn:hover:not(:disabled) {
-  background: #2563eb;
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(59,130,246,0.3);
+  box-shadow: 0 8px 20px var(--accent-glow, rgba(59,130,246,0.3));
 }
 
 .save-btn:disabled {
@@ -175,7 +175,7 @@
 }
 
 .save-btn.loading {
-  background: #1e3a8a;
+  opacity: 0.8;
 }
 
 /* ── Responsive ── */
@@ -192,6 +192,10 @@
     grid-template-columns: 1fr;
     gap: 0;
   }
+
+  .theme-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
 }
 
 /* ── Profile Picture Upload Section ── */
@@ -207,8 +211,8 @@
   height: 90px;
   border-radius: 50%;
   overflow: hidden;
-  background: #080a0f;
-  border: 2px solid #1e2330;
+  background: var(--input-bg, #080a0f);
+  border: 2px solid var(--border-color, #1e2330);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -225,7 +229,7 @@
 .settings-avatar-placeholder {
   font-size: 2.5rem;
   font-weight: 800;
-  color: #3b82f6;
+  color: var(--accent, #3b82f6);
   text-transform: uppercase;
 }
 
@@ -237,9 +241,9 @@
 
 .file-upload-btn {
   display: inline-block;
-  background: #1e2330;
-  color: #f1f5f9;
-  border: 1px solid #30363d;
+  background: var(--hover-bg, #1e2330);
+  color: var(--text-main, #f1f5f9);
+  border: 1px solid var(--border-color, #30363d);
   padding: 10px 20px;
   border-radius: 8px;
   font-weight: 600;
@@ -251,14 +255,166 @@
 }
 
 .file-upload-btn:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: #3b82f6;
-  color: white;
+  border-color: var(--accent, #3b82f6);
 }
 
 .upload-tip {
-  color: #64748b;
+  color: var(--text-muted, #64748b);
   font-size: 0.8rem;
   margin: 0;
 }
 
+/* ============================================================
+   THEME PICKER — Telegram-Style Grid
+   ============================================================ */
+
+.theme-picker-card {
+  margin-bottom: 24px;
+}
+
+.theme-picker-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin: 0 0 6px 0;
+  color: var(--text-main, #f1f5f9);
+}
+
+.theme-picker-subtitle {
+  color: var(--text-muted, #94a3b8);
+  font-size: 0.95rem;
+  margin: 0 0 28px 0;
+}
+
+.theme-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.theme-preview-card {
+  position: relative;
+  background: transparent;
+  border: 2px solid var(--border-color, #1e2330);
+  border-radius: 16px;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  text-align: center;
+}
+
+.theme-preview-card:hover {
+  border-color: var(--text-muted, #64748b);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.theme-preview-card.active {
+  border-color: var(--accent, #3b82f6);
+  box-shadow: 0 0 0 2px var(--accent-glow, rgba(59,130,246,0.3)), 
+              0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Mini theme preview visual */
+.theme-preview-visual {
+  width: 100%;
+  height: 90px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 14px 14px 0 0;
+}
+
+.tp-navbar {
+  width: 100%;
+  height: 14px;
+  border-radius: 14px 14px 0 0;
+}
+
+.tp-body {
+  width: 100%;
+  height: 76px;
+  padding: 8px 10px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+}
+
+.tp-card {
+  width: 85%;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tp-line {
+  height: 4px;
+  width: 100%;
+  border-radius: 2px;
+}
+
+.tp-line.short {
+  width: 60%;
+}
+
+.tp-accent-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  position: absolute;
+  bottom: 8px;
+  right: 10px;
+  box-shadow: 0 0 8px currentColor;
+}
+
+/* Theme label area */
+.theme-preview-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 8px;
+  background: var(--card-bg, #111318);
+  border-top: 1px solid var(--border-color, #1e2330);
+}
+
+.theme-emoji {
+  font-size: 1rem;
+}
+
+.theme-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-main, #e2e8f0);
+  white-space: nowrap;
+}
+
+/* Active check mark */
+.theme-check {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 22px;
+  height: 22px;
+  background: var(--accent, #3b82f6);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 900;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  animation: checkPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+  z-index: 2;
+}
+
+@keyframes checkPop {
+  from { transform: scale(0); }
+  to   { transform: scale(1); }
+}
