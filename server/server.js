@@ -163,6 +163,57 @@ app.post('/login', async (req, res) => {
   }
 });
 
+// ── Forgot Password: Step 1 — fetch hint question for email ──
+app.get('/api/forgot-password/hint', async (req, res) => {
+  try {
+    const { email } = req.query;
+    if (!email) return res.status(400).json({ error: "Email is required" });
+
+    const user = await User.findOne({ email: email.toLowerCase().trim() });
+    if (!user) return res.status(404).json({ error: "No account found with that email address." });
+
+    res.json({ hintQuestion: user.hintQuestion });
+  } catch (error) {
+    console.error("Hint fetch error:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// ── Forgot Password: Step 2 — verify answer & reset password ──
+app.post('/api/forgot-password/reset', async (req, res) => {
+  try {
+    const { email, hintAnswer, newPassword } = req.body;
+    if (!email || !hintAnswer || !newPassword)
+      return res.status(400).json({ error: "All fields are required." });
+
+    const user = await User.findOne({ email: email.toLowerCase().trim() });
+    if (!user) return res.status(404).json({ error: "No account found with that email." });
+
+    // Verify hint answer (stored as bcrypt hash)
+    const isHintHashed = user.hintAnswer && (user.hintAnswer.startsWith('$2a$') || user.hintAnswer.startsWith('$2b$'));
+    let answerMatch = false;
+    if (isHintHashed) {
+      answerMatch = await bcrypt.compare(hintAnswer.toLowerCase().trim(), user.hintAnswer);
+    } else {
+      answerMatch = user.hintAnswer.toLowerCase().trim() === hintAnswer.toLowerCase().trim();
+    }
+
+    if (!answerMatch) return res.status(401).json({ error: "Incorrect answer. Please try again." });
+
+    if (newPassword.length < 6) return res.status(400).json({ error: "Password must be at least 6 characters." });
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
+
+    res.json({ message: "Password reset successfully! You can now log in with your new password." });
+  } catch (error) {
+    console.error("Password reset error:", error);
+    res.status(500).json({ error: "Server error during password reset" });
+  }
+});
+
+
+
 app.get('/api/users/check-status/:id', async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select('status');
