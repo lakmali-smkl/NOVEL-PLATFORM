@@ -27,6 +27,7 @@ import UserSidebar from './pages/UserSidebar';
 import RequestWriter from './pages/RequestWriter';
 import Notifications from './pages/Notifications';
 import CollectionDetail from './pages/CollectionDetail';
+import ChatPage from './pages/ChatPage';
 
 import './App.css';
 import './theme.css';
@@ -205,6 +206,8 @@ function App() {
             <Route path="/add-article" element={<AddArticle user={user} />} />
             <Route path="/library" element={<Library />} />
             <Route path="/read/:type/:id" element={<ReadPage />} />
+            <Route path="/chat" element={<ChatPage />} />
+            <Route path="/chat/:username" element={<ChatPage />} />
             <Route path="/edit-novel/:id" element={<EditNovel user={user} />} />
             <Route path="/edit-article/:id" element={<EditArticle />} />
             <Route path="/notifications" element={<Notifications user={user} />} />

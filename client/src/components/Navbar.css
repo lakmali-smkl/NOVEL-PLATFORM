@@ -3,7 +3,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 0 2rem;
-  background-color: rgba(119, 3, 7, 0.95);
+  background-color: var(--navbar-bg, rgba(119, 3, 7, 0.95));
   backdrop-filter: blur(8px);
   color: #fff;
   position: fixed;
@@ -15,6 +15,7 @@
   box-sizing: border-box;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.4s ease;
 }
 
 /* Container for the Menu Button (Top Left) */
@@ -45,9 +46,7 @@
   font-size: 0.95rem;
   transition: all 0.3s ease;
   background: transparent;
-  /* Ensure button background is clear */
   border: none;
-  /* Remove default button border */
   padding: 5px 10px;
 }
 
@@ -101,7 +100,6 @@
   top: -5px;
   right: -8px;
   background-color: #ff0000;
-  /* Notification Red */
   color: white;
   font-size: 0.7rem;
   font-weight: bold;
@@ -116,30 +114,46 @@
     transform: scale(1);
     box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7);
   }
-
   70% {
     transform: scale(1.1);
     box-shadow: 0 0 0 10px rgba(255, 0, 0, 0);
   }
-
   100% {
     transform: scale(1);
     box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
   }
 }
 
-.theme-toggle-btn {
-  background: transparent;
-  border: none;
-  font-size: 1.25rem;
-  cursor: pointer;
-  padding: 5px 10px;
+/* ── Theme Indicator ── */
+.theme-indicator-btn {
   display: flex;
   align-items: center;
-  justify-content: center;
-  transition: transform 0.3s ease;
+  gap: 6px;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #fff;
 }
 
-.theme-toggle-btn:hover {
-  transform: scale(1.18);
+.theme-indicator-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.theme-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 6px currentColor;
+  transition: background 0.3s ease;
+}
+
+.theme-indicator-label {
+  font-size: 0.9rem;
+  line-height: 1;
 }

@@ -47,7 +47,32 @@ const RecommendationSection = ({ user }) => {
     );
   }
 
-  if (recommendations.length === 0) return null;
+  if (recommendations.length === 0) {
+    return (
+      <section className="rec-section">
+        <div className="rec-header">
+          <div className="rec-title-group">
+            <span className="rec-ai-label">✨ AI</span>
+            <h2>Recommended for You</h2>
+          </div>
+          <p className="rec-subtitle">Personalised picks based on your reading history</p>
+        </div>
+        <div className="rec-empty-state" style={{ 
+          padding: '40px 20px', 
+          background: 'var(--card-bg)', 
+          border: '1px dashed var(--border-color)', 
+          borderRadius: '16px', 
+          textAlign: 'center',
+          color: 'var(--text-muted)',
+          boxShadow: '0 4px 15px rgba(0, 0, 0, 0.05)'
+        }}>
+          <span style={{ fontSize: '2.5rem', display: 'block', marginBottom: '12px' }}>📚</span>
+          <p style={{ margin: 0, fontWeight: '600', fontSize: '1.1rem', color: 'var(--text-main)' }}>You're fully caught up!</p>
+          <p style={{ margin: '6px 0 0 0', fontSize: '0.9rem' }}>No new recommendations available. Explore the library or check back later!</p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="rec-section">

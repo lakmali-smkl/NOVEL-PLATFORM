@@ -9,18 +9,14 @@
   box-shadow: 10px 0 30px rgba(0, 0, 0, 0.7);
 }
 
-/* Outer content wrapper — fills the parent .sidebar (flex: 1 child) */
+/* Outer content wrapper — fills the parent .sidebar */
 .user-sidebar-content {
   width: 100%;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;         /* Clip here — only nav scrolls */
+  padding-bottom: 100px;
 }
 
 /* ── Sticky header ── */
 .user-sidebar-content .sidebar-top-header {
-  flex-shrink: 0;
   padding: 30px 20px 20px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   margin-bottom: 10px;
@@ -28,7 +24,6 @@
 
 /* Keep existing class for back compat */
 .user-sidebar-content .sidebar-header {
-  flex-shrink: 0;
   margin-bottom: 20px;
   padding-bottom: 20px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -36,26 +31,9 @@
 
 /* ── Scrollable nav region ── */
 .user-sidebar-content nav {
-  flex: 1;
-  min-height: 0;            /* Critical: lets flex child shrink & scroll */
-  overflow-y: auto;
+  overflow-y: visible;
   overflow-x: hidden;
-  padding-bottom: 40px;
-}
-
-/* Custom scrollbar */
-.user-sidebar-content nav::-webkit-scrollbar {
-  width: 4px;
-}
-.user-sidebar-content nav::-webkit-scrollbar-track {
-  background: transparent;
-}
-.user-sidebar-content nav::-webkit-scrollbar-thumb {
-  background: rgba(185, 28, 28, 0.4);
-  border-radius: 4px;
-}
-.user-sidebar-content nav::-webkit-scrollbar-thumb:hover {
-  background: rgba(185, 28, 28, 0.7);
+  padding-bottom: 20px;
 }
 
 /* ── Badge ── */
@@ -162,6 +140,13 @@
 }
 
 @keyframes badgePulse {
-  0%, 100% { box-shadow: 0 0 8px rgba(168, 85, 247, 0.6); }
-  50%       { box-shadow: 0 0 16px rgba(168, 85, 247, 1); }
+
+  0%,
+  100% {
+    box-shadow: 0 0 8px rgba(168, 85, 247, 0.6);
+  }
+
+  50% {
+    box-shadow: 0 0 16px rgba(168, 85, 247, 1);
+  }
 }

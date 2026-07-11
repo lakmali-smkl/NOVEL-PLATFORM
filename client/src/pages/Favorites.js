@@ -4,71 +4,113 @@ import './Favorites.css';
 
 const Favorites = () => {
   const [favs, setFavs] = useState([]);
+  const [activeTab, setActiveTab] = useState('all'); // 'all', 'novel', 'article'
   const userStr = localStorage.getItem('user');
-  // 2. Safely parse it
   const user = userStr ? JSON.parse(userStr) : null;
 
   useEffect(() => {
-    // 3. ONLY fetch if the user exists
     if (user && user.email) {
       fetch(`http://localhost:5000/api/users/${user.email}`)
         .then(res => res.json())
         .then(data => setFavs(data.favorites || []))
         .catch(err => console.error("Error fetching favorites:", err));
     }
-  }, [user]); // React might warn about object dependency, but this is safe here
+  }, [user]);
 
-  // 4. Guard clause: If no user, show a message instead of crashing
   if (!user) {
-    return <div className="fav-content"><h2>Please login to see your favorites.</h2></div>;
+    return (
+      <div className="fav-content">
+        <div className="fav-empty-state">
+          <h2>Please login to see your favorites.</h2>
+        </div>
+      </div>
+    );
   }
 
   const handleDelete = async (contentId) => {
-  if (window.confirm("Remove from favorites?")) {
-    try {
-      // Use the user's _id and the item's contentId
-      const response = await fetch(`http://localhost:5000/api/users/${user._id}/favorites/${contentId}`, { 
-        method: 'DELETE' 
-      });
-      
-      if (response.ok) {
-        // Filter the UI using contentId since that's what your state uses
-        setFavs(prevFavs => prevFavs.filter(item => item.contentId !== contentId));
-      } else {
-        const errorData = await response.json();
-        console.error("Server error:", errorData.message);
+    if (window.confirm("Remove from favorites?")) {
+      try {
+        const response = await fetch(`http://localhost:5000/api/users/${user._id}/favorites/${contentId}`, { 
+          method: 'DELETE' 
+        });
+        
+        if (response.ok) {
+          setFavs(prevFavs => prevFavs.filter(item => item.contentId !== contentId));
+        } else {
+          const errorData = await response.json();
+          console.error("Server error:", errorData.message);
+        }
+      } catch (err) {
+        console.error("Delete failed:", err);
       }
-    } catch (err) {
-      console.error("Delete failed:", err);
     }
-  }
-};
+  };
+
+  const filteredFavs = favs.filter(item => {
+    if (activeTab === 'all') return true;
+    return item.type === activeTab;
+  });
+
+  const countByType = (type) => {
+    if (type === 'all') return favs.length;
+    return favs.filter(item => item.type === type).length;
+  };
 
   return (
     <div className="fav-content">
-      <h2>My Saved Favorites</h2>
+      <div className="fav-header-section">
+        <h2>My Saved Favorites</h2>
+        <p className="fav-subtitle">Access your favorite novels and articles in one place.</p>
+      </div>
+
+      {/* Premium Tab Switcher */}
+      <div className="fav-tabs-container">
+        <button 
+          className={`fav-tab ${activeTab === 'all' ? 'active' : ''}`}
+          onClick={() => setActiveTab('all')}
+        >
+          📚 All <span className="tab-count">{countByType('all')}</span>
+        </button>
+        <button 
+          className={`fav-tab ${activeTab === 'novel' ? 'active' : ''}`}
+          onClick={() => setActiveTab('novel')}
+        >
+          📖 Novels <span className="tab-count">{countByType('novel')}</span>
+        </button>
+        <button 
+          className={`fav-tab ${activeTab === 'article' ? 'active' : ''}`}
+          onClick={() => setActiveTab('article')}
+        >
+          📝 Articles <span className="tab-count">{countByType('article')}</span>
+        </button>
+      </div>
+
       <div className="fav-list">
-        {favs.length > 0 ? (
-          favs.map(item => (
+        {filteredFavs.length > 0 ? (
+          filteredFavs.map(item => (
             <div key={item.contentId} className="fav-card">
+              <div className="fav-card-type-tag">
+                {item.type === 'novel' ? '📖 Novel' : '📝 Article'}
+              </div>
               <h3>{item.title}</h3>
-
-
               <div className="fav-actions">
-              <Link to={`/read/${item.type}/${item.contentId}`} className="read-btn">
-                Read Now
-              </Link>
-              <button 
-                className="delete-btn" 
-                onClick={() => handleDelete(item.contentId)}
-              >
-                Remove
-              </button>
-            </div>
+                <Link to={`/read/${item.type}/${item.contentId}`} className="read-btn">
+                  Read Now
+                </Link>
+                <button 
+                  className="delete-btn" 
+                  onClick={() => handleDelete(item.contentId)}
+                >
+                  Remove
+                </button>
+              </div>
             </div>
           ))
         ) : (
-          <p>No favorites saved yet.</p>
+          <div className="fav-empty-state">
+            <span className="empty-icon">⭐</span>
+            <p>No favorites found in this category.</p>
+          </div>
         )}
       </div>
     </div>

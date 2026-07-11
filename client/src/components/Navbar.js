@@ -2,13 +2,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
+import { useTheme } from '../ThemeContext';
 import './Navbar.css';
 
 const Navbar = ({ user, setUser, toggleSidebar, closeSidebar }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [unreadCount, setUnreadCount] = useState(0);
-  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
+  const { currentTheme } = useTheme();
 
   const isLibraryPage = location.pathname === '/library';
 
@@ -29,17 +30,6 @@ const Navbar = ({ user, setUser, toggleSidebar, closeSidebar }) => {
     return () => clearInterval(interval);
   }, [user]);
 
-  const toggleTheme = () => {
-    const nextTheme = theme === 'dark' ? 'light' : 'dark';
-    setTheme(nextTheme);
-    localStorage.setItem('theme', nextTheme);
-    if (nextTheme === 'light') {
-      document.body.classList.add('light-theme');
-    } else {
-      document.body.classList.remove('light-theme');
-    }
-  };
-
   const handleLogout = () => {
     if (closeSidebar) {
       closeSidebar();
@@ -51,7 +41,7 @@ const Navbar = ({ user, setUser, toggleSidebar, closeSidebar }) => {
   };
 
   return (
-    <nav className="navbar">
+    <nav className="navbar" style={{ backgroundColor: currentTheme.navbar }}>
       <div className="nav-left">
         {user && (
           <button className="menu-btn" onClick={toggleSidebar}>
@@ -65,11 +55,19 @@ const Navbar = ({ user, setUser, toggleSidebar, closeSidebar }) => {
       </div>
 
       <ul className="nav-right">
-        {/* THEME TOGGLE */}
+        {/* THEME INDICATOR — shows current theme dot, links to settings */}
         <li className="nav-item">
-          <button onClick={toggleTheme} className="theme-toggle-btn" title="Toggle Theme">
-            {theme === 'light' ? '🌙' : '☀️'}
-          </button>
+          <Link 
+            to={user ? (user.isWriter && !user.isAdmin ? "/writer-dashboard/settings" : "/dashboard/settings") : "/login"} 
+            className="theme-indicator-btn" 
+            title={`Theme: ${currentTheme.name}`}
+          >
+            <span 
+              className="theme-dot" 
+              style={{ background: currentTheme.accent }}
+            />
+            <span className="theme-indicator-label">{currentTheme.emoji}</span>
+          </Link>
         </li>
 
         {user ? (

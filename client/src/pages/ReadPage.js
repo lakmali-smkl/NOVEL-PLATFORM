@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import './ReadPage.css';
 
 const ReadPage = () => {
     const { type, id } = useParams(); 
-    const [data, setData] = useState(null);
+    const navigate = useNavigate();    const [data, setData] = useState(null);
     const [isFavorite, setIsFavorite] = useState(false);
     const [isLiked, setIsLiked] = useState(false);
     const [likesCount, setLikesCount] = useState(0);
@@ -186,6 +186,27 @@ const ReadPage = () => {
         setCommentText("");
     };
 
+    const handleMessageWriter = async () => {
+        if (!user) {
+            alert("Please login first to chat with the writer!");
+            navigate('/login');
+            return;
+        }
+        
+        try {
+            const res = await fetch(`http://localhost:5000/api/users/status/${data.authorId}`);
+            const authorData = await res.json();
+            if (res.ok && authorData.username) {
+                navigate(`/chat/${authorData.username}`);
+            } else {
+                navigate(`/chat/${data.author}`);
+            }
+        } catch (err) {
+            console.error("Error navigating to chat:", err);
+            navigate(`/chat/${data.author}`);
+        }
+    };
+
     const [activeReplyCommentId, setActiveReplyCommentId] = useState(null);
     const [replyText, setReplyText] = useState("");
     const [visibleReplies, setVisibleReplies] = useState({});
@@ -220,6 +241,44 @@ const ReadPage = () => {
         setVisibleReplies(prev => ({ ...prev, [commentId]: !prev[commentId] }));
     };
 
+    const handleDeleteComment = async (commentId) => {
+        if (!window.confirm("Are you sure you want to delete this comment?")) return;
+        try {
+            const res = await fetch(`http://localhost:5000/api/${type}/${id}/comment/${commentId}`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId })
+            });
+            if (res.ok) {
+                const updatedComments = await res.json();
+                setComments(updatedComments);
+            } else {
+                alert("Failed to delete comment");
+            }
+        } catch (err) {
+            console.error("Error deleting comment:", err);
+        }
+    };
+
+    const handleDeleteReply = async (commentId, replyId) => {
+        if (!window.confirm("Are you sure you want to delete this reply?")) return;
+        try {
+            const res = await fetch(`http://localhost:5000/api/${type}/${id}/comment/${commentId}/reply/${replyId}`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId })
+            });
+            if (res.ok) {
+                const updatedComments = await res.json();
+                setComments(updatedComments);
+            } else {
+                alert("Failed to delete reply");
+            }
+        } catch (err) {
+            console.error("Error deleting reply:", err);
+        }
+    };
+
     if (!data) return <div className="loading">Loading...</div>;
 
     return (
@@ -232,7 +291,14 @@ const ReadPage = () => {
                 </Link>
 
                 <h1>{data.title}</h1>
-                <p className="author-name">By: {data.author}</p>
+                <div className="author-section-read" style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+                    <p className="author-name" style={{ margin: 0 }}>By: {data.author}</p>
+                    {userId !== data.authorId && (
+                        <button onClick={handleMessageWriter} className="interact-btn message-writer-btn" style={{ padding: '4px 10px', fontSize: '0.85rem' }}>
+                            💬 Message Writer
+                        </button>
+                    )}
+                </div>
                 
                 <div className="interaction-bar" style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                     <button onClick={handleFavorite} className="interact-btn">
@@ -308,6 +374,11 @@ const ReadPage = () => {
                             const hasReplies = c.replies && c.replies.length > 0;
                             const showReplies = !!visibleReplies[commentId];
 
+                            const canDeleteComment = user && (
+                                (c.userId && c.userId.toString() === userId) ||
+                                (data.authorId && data.authorId.toString() === userId)
+                            );
+
                             return (
                                 <div key={commentId} className="comment-card">
                                     <div className="comment-main">
@@ -353,6 +424,16 @@ const ReadPage = () => {
                                                         {showReplies ? `Hide Replies` : `View Replies (${c.replies.length})`}
                                                     </button>
                                                 )}
+
+                                                {canDeleteComment && (
+                                                    <button 
+                                                        onClick={() => handleDeleteComment(c._id)} 
+                                                        className="comment-action-btn delete-btn-trigger"
+                                                        style={{ color: '#ff4b4b' }}
+                                                    >
+                                                        🗑 Delete
+                                                    </button>
+                                                )}
                                             </div>
 
                                             {/* Reply Input Box */}
@@ -388,20 +469,34 @@ const ReadPage = () => {
                                             {c.replies.map((reply, rIndex) => {
                                                 const replyId = reply._id || rIndex;
                                                 const isReplyAuthor = data.authorId && reply.userId && (data.authorId.toString() === reply.userId.toString());
+                                                const canDeleteReply = user && (
+                                                    (reply.userId && reply.userId.toString() === userId) ||
+                                                    (data.authorId && data.authorId.toString() === userId)
+                                                );
+
                                                 return (
                                                     <div key={replyId} className="reply-card">
                                                         <div className="reply-avatar">
                                                             {reply.username ? reply.username.charAt(0).toUpperCase() : '?'}
                                                         </div>
                                                         <div className="reply-details">
-                                                            <div className="reply-header">
+                                                            <div className="reply-header" style={{ display: 'flex', alignItems: 'center' }}>
                                                                 <span className="reply-username">
                                                                     {reply.username}
                                                                     {isReplyAuthor && <span className="author-badge">Author</span>}
                                                                 </span>
-                                                                <span className="reply-time">
+                                                                <span className="reply-time" style={{ marginLeft: '8px' }}>
                                                                     {reply.createdAt ? new Date(reply.createdAt).toLocaleDateString() : 'Just now'}
                                                                 </span>
+                                                                {canDeleteReply && (
+                                                                    <button 
+                                                                        onClick={() => handleDeleteReply(c._id, reply._id)} 
+                                                                        className="reply-delete-btn"
+                                                                        style={{ background: 'none', border: 'none', color: '#ff4b4b', cursor: 'pointer', fontSize: '0.8rem', marginLeft: 'auto', padding: '0 4px' }}
+                                                                    >
+                                                                        🗑 Delete
+                                                                    </button>
+                                                                )}
                                                             </div>
                                                             <p className="reply-text">{reply.text}</p>
                                                         </div>

@@ -1,15 +1,17 @@
 .admin-sidebar {
   width: 100%;
-  flex: 1;                    /* Fill parent .sidebar flex container */
+  flex: 1;
+  /* Fill parent .sidebar flex container */
   background: linear-gradient(165deg, #0f1115 0%, #161b22 100%);
   display: flex;
   flex-direction: column;
-  overflow: hidden;           /* Clip here — only nav scrolls */
+  overflow: visible;
   box-sizing: border-box;
 }
 
 .admin-sidebar-header {
-  flex-shrink: 0;             /* Always visible — never compress */
+  flex-shrink: 0;
+  /* Always visible — never compress */
   padding: 32px 20px 20px;
   margin-bottom: 8px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -46,20 +48,15 @@
 
 .admin-sidebar-nav {
   flex: 1;
-  min-height: 0;              /* Critical: enables scroll in flex column */
-  overflow-y: auto;
+  min-height: 0;
+  /* Critical: enables scroll in flex column */
+  overflow-y: visible;
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
   gap: 4px;
   padding: 8px 20px 40px;
 }
-
-/* Custom scrollbar */
-.admin-sidebar-nav::-webkit-scrollbar { width: 4px; }
-.admin-sidebar-nav::-webkit-scrollbar-track { background: transparent; }
-.admin-sidebar-nav::-webkit-scrollbar-thumb { background: rgba(0,123,255,0.3); border-radius: 4px; }
-.admin-sidebar-nav::-webkit-scrollbar-thumb:hover { background: rgba(0,123,255,0.6); }
 
 .admin-nav-item {
   color: #8b949e;
