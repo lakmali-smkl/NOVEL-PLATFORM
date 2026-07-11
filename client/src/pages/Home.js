@@ -3,6 +3,7 @@ import { Link, Navigate } from 'react-router-dom';
 import './Home.css';
 import myVideo from './backgroundVideo.mp4';
 import RecommendationSection from './RecommendationSection';
+import ChatbotWidget from '../components/ChatbotWidget';
 
 const Home = ({ user }) => {
   const [trending, setTrending] = useState([]);
@@ -186,6 +187,9 @@ const Home = ({ user }) => {
             )}
           </div>
         </section>
+
+        {/* 🤖 Floating Library Helper Chatbot */}
+        <ChatbotWidget />
       </div>
     );
   }
@@ -204,6 +208,9 @@ const Home = ({ user }) => {
           <Link to="/login" className="btn-red">Login</Link>
         </div>
       </section>
+
+      {/* 🤖 Floating Library Helper Chatbot - also on landing page for guests */}
+      <ChatbotWidget />
     </div>
   );
 };
