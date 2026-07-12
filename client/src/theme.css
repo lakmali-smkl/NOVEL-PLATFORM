@@ -94,6 +94,7 @@ body.theme-snow .user-sidebar-content .sidebar-top-header {
 body.theme-snow .user-sidebar-content h3 {
   background: linear-gradient(to right, #1f2937, #b91c1c) !important;
   -webkit-background-clip: text !important;
+  background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
 }
 body.theme-snow .user-sidebar-content .nav-item {
@@ -174,6 +175,7 @@ body.theme-snow .welcome-hero {
 body.theme-snow .welcome-hero h1 {
   background: linear-gradient(135deg, #1f2937, #4b5563) !important;
   -webkit-background-clip: text !important;
+  background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
 }
 body.theme-snow .dashboard-grid {
@@ -395,6 +397,7 @@ body.theme-snow .profile-header {
 body.theme-snow .username-view-wrap h1 {
   background: linear-gradient(135deg, #1f2937 40%, #4b5563 100%) !important;
   -webkit-background-clip: text !important;
+  background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
 }
 body.theme-snow .email-text {
@@ -481,6 +484,7 @@ body.theme-snow .settings-card h3 {
 body.theme-snow .settings-header h1 {
   background: linear-gradient(135deg, #1f2937 30%, #4b5563 100%) !important;
   -webkit-background-clip: text !important;
+  background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
 }
 body.theme-snow .settings-header p {
@@ -603,6 +607,7 @@ body.theme-ocean .settings-header h1,
 body.theme-ocean .wd-username {
   background: linear-gradient(135deg, #64ffda 0%, #ccd6f6 100%) !important;
   -webkit-background-clip: text !important;
+  background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
 }
 body.theme-ocean .form-group input,
@@ -675,6 +680,7 @@ body.theme-forest .settings-header h1,
 body.theme-forest .wd-username {
   background: linear-gradient(135deg, #52b788 0%, #d4e7d9 100%) !important;
   -webkit-background-clip: text !important;
+  background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
 }
 body.theme-forest .form-group input,
@@ -747,6 +753,7 @@ body.theme-purple .settings-header h1,
 body.theme-purple .wd-username {
   background: linear-gradient(135deg, #a78bfa 0%, #ddd6fe 100%) !important;
   -webkit-background-clip: text !important;
+  background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
 }
 body.theme-purple .form-group input,
@@ -819,6 +826,7 @@ body.theme-sunset .settings-header h1,
 body.theme-sunset .wd-username {
   background: linear-gradient(135deg, #fb923c 0%, #fde8d0 100%) !important;
   -webkit-background-clip: text !important;
+  background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
 }
 body.theme-sunset .form-group input,
