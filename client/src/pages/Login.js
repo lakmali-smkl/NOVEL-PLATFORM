@@ -132,7 +132,7 @@ const Login = ({ setUser }) => {
         {/* Logo / Brand */}
         <div className="auth-brand">
           <span className="auth-brand-icon">📖</span>
-          <span className="auth-brand-name">NovelPlatform</span>
+          <span className="auth-brand-name">NovelVerse</span>
         </div>
 
         <h1 className="auth-title">Welcome back</h1>
