@@ -305,6 +305,40 @@ app.get('/api/admin/stats', async (req, res) => {
   }
 });
 
+// ── Public Platform Stats (for Home page spotlight section) ──
+app.get('/api/platform-stats', async (req, res) => {
+  try {
+    const [totalUsers, publishedNovels, publishedArticles, novelWords, articleWords] = await Promise.all([
+      User.countDocuments(),
+      Novel.countDocuments({ status: 'published' }),
+      Article.countDocuments({ status: 'published' }),
+      Novel.aggregate([
+        { $match: { content: { $exists: true, $ne: '' } } },
+        { $project: { wordCount: { $size: { $split: [{ $trim: { input: '$content' } }, ' '] } } } },
+        { $group: { _id: null, total: { $sum: '$wordCount' } } }
+      ]),
+      Article.aggregate([
+        { $match: { content: { $exists: true, $ne: '' } } },
+        { $project: { wordCount: { $size: { $split: [{ $trim: { input: '$content' } }, ' '] } } } },
+        { $group: { _id: null, total: { $sum: '$wordCount' } } }
+      ])
+    ]);
+
+    const totalWords = (novelWords[0]?.total || 0) + (articleWords[0]?.total || 0);
+
+    res.json({
+      totalUsers,
+      publishedNovels,
+      publishedArticles,
+      totalPublished: publishedNovels + publishedArticles,
+      totalWords
+    });
+  } catch (error) {
+    console.error("Platform stats error:", error);
+    res.status(500).json({ error: "Failed to fetch platform stats" });
+  }
+});
+
 app.post('/api/writer-requests', async (req, res) => {
     try {
         const { userId, username, reason } = req.body;
@@ -1017,6 +1051,82 @@ app.get('/api/users/:userId/history', async (req, res) => {
   } catch (error) {
     console.error("Error fetching history:", error);
     res.status(500).json({ error: "Failed to fetch history" });
+  }
+});
+
+// GET: Fetch user reading stats (streak, progress, checklist)
+app.get('/api/users/:userId/reading-stats', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    const readingHistory = user.readingHistory || [];
+    
+    // 1. Calculate active streak
+    const uniqueDates = [...new Set(readingHistory.map(item => {
+      const d = new Date(item.lastRead);
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }))].sort((a, b) => new Date(b) - new Date(a)); // sorted descending (newest first)
+
+    let streak = 0;
+    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(today.getDate() - 1);
+
+    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    const yesterdayStr = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}`;
+
+    if (uniqueDates.length > 0) {
+      const firstDate = uniqueDates[0];
+      if (firstDate === todayStr || firstDate === yesterdayStr) {
+        streak = 1;
+        let checkDate = new Date(firstDate);
+        
+        for (let i = 1; i < uniqueDates.length; i++) {
+          checkDate.setDate(checkDate.getDate() - 1);
+          const checkDateStr = `${checkDate.getFullYear()}-${String(checkDate.getMonth() + 1).padStart(2, '0')}-${String(checkDate.getDate()).padStart(2, '0')}`;
+          
+          if (uniqueDates[i] === checkDateStr) {
+            streak++;
+          } else {
+            break;
+          }
+        }
+      }
+    }
+
+    // 2. Calculate current week's checkmarks (Monday - Sunday)
+    const currentDay = today.getDay(); // 0 is Sunday, 1 is Monday, etc.
+    const distanceToMonday = currentDay === 0 ? 6 : currentDay - 1;
+    const monday = new Date(today);
+    monday.setDate(today.getDate() - distanceToMonday);
+    monday.setHours(0, 0, 0, 0);
+
+    const dayChecklist = []; // [true, false, ...]
+    
+    for (let i = 0; i < 7; i++) {
+      const day = new Date(monday);
+      day.setDate(monday.getDate() + i);
+      const dayStr = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, '0')}-${String(day.getDate()).padStart(2, '0')}`;
+      
+      const hasRead = uniqueDates.includes(dayStr);
+      dayChecklist.push(hasRead);
+    }
+
+    const daysReadThisWeek = dayChecklist.filter(Boolean).length;
+    const weeklyGoal = 5; // Default weekly goal
+    const progressPercentage = Math.round((daysReadThisWeek / weeklyGoal) * 100);
+
+    res.json({
+      streak,
+      weeklyGoal,
+      daysReadThisWeek,
+      progressPercentage,
+      dayChecklist
+    });
+  } catch (error) {
+    console.error("Error fetching reading stats:", error);
+    res.status(500).json({ error: "Failed to fetch reading stats" });
   }
 });
 
