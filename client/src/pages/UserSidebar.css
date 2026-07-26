@@ -4,9 +4,9 @@
 
 /* User Theme Sidebar - Red Variant */
 .sidebar.user-theme {
-  background: linear-gradient(180deg, #0f0808 0%, #1a0f0f 100%);
+  background: var(--card-bg);
   border-right: 2px solid #b91c1c;
-  box-shadow: 10px 0 30px rgba(0, 0, 0, 0.7);
+  box-shadow: 10px 0 30px rgba(0, 0, 0, 0.08);
 }
 
 /* Outer content wrapper — fills the parent .sidebar */
@@ -54,7 +54,7 @@
 .user-sidebar-content h3 {
   margin: 0;
   font-size: 1.3rem;
-  background: linear-gradient(to right, #fff, #a70f0f);
+  background: linear-gradient(to right, var(--text-main), #a70f0f);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -82,7 +82,7 @@
 
 .user-sidebar-content .nav-item {
   text-decoration: none;
-  color: #d1d5db;
+  color: var(--text-muted);
   padding: 12px 18px;
   margin-bottom: 4px;
   border-radius: 8px;
@@ -96,7 +96,7 @@
 
 .user-sidebar-content .nav-item:hover {
   background: rgba(185, 28, 28, 0.1);
-  color: #fff;
+  color: var(--text-main);
   transform: translateX(6px);
 }
 

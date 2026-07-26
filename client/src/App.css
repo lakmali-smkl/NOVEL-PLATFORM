@@ -1,18 +1,20 @@
 /* ============================================================
-   ROOT & DEFAULT THEME (Midnight Dark)
+   ROOT & DEFAULT THEME
+   Content is always light/professional — themes only change the
+   navbar color and the accent used for buttons/links/highlights.
    ============================================================ */
 :root {
   --brand-red: #770307;
-  --dark-bg: #080a0f;
-  --card-bg: #111318;
-  --text-main: #e2e8f0;
-  --text-muted: #94a3b8;
-  --accent: #3b82f6;
-  --accent-glow: rgba(59, 130, 246, 0.25);
+  --dark-bg: #f3f4f6;
+  --card-bg: #ffffff;
+  --text-main: #1f2937;
+  --text-muted: #6b7280;
+  --accent: #2563eb;
+  --accent-glow: rgba(37, 98, 235, 0.18);
   --navbar-bg: rgba(119, 3, 7, 0.95);
-  --border-color: #1e2330;
-  --input-bg: #080a0f;
-  --hover-bg: rgba(255, 255, 255, 0.04);
+  --border-color: #e5e7eb;
+  --input-bg: #ffffff;
+  --hover-bg: rgba(37, 98, 235, 0.06);
   --transition: all 0.3s ease;
 }
 
@@ -20,16 +22,16 @@
    THEME: Midnight Dark (default — no extra class needed)
    ============================================================ */
 body.theme-midnight {
-  --dark-bg: #080a0f;
-  --card-bg: #111318;
-  --text-main: #e2e8f0;
-  --text-muted: #94a3b8;
-  --accent: #3b82f6;
-  --accent-glow: rgba(59, 130, 246, 0.25);
+  --dark-bg: #f3f4f6;
+  --card-bg: #ffffff;
+  --text-main: #1f2937;
+  --text-muted: #6b7280;
+  --accent: #2563eb;
+  --accent-glow: rgba(37, 98, 235, 0.18);
   --navbar-bg: rgba(119, 3, 7, 0.95);
-  --border-color: #1e2330;
-  --input-bg: #080a0f;
-  --hover-bg: rgba(255, 255, 255, 0.04);
+  --border-color: #e5e7eb;
+  --input-bg: #ffffff;
+  --hover-bg: rgba(37, 98, 235, 0.06);
 }
 
 /* ============================================================
@@ -40,80 +42,80 @@ body.theme-snow {
   --card-bg: #ffffff;
   --text-main: #1f2937;
   --text-muted: #6b7280;
-  --accent: #3b82f6;
-  --accent-glow: rgba(59, 130, 246, 0.15);
+  --accent: #2563eb;
+  --accent-glow: rgba(37, 98, 235, 0.18);
   --navbar-bg: rgba(119, 3, 7, 0.95);
   --border-color: #e5e7eb;
   --input-bg: #ffffff;
-  --hover-bg: rgba(0, 0, 0, 0.04);
+  --hover-bg: rgba(37, 98, 235, 0.06);
 }
 
 /* ============================================================
    THEME: Ocean Blue
    ============================================================ */
 body.theme-ocean {
-  --dark-bg: #0a1628;
-  --card-bg: #112240;
-  --text-main: #ccd6f6;
-  --text-muted: #8892b0;
-  --accent: #64ffda;
-  --accent-glow: rgba(100, 255, 218, 0.2);
+  --dark-bg: #f3f4f6;
+  --card-bg: #ffffff;
+  --text-main: #1f2937;
+  --text-muted: #6b7280;
+  --accent: #0e7490;
+  --accent-glow: rgba(14, 116, 144, 0.18);
   --navbar-bg: rgba(12, 45, 72, 0.95);
-  --border-color: #1d3557;
-  --input-bg: #0a1628;
-  --hover-bg: rgba(100, 255, 218, 0.05);
-  --brand-red: #64ffda;
+  --border-color: #e5e7eb;
+  --input-bg: #ffffff;
+  --hover-bg: rgba(14, 116, 144, 0.06);
+  --brand-red: #0e7490;
 }
 
 /* ============================================================
    THEME: Forest Green
    ============================================================ */
 body.theme-forest {
-  --dark-bg: #0d1f17;
-  --card-bg: #132a1e;
-  --text-main: #d4e7d9;
-  --text-muted: #8fb59a;
-  --accent: #52b788;
-  --accent-glow: rgba(82, 183, 136, 0.2);
+  --dark-bg: #f3f4f6;
+  --card-bg: #ffffff;
+  --text-main: #1f2937;
+  --text-muted: #6b7280;
+  --accent: #15803d;
+  --accent-glow: rgba(21, 128, 61, 0.18);
   --navbar-bg: rgba(27, 67, 50, 0.95);
-  --border-color: #1e4d36;
-  --input-bg: #0d1f17;
-  --hover-bg: rgba(82, 183, 136, 0.05);
-  --brand-red: #52b788;
+  --border-color: #e5e7eb;
+  --input-bg: #ffffff;
+  --hover-bg: rgba(21, 128, 61, 0.06);
+  --brand-red: #15803d;
 }
 
 /* ============================================================
    THEME: Royal Purple
    ============================================================ */
 body.theme-purple {
-  --dark-bg: #120b24;
-  --card-bg: #1c1035;
-  --text-main: #ddd6fe;
-  --text-muted: #a5a0c8;
-  --accent: #a78bfa;
-  --accent-glow: rgba(167, 139, 250, 0.2);
+  --dark-bg: #f3f4f6;
+  --card-bg: #ffffff;
+  --text-main: #1f2937;
+  --text-muted: #6b7280;
+  --accent: #7c3aed;
+  --accent-glow: rgba(124, 58, 237, 0.18);
   --navbar-bg: rgba(45, 24, 84, 0.95);
-  --border-color: #2e1f5e;
-  --input-bg: #120b24;
-  --hover-bg: rgba(167, 139, 250, 0.05);
-  --brand-red: #a78bfa;
+  --border-color: #e5e7eb;
+  --input-bg: #ffffff;
+  --hover-bg: rgba(124, 58, 237, 0.06);
+  --brand-red: #7c3aed;
 }
 
 /* ============================================================
    THEME: Sunset Warm
    ============================================================ */
 body.theme-sunset {
-  --dark-bg: #1a0f05;
-  --card-bg: #27180c;
-  --text-main: #fde8d0;
-  --text-muted: #c9a882;
-  --accent: #fb923c;
-  --accent-glow: rgba(251, 146, 60, 0.2);
+  --dark-bg: #f3f4f6;
+  --card-bg: #ffffff;
+  --text-main: #1f2937;
+  --text-muted: #6b7280;
+  --accent: #c2410c;
+  --accent-glow: rgba(194, 65, 12, 0.18);
   --navbar-bg: rgba(120, 53, 15, 0.95);
-  --border-color: #3d2410;
-  --input-bg: #1a0f05;
-  --hover-bg: rgba(251, 146, 60, 0.05);
-  --brand-red: #fb923c;
+  --border-color: #e5e7eb;
+  --input-bg: #ffffff;
+  --hover-bg: rgba(194, 65, 12, 0.06);
+  --brand-red: #c2410c;
 }
 
 /* ============================================================

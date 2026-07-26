@@ -7,8 +7,8 @@
   margin: 0 auto;
   padding: 80px 32px;
   min-height: 100vh;
-  background: var(--dark-bg, #080a0f);
-  color: var(--text-main, #e2e8f0);
+  background: var(--dark-bg, var(--dark-bg));
+  color: var(--text-main, var(--text-main));
   font-family: 'Inter', sans-serif;
   animation: settingsFadeIn 0.5s ease both;
 }
@@ -28,25 +28,25 @@
   font-weight: 900;
   letter-spacing: -0.03em;
   margin: 0 0 10px 0;
-  background: linear-gradient(135deg, #ffffff 30%, #94a3b8 100%);
+  background: linear-gradient(135deg, var(--text-main) 30%, var(--text-muted) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .settings-header p {
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, var(--text-muted));
   font-size: 1.05rem;
   margin: 0;
 }
 
 /* ── Card & Alerts ── */
 .settings-card {
-  background: var(--card-bg, #111318);
-  border: 1px solid var(--border-color, #1e2330);
+  background: var(--card-bg, var(--card-bg));
+  border: 1px solid var(--border-color, var(--border-color));
   border-radius: 20px;
   padding: 40px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
   margin-bottom: 24px;
 }
 
@@ -91,18 +91,18 @@
   left: 0;
   right: 0;
   height: 1px;
-  background: var(--border-color, #1e2330);
+  background: var(--border-color, var(--border-color));
 }
 
 .form-section h3 {
-  color: var(--text-main, #f1f5f9);
+  color: var(--text-main, var(--text-main));
   font-size: 1.25rem;
   font-weight: 700;
   margin: 0 0 8px 0;
 }
 
 .section-hint {
-  color: var(--text-muted, #64748b);
+  color: var(--text-muted, var(--text-muted));
   font-size: 0.85rem;
   margin: 0 0 24px 0;
 }
@@ -113,7 +113,7 @@
 
 .form-group label {
   display: block;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, var(--text-muted));
   font-size: 0.9rem;
   font-weight: 600;
   margin-bottom: 8px;
@@ -121,9 +121,9 @@
 
 .form-group input {
   width: 100%;
-  background: var(--input-bg, #080a0f);
-  border: 1px solid var(--border-color, #1e2330);
-  color: var(--text-main, #f1f5f9);
+  background: var(--input-bg, var(--dark-bg));
+  border: 1px solid var(--border-color, var(--border-color));
+  color: var(--text-main, var(--text-main));
   padding: 14px 16px;
   border-radius: 10px;
   font-size: 1rem;
@@ -134,7 +134,7 @@
 
 .form-group input:focus {
   outline: none;
-  border-color: var(--accent, #3b82f6);
+  border-color: var(--accent, var(--accent));
   box-shadow: 0 0 0 3px var(--accent-glow, rgba(59,130,246,0.15));
 }
 
@@ -152,7 +152,7 @@
 }
 
 .save-btn {
-  background: var(--accent, #3b82f6);
+  background: var(--accent, var(--accent));
   color: #fff;
   border: none;
   padding: 14px 32px;
@@ -211,13 +211,13 @@
   height: 90px;
   border-radius: 50%;
   overflow: hidden;
-  background: var(--input-bg, #080a0f);
-  border: 2px solid var(--border-color, #1e2330);
+  background: var(--input-bg, var(--dark-bg));
+  border: 2px solid var(--border-color, var(--border-color));
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .settings-avatar-img {
@@ -229,7 +229,7 @@
 .settings-avatar-placeholder {
   font-size: 2.5rem;
   font-weight: 800;
-  color: var(--accent, #3b82f6);
+  color: var(--accent, var(--accent));
   text-transform: uppercase;
 }
 
@@ -241,8 +241,8 @@
 
 .file-upload-btn {
   display: inline-block;
-  background: var(--hover-bg, #1e2330);
-  color: var(--text-main, #f1f5f9);
+  background: var(--hover-bg, var(--border-color));
+  color: var(--text-main, var(--text-main));
   border: 1px solid var(--border-color, #30363d);
   padding: 10px 20px;
   border-radius: 8px;
@@ -255,11 +255,11 @@
 }
 
 .file-upload-btn:hover {
-  border-color: var(--accent, #3b82f6);
+  border-color: var(--accent, var(--accent));
 }
 
 .upload-tip {
-  color: var(--text-muted, #64748b);
+  color: var(--text-muted, var(--text-muted));
   font-size: 0.8rem;
   margin: 0;
 }
@@ -276,11 +276,11 @@
   font-size: 1.4rem;
   font-weight: 800;
   margin: 0 0 6px 0;
-  color: var(--text-main, #f1f5f9);
+  color: var(--text-main, var(--text-main));
 }
 
 .theme-picker-subtitle {
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, var(--text-muted));
   font-size: 0.95rem;
   margin: 0 0 28px 0;
 }
@@ -294,7 +294,7 @@
 .theme-preview-card {
   position: relative;
   background: transparent;
-  border: 2px solid var(--border-color, #1e2330);
+  border: 2px solid var(--border-color, var(--border-color));
   border-radius: 16px;
   padding: 0;
   cursor: pointer;
@@ -304,15 +304,15 @@
 }
 
 .theme-preview-card:hover {
-  border-color: var(--text-muted, #64748b);
+  border-color: var(--text-muted, var(--text-muted));
   transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
 }
 
 .theme-preview-card.active {
-  border-color: var(--accent, #3b82f6);
+  border-color: var(--accent, var(--accent));
   box-shadow: 0 0 0 2px var(--accent-glow, rgba(59,130,246,0.3)), 
-              0 8px 25px rgba(0, 0, 0, 0.3);
+              0 8px 25px rgba(0, 0, 0, 0.08);
 }
 
 /* Mini theme preview visual */
@@ -379,8 +379,8 @@
   justify-content: center;
   gap: 6px;
   padding: 10px 8px;
-  background: var(--card-bg, #111318);
-  border-top: 1px solid var(--border-color, #1e2330);
+  background: var(--card-bg, var(--card-bg));
+  border-top: 1px solid var(--border-color, var(--border-color));
 }
 
 .theme-emoji {
@@ -390,7 +390,7 @@
 .theme-name {
   font-size: 0.8rem;
   font-weight: 600;
-  color: var(--text-main, #e2e8f0);
+  color: var(--text-main, var(--text-main));
   white-space: nowrap;
 }
 
@@ -401,7 +401,7 @@
   right: 8px;
   width: 22px;
   height: 22px;
-  background: var(--accent, #3b82f6);
+  background: var(--accent, var(--accent));
   color: white;
   border-radius: 50%;
   display: flex;
@@ -409,7 +409,7 @@
   justify-content: center;
   font-size: 0.75rem;
   font-weight: 900;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   animation: checkPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
   z-index: 2;
 }

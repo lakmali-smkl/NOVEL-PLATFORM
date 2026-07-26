@@ -1,21 +1,21 @@
 .read-page-container {
   padding: 40px 20px;
   padding-top: 100px;
-  background-color: #0a0a0a;
+  background-color: var(--dark-bg);
   min-height: 100vh;
   display: flex;
   justify-content: center;
 }
 
 .read-card {
-  background: #1a1a1a;
+  background: var(--card-bg);
   max-width: 900px;
   width: 100%;
   padding: 40px;
   border-radius: 12px;
-  border: 1px solid #333;
-  color: white;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
 .interaction-bar {
@@ -30,9 +30,9 @@
   flex: 1; /* Retains equal width distribution safely across 3 blocks */
   padding: 12px;
   border-radius: 8px;
-  border: 1px solid #770307;
+  border: 1px solid var(--brand-red);
   background: transparent;
-  color: #770307;
+  color: var(--brand-red);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -51,7 +51,7 @@
 }
 
 .btn-active-fav {
-  background: #770307 !important;
+  background: var(--brand-red) !important;
   color: white !important;
 }
 
@@ -83,11 +83,11 @@
   top: 115%;
   left: 0;
   right: 0;
-  background-color: #1a1a1a;
-  border: 1px solid #333;
-  border-top: 3px solid #770307; /* Visual anchor highlight ribbon */
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-top: 3px solid var(--brand-red); /* Visual anchor highlight ribbon */
   border-radius: 8px;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.75);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
   z-index: 100;
   padding: 6px;
   box-sizing: border-box;
@@ -104,10 +104,10 @@
   font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
-  color: #6a6a6a;
+  color: var(--text-muted);
   letter-spacing: 0.06em;
   padding: 6px 10px 8px 10px;
-  border-bottom: 1px solid #2a2a2a;
+  border-bottom: 1px solid var(--border-color);
   margin-bottom: 4px;
 }
 
@@ -116,7 +116,7 @@
   width: 100% !important;
   background: transparent !important;
   border: none !important;
-  color: #e0e0e0 !important;
+  color: var(--text-main) !important;
   padding: 10px 12px !important;
   font-size: 0.925rem !important;
   font-weight: 500 !important;
@@ -136,7 +136,7 @@
 }
 
 .empty-row-text {
-  color: #64748b;
+  color: var(--text-muted);
   font-style: italic;
   font-size: 0.85rem;
   padding: 12px 10px;
@@ -145,7 +145,7 @@
 
 .row-badge {
   margin-left: auto;
-  color: #6a6a6a;
+  color: var(--text-muted);
   font-weight: bold;
   font-size: 0.8rem;
 }
@@ -160,13 +160,13 @@
   bottom: 125%;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #770307;
+  background-color: var(--brand-red);
   color: #ffffff;
   font-size: 0.8rem;
   font-weight: 700;
   padding: 6px 14px;
   border-radius: 6px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
   white-space: nowrap;
   border: 1px solid rgba(255, 77, 77, 0.2);
   z-index: 105;
@@ -188,10 +188,10 @@
 .comment-section textarea {
   width: 100%;
   height: 100px;
-  background: #252525;
-  border: 1px solid #444;
+  background: var(--input-bg);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
-  color: white;
+  color: var(--text-main);
   padding: 15px;
   box-sizing: border-box;
   resize: none;
@@ -201,11 +201,11 @@
 
 .comment-section textarea:focus {
   outline: none;
-  border-color: #770307;
+  border-color: var(--brand-red);
 }
 
 .post-comment-btn {
-  background: #770307;
+  background: var(--brand-red);
   color: white;
   border: none;
   padding: 10px 25px;
@@ -224,8 +224,8 @@
    💬 NESTED COMMENTS AND REPLIES STYLING (Facebook & YouTube inspired)
    ========================================================================== */
 .comment-card {
-  background: #1e1e1e;
-  border: 1px solid #2a2a2a;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
   border-radius: 10px;
   padding: 16px;
   margin-bottom: 16px;
@@ -243,7 +243,7 @@
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #770307, #b30006);
+  background: linear-gradient(135deg, var(--brand-red), #b30006);
   color: white;
   display: flex;
   align-items: center;
@@ -251,7 +251,7 @@
   font-weight: bold;
   font-size: 0.95rem;
   flex-shrink: 0;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 .reply-avatar {
@@ -274,7 +274,7 @@
 
 .comment-username, .reply-username {
   font-weight: 700;
-  color: #f1f5f9;
+  color: var(--text-main);
   font-size: 0.95rem;
   display: flex;
   align-items: center;
@@ -286,7 +286,7 @@
 }
 
 .author-badge {
-  background: #770307;
+  background: var(--brand-red);
   color: white;
   font-size: 0.65rem;
   padding: 2px 6px;
@@ -299,11 +299,11 @@
 
 .comment-time, .reply-time {
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--text-muted);
 }
 
 .comment-text, .reply-text {
-  color: #cbd5e1;
+  color: var(--text-main);
   font-size: 0.925rem;
   line-height: 1.5;
   margin: 0 0 10px 0;
@@ -322,7 +322,7 @@
 .comment-action-btn {
   background: transparent;
   border: none;
-  color: #94a3b8;
+  color: var(--text-muted);
   font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
@@ -342,8 +342,8 @@
 /* Reply box nested under comment */
 .reply-input-box {
   margin-top: 12px;
-  background: #252525;
-  border: 1px solid #3a3a3a;
+  background: var(--input-bg);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 12px;
 }
@@ -351,10 +351,10 @@
 .reply-input-box textarea {
   width: 100%;
   height: 70px !important;
-  background: #1a1a1a !important;
-  border: 1px solid #444 !important;
+  background: var(--card-bg) !important;
+  border: 1px solid var(--border-color) !important;
   border-radius: 6px !important;
-  color: white !important;
+  color: var(--text-main) !important;
   padding: 10px !important;
   box-sizing: border-box !important;
   resize: none !important;
@@ -364,7 +364,7 @@
 }
 
 .reply-input-box textarea:focus {
-  border-color: #770307 !important;
+  border-color: var(--brand-red) !important;
   outline: none !important;
 }
 
@@ -376,8 +376,8 @@
 
 .reply-cancel-btn {
   background: transparent;
-  border: 1px solid #444;
-  color: #94a3b8;
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
   padding: 6px 14px;
   border-radius: 4px;
   font-size: 0.8rem;
@@ -387,12 +387,12 @@
 }
 
 .reply-cancel-btn:hover {
-  background: #2f2f2f;
-  color: white;
+  background: var(--hover-bg);
+  color: var(--text-main);
 }
 
 .reply-submit-btn {
-  background: #770307;
+  background: var(--brand-red);
   color: white;
   border: none;
   padding: 6px 16px;
@@ -411,7 +411,7 @@
 .replies-container {
   margin-left: 50px;
   margin-top: 14px;
-  border-left: 2px solid #2a2a2a;
+  border-left: 2px solid var(--border-color);
   padding-left: 16px;
   display: flex;
   flex-direction: column;
@@ -421,25 +421,25 @@
 .reply-card {
   display: flex;
   gap: 10px;
-  background: #181818;
+  background: var(--card-bg);
   padding: 10px 12px;
   border-radius: 8px;
-  border: 1px solid #222;
+  border: 1px solid var(--border-color);
 }
 
 .read-card h1 {
-  color: #dddfe2;
+  color: var(--text-main);
   margin-bottom: 10px;
 }
 
 .author-name {
-  color: #718096;
+  color: var(--text-muted);
   font-weight: bold;
   margin-bottom: 20px;
 }
 
 .content-body {
-  color: #e6e8ec;
+  color: var(--text-main);
   line-height: 1.8;
   font-size: 1.0rem;
   white-space: pre-wrap;
@@ -447,7 +447,7 @@
 
 .back-home-link {
   display: inline-block;
-  color: #718096;
+  color: var(--text-muted);
   text-decoration: none;
   font-weight: 600;
   font-size: 0.95rem;
@@ -456,6 +456,6 @@
 }
 
 .back-home-link:hover {
-  color: #770307; /* Cohesive crimson theme link pop */
+  color: var(--brand-red); /* Cohesive crimson theme link pop */
   transform: translateX(-4px); /* Interactive push effect */
 }

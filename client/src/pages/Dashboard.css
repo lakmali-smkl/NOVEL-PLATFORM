@@ -1,10 +1,6 @@
 
 :root {
-  --primary-color: #770307;
-  --bg-dark: #0a0a0a;
-  --bg-panel: #141414;
-  --text-main: #ffffff;
-  --text-muted: #a0a0a0;
+  --primary-color: var(--brand-red);
   --transition-speed: 0.3s;
   --sidebar-width: 280px;
 }
@@ -15,12 +11,12 @@
   left: calc(var(--sidebar-width) * -1);
   width: var(--sidebar-width);
   height: 100vh;
-  background-color: var(--bg-dark);
+  background-color: var(--card-bg);
   z-index: 1001;
   transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
   padding-top: 80px;
-  border-right: 1px solid #222;
-  box-shadow: 5px 0 15px rgba(0,0,0,0.3);
+  border-right: 1px solid var(--border-color);
+  box-shadow: 5px 0 15px rgba(0, 0, 0, 0.08);
 }
 
 .sidebar.active {
@@ -44,7 +40,7 @@
 
 .sidebar-divider {
   height: 1px;
-  background: #333;
+  background: var(--border-color);
   margin: 15px 25px;
 }
 
@@ -68,7 +64,7 @@
 .dashboard-container {
   display: flex;
   min-height: 100vh;
-  background-color: #121212;
+  background-color: var(--dark-bg);
 }
 
 .content {

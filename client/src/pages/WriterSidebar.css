@@ -8,7 +8,7 @@
 
 .writer-sidebar-content {
   width: 100%;
-  background: #0d1117;
+  background: var(--input-bg);
   border-right: 1px solid rgba(255, 255, 255, 0.05);
   z-index: 1000;
   padding-bottom: 100px;
@@ -62,7 +62,7 @@
   align-items: center;
   gap: 12px;
   padding: 12px 15px;
-  color: #8b949e;
+  color: var(--text-muted);
   text-decoration: none;
   font-size: 0.9rem;
   border-radius: 8px;
@@ -71,7 +71,7 @@
 
 .writer-sidebar-content ul li a:hover {
   background: rgba(255, 51, 51, 0.05);
-  color: #fff;
+  color: var(--text-main);
   transform: translateX(5px);
 }
 
@@ -93,7 +93,7 @@
 .sidebar-header p {
   font-size: 0.85rem;
   font-weight: 500;
-  color: rgba(240, 240, 255, 0.85);
+  color: var(--text-muted);
   margin-top: 4px;
   padding: 0;
   font-style: italic;

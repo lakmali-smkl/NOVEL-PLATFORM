@@ -1,19 +1,19 @@
 /* Container for the table section */
 .action-card.full-width {
-    background-color: #1a1a1a;
-    border: 1px solid #333;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 30px;
     margin: 20px 0;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
 .action-card h3 {
-    color: #ffffff;
+    color: var(--text-main);
     font-size: 1.5rem;
     margin-bottom: 20px;
     font-weight: 600;
-    border-left: 4px solid #a50000;
+    border-left: 4px solid var(--brand-red);
     padding-left: 15px;
 }
 
@@ -21,7 +21,7 @@
 .works-table {
     width: 100%;
     border-collapse: collapse;
-    color: #e0e0e0;
+    color: var(--text-main);
     font-size: 0.95rem;
 }
 
@@ -29,32 +29,32 @@
 .works-table th {
     text-align: left;
     padding: 15px;
-    background-color: #252525;
-    color: #a0a0a0;
+    background-color: var(--input-bg);
+    color: var(--text-muted);
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 1px;
     font-size: 0.8rem;
-    border-bottom: 2px solid #333;
+    border-bottom: 2px solid var(--border-color);
 }
 
 /* Row styling */
 .works-table td {
     padding: 18px 15px;
-    border-bottom: 1px solid #2a2a2a;
+    border-bottom: 1px solid var(--border-color);
     vertical-align: middle;
 }
 
 /* Subtle hover effect for rows */
 .works-table tr:hover {
-    background-color: #222222;
+    background-color: var(--hover-bg);
     transition: background 0.2s ease;
 }
 
 /* Title column specific styling */
 .works-table td:first-child {
     font-weight: 600;
-    color: #fff;
+    color: var(--text-main);
 }
 
 /* Container for the buttons to keep them side-by-side */
@@ -82,9 +82,9 @@
 
 /* Edit Button (Gold/Yellow or Blue accents often work, but staying with Red/White for your theme) */
 .edit-btn {
-    color: #ffffff;
-    border: 1px solid #444;
-    background-color: #222;
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+    background-color: var(--input-bg);
 }
 
 .edit-btn:hover {
@@ -98,12 +98,12 @@
 /* Delete Button (Aggressive Red) */
 .delete-btn {
     color: #ff4d4d;
-    border: 1px solid #a50000;
+    border: 1px solid var(--brand-red);
     background-color: rgba(165, 0, 0, 0.1);
 }
 
 .delete-btn:hover {
-    background-color: #a50000;
+    background-color: var(--brand-red);
     color: #fff;
     box-shadow: 0 0 15px rgba(165, 0, 0, 0.4);
     transform: translateY(-2px);
@@ -116,7 +116,7 @@
 
 /* Empty state message */
 .action-card p {
-    color: #777;
+    color: var(--text-muted);
     font-style: italic;
     padding: 20px 0;
 }

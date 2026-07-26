@@ -1,19 +1,19 @@
 /* CONTAINER BASE STRUCTURING */
 .directory-workspace {
   padding: 30px;
-  background-color: #0d1117; /* Matches your dashboard background */
+  background-color: var(--input-bg); /* Matches your dashboard background */
   min-height: 100%;
 }
 
 .directory-header h2 {
-  color: #ffffff;
+  color: var(--text-main);
   font-size: 1.6rem;
   font-weight: 700;
   margin: 0 0 5px 0;
 }
 
 .directory-header .subtitle {
-  color: #8b949e;
+  color: var(--text-muted);
   font-size: 0.9rem;
   margin: 0;
 }
@@ -27,8 +27,8 @@
 }
 
 .metric-card {
-  background-color: #161b22;
-  border: 1px solid #21262d;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 20px;
   display: flex;
@@ -36,7 +36,7 @@
 }
 
 .metric-label {
-  color: #8b949e;
+  color: var(--text-muted);
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -44,7 +44,7 @@
 }
 
 .metric-value {
-  color: #f0f6fc;
+  color: var(--text-main);
   font-size: 1.8rem;
   font-weight: 700;
 }
@@ -61,10 +61,10 @@
 
 .search-input {
   flex-grow: 1;
-  background-color: #161b22;
-  border: 1px solid #30363d;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
   border-radius: 6px;
-  color: #f0f6fc;
+  color: var(--text-main);
   padding: 10px 14px;
   font-size: 0.9rem;
 }
@@ -75,10 +75,10 @@
 }
 
 .role-select {
-  background-color: #161b22;
-  border: 1px solid #30363d;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
   border-radius: 6px;
-  color: #f0f6fc;
+  color: var(--text-main);
   padding: 0 14px;
   font-size: 0.9rem;
   cursor: pointer;
@@ -86,8 +86,8 @@
 
 /* DATA DIRECTORY GRID CONFIGURATIONS */
 .table-responsive-wrapper {
-  background-color: #161b22;
-  border: 1px solid #21262d;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   overflow: hidden;
 }
@@ -101,15 +101,15 @@
 
 .directory-table th {
   background-color: rgba(0, 0, 0, 0.2);
-  border-bottom: 1px solid #30363d;
-  color: #8b949e;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-muted);
   font-weight: 600;
   padding: 14px 20px;
 }
 
 .directory-table td {
   padding: 14px 20px;
-  border-bottom: 1px solid #21262d;
+  border-bottom: 1px solid var(--border-color);
   vertical-align: middle;
 }
 
@@ -128,12 +128,12 @@
 }
 
 .cell-username {
-  color: #f0f6fc;
+  color: var(--text-main);
   font-weight: 600;
 }
 
 .cell-email {
-  color: #8b949e;
+  color: var(--text-muted);
   font-size: 0.8rem;
 }
 
@@ -152,12 +152,12 @@
 
 .badge-admin { background-color: rgba(119, 3, 7, 0.2); color: #ff3333; border: 1px solid rgba(119, 3, 7, 0.4); }
 .badge-writer { background-color: rgba(88, 166, 255, 0.15); color: #58a6ff; border: 1px solid rgba(88, 166, 255, 0.3); }
-.badge-reader { background-color: rgba(139, 148, 158, 0.1); color: #8b949e; border: 1px solid rgba(139, 148, 158, 0.2); }
+.badge-reader { background-color: rgba(139, 148, 158, 0.1); color: var(--text-muted); border: 1px solid rgba(139, 148, 158, 0.2); }
 
 /* STATUS DOT SIGNALS */
 .status-tag {
   font-size: 0.8rem;
-  color: #c9d1d9;
+  color: var(--text-muted);
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -181,7 +181,7 @@
 }
 
 .date-cell {
-  color: #8b949e;
+  color: var(--text-muted);
   font-family: monospace;
 }
 
@@ -194,8 +194,8 @@
 
 .btn-table {
   background: transparent;
-  border: 1px solid #30363d;
-  color: #c9d1d9;
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
   padding: 6px 12px;
   border-radius: 4px;
   font-size: 0.8rem;
@@ -211,7 +211,7 @@
 
 .immutable-label {
   font-size: 0.8rem;
-  color: #555;
+  color: var(--text-muted);
   font-style: italic;
   padding: 6px 0;
 }
@@ -219,5 +219,5 @@
 .table-empty, .directory-loading {
   text-align: center;
   padding: 40px;
-  color: #8b949e;
+  color: var(--text-muted);
 }

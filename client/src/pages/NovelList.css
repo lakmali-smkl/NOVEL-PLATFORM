@@ -15,8 +15,8 @@
 
 /* ── Novel Card ── */
 .novel-card {
-  background: #111318;
-  border: 1px solid #1e2330;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
   border-radius: 18px;
   overflow: hidden;
   position: relative;
@@ -81,7 +81,7 @@
 }
 
 .novel-info h3 {
-  color: #f1f5f9 !important;
+  color: var(--text-main) !important;
   font-size: 1rem;
   font-weight: 700;
   margin: 0 0 5px 0;
@@ -92,14 +92,14 @@
 }
 
 .novel-info .author {
-  color: #64748b !important;
+  color: var(--text-muted) !important;
   font-size: 0.78rem;
   font-weight: 500;
   margin: 0 0 8px 0;
 }
 
 .novel-info .excerpt {
-  color: #475569 !important;
+  color: var(--text-muted) !important;
   font-size: 0.8rem;
   line-height: 1.6;
   margin: 0 0 14px 0;
@@ -138,7 +138,7 @@
 
 /* ── Gallery title ── */
 .novel-gallery h2 {
-  color: #f1f5f9 !important;
+  color: var(--text-main) !important;
   text-align: center;
   margin-bottom: 28px;
   font-size: 1.4rem;
@@ -147,7 +147,7 @@
 
 /* ── Empty state ── */
 .novel-gallery p {
-  color: #475569 !important;
+  color: var(--text-muted) !important;
   text-align: center;
   padding: 48px 0;
   font-size: 0.95rem;

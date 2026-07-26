@@ -8,7 +8,7 @@
   padding: 80px 32px;
   min-height: 100vh;
   position: relative;
-  color: #e2e8f0;
+  color: var(--text-main);
   font-family: 'Inter', sans-serif;
   overflow: hidden;
 }
@@ -18,7 +18,7 @@
   align-items: center;
   justify-content: center;
   font-size: 1.2rem;
-  color: #94a3b8;
+  color: var(--text-muted);
 }
 
 /* 🔮 Premium Background Glows */
@@ -36,7 +36,7 @@
 .glow-1 {
   top: 10%;
   left: -5%;
-  background: #3b82f6;
+  background: var(--accent);
 }
 
 .glow-2 {
@@ -49,12 +49,12 @@
 .profile-header {
   position: relative;
   z-index: 1;
-  background: #111318;
-  border: 1px solid #1e2330;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
   border-radius: 24px;
   padding: 40px;
   margin-bottom: 32px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
   animation: profFadeUp 0.6s ease both;
 }
 
@@ -67,7 +67,7 @@
 .avatar-placeholder {
   width: 110px;
   height: 110px;
-  background: linear-gradient(135deg, #3b82f6 0%, #770307 100%);
+  background: linear-gradient(135deg, var(--accent) 0%, #770307 100%);
   color: white;
   border-radius: 50%;
   display: flex;
@@ -75,7 +75,7 @@
   justify-content: center;
   font-size: 3.5rem;
   font-weight: 800;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
   border: 3px solid rgba(255, 255, 255, 0.05);
   flex-shrink: 0;
 }
@@ -85,7 +85,7 @@
   height: 110px;
   border-radius: 50%;
   object-fit: cover;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
   border: 3px solid rgba(255, 255, 255, 0.05);
   flex-shrink: 0;
 }
@@ -107,10 +107,7 @@
   font-weight: 900;
   letter-spacing: -0.03em;
   margin: 0;
-  background: linear-gradient(135deg, #ffffff 40%, rgba(255, 255, 255, 0.6) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--text-main);
 }
 
 .pencil-edit-btn {
@@ -129,7 +126,7 @@
 }
 
 .email-text {
-  color: #94a3b8;
+  color: var(--text-muted);
   font-size: 1.05rem;
   margin: 0;
 }
@@ -143,8 +140,8 @@
 }
 
 .edit-input {
-  background: #080a0f;
-  border: 1px solid #3b82f6;
+  background: var(--dark-bg);
+  border: 1px solid var(--accent);
   color: white;
   padding: 10px 16px;
   border-radius: 10px;
@@ -172,7 +169,7 @@
 }
 
 .save-btn {
-  background: #3b82f6;
+  background: var(--accent);
   color: white;
 }
 
@@ -182,8 +179,8 @@
 }
 
 .cancel-btn {
-  background: #1e2330;
-  color: #94a3b8;
+  background: var(--border-color);
+  color: var(--text-muted);
   border: 1px solid #30363d !important;
 }
 
@@ -204,8 +201,8 @@
 }
 
 .stat-card {
-  background: #111318;
-  border: 1px solid #1e2330;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
   border-radius: 20px;
   padding: 24px;
   display: flex;
@@ -217,7 +214,7 @@
 
 .stat-card:hover {
   transform: translateY(-4px);
-  border-color: #3b82f6;
+  border-color: var(--accent);
 }
 
 .stat-icon {
@@ -240,12 +237,12 @@
 .stat-number {
   font-size: 1.8rem;
   font-weight: 800;
-  color: #f1f5f9;
+  color: var(--text-main);
   line-height: 1.2;
 }
 
 .stat-label {
-  color: #64748b;
+  color: var(--text-muted);
   font-size: 0.85rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -260,20 +257,20 @@
 }
 
 .info-card {
-  background: #111318;
+  background: var(--card-bg);
   padding: 40px;
   border-radius: 24px;
-  border: 1px solid #1e2330;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
 }
 
 .info-card h3 {
-  border-bottom: 1px solid #1e2330;
+  border-bottom: 1px solid var(--border-color);
   padding-bottom: 16px;
   margin-bottom: 24px;
   font-size: 1.3rem;
   font-weight: 800;
-  color: #f1f5f9;
+  color: var(--text-main);
 }
 
 .info-row {
@@ -289,13 +286,13 @@
 }
 
 .info-row span {
-  color: #64748b;
+  color: var(--text-muted);
   font-weight: 600;
   font-size: 0.95rem;
 }
 
 .info-row p {
-  color: #f1f5f9;
+  color: var(--text-main);
   margin: 0;
   font-weight: 700;
   font-size: 1rem;
@@ -375,14 +372,11 @@
   font-weight: 900;
   letter-spacing: -0.03em;
   margin: 0 0 8px 0;
-  background: linear-gradient(135deg, #ffffff 40%, rgba(255, 255, 255, 0.6) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--text-main);
 }
 
 .profile-welcome-header p {
-  color: #94a3b8;
+  color: var(--text-muted);
   font-size: 1.05rem;
   margin: 0;
 }
@@ -412,7 +406,7 @@
 
 .stat-card-link:hover {
   transform: translateY(-6px);
-  border-color: #3b82f6;
+  border-color: var(--accent);
   box-shadow: 0 12px 30px rgba(59,130,246,0.2);
 }
 
@@ -422,7 +416,7 @@
   align-items: center;
   justify-content: space-between;
   background: rgba(255,255,255,0.01);
-  border: 1px solid #1e2330;
+  border: 1px solid var(--border-color);
   border-radius: 14px;
   padding: 18px;
   margin-bottom: 18px;
@@ -457,7 +451,7 @@
 
 .streak-sub {
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--text-muted);
   font-weight: 500;
 }
 
@@ -480,13 +474,13 @@
 
 .progress-bg {
   fill: none;
-  stroke: #1e2330;
+  stroke: var(--border-color);
   stroke-width: 3.5;
 }
 
 .progress-bar {
   fill: none;
-  stroke: #3b82f6;
+  stroke: var(--accent);
   stroke-width: 3.5;
   stroke-linecap: round;
   transform: rotate(-90deg);
@@ -501,7 +495,7 @@
   transform: translate(-50%, -50%);
   font-size: 0.72rem;
   font-weight: 700;
-  color: #f1f5f9;
+  color: var(--text-main);
 }
 
 .ring-label {
@@ -511,12 +505,12 @@
 
 .ring-label strong {
   font-size: 0.95rem;
-  color: #f1f5f9;
+  color: var(--text-main);
 }
 
 .ring-label span {
   font-size: 0.7rem;
-  color: #64748b;
+  color: var(--text-muted);
 }
 
 .daily-checklist {
@@ -532,7 +526,7 @@
   align-items: center;
   gap: 4px;
   background: rgba(255,255,255,0.01);
-  border: 1px solid #1e2330;
+  border: 1px solid var(--border-color);
   padding: 8px 4px;
   border-radius: 8px;
 }
@@ -540,14 +534,14 @@
 .day-box span:first-child {
   font-size: 0.7rem;
   font-weight: 700;
-  color: #64748b;
+  color: var(--text-muted);
 }
 
 .check-dot {
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  border: 1px solid #334155;
+  border: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -565,8 +559,8 @@
 }
 
 .day-box.checked .check-dot {
-  background: #3b82f6;
-  border-color: #3b82f6;
+  background: var(--accent);
+  border-color: var(--accent);
   color: white;
   font-weight: 800;
 }

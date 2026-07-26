@@ -1,16 +1,18 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // All available themes — order matters for the picker UI
+// Content is always light/professional — only the navbar color and
+// accent (buttons/links/highlights) differ between themes.
 export const THEMES = [
   {
     id: 'midnight',
     name: 'Midnight Dark',
     emoji: '🌙',
     navbar: '#770307',
-    bg: '#080a0f',
-    card: '#111318',
-    accent: '#3b82f6',
-    text: '#e2e8f0',
+    bg: '#f3f4f6',
+    card: '#ffffff',
+    accent: '#2563eb',
+    text: '#1f2937',
   },
   {
     id: 'snow',
@@ -19,7 +21,7 @@ export const THEMES = [
     navbar: '#770307',
     bg: '#f3f4f6',
     card: '#ffffff',
-    accent: '#3b82f6',
+    accent: '#2563eb',
     text: '#1f2937',
   },
   {
@@ -27,40 +29,40 @@ export const THEMES = [
     name: 'Ocean Blue',
     emoji: '🌊',
     navbar: '#0c2d48',
-    bg: '#0a1628',
-    card: '#112240',
-    accent: '#64ffda',
-    text: '#ccd6f6',
+    bg: '#f3f4f6',
+    card: '#ffffff',
+    accent: '#0e7490',
+    text: '#1f2937',
   },
   {
     id: 'forest',
     name: 'Forest Green',
     emoji: '🌿',
     navbar: '#1b4332',
-    bg: '#0d1f17',
-    card: '#132a1e',
-    accent: '#52b788',
-    text: '#d4e7d9',
+    bg: '#f3f4f6',
+    card: '#ffffff',
+    accent: '#15803d',
+    text: '#1f2937',
   },
   {
     id: 'purple',
     name: 'Royal Purple',
     emoji: '👑',
     navbar: '#2d1854',
-    bg: '#120b24',
-    card: '#1c1035',
-    accent: '#a78bfa',
-    text: '#ddd6fe',
+    bg: '#f3f4f6',
+    card: '#ffffff',
+    accent: '#7c3aed',
+    text: '#1f2937',
   },
   {
     id: 'sunset',
     name: 'Sunset Warm',
     emoji: '🌅',
     navbar: '#78350f',
-    bg: '#1a0f05',
-    card: '#27180c',
-    accent: '#fb923c',
-    text: '#fde8d0',
+    bg: '#f3f4f6',
+    card: '#ffffff',
+    accent: '#c2410c',
+    text: '#1f2937',
   },
 ];
 
@@ -89,12 +91,12 @@ export const ThemeProvider = ({ children }) => {
 
   // Apply theme class to body whenever theme changes
   useEffect(() => {
-    // Remove all theme classes
-    document.body.classList.forEach((cls) => {
-      if (cls.startsWith('theme-') || cls === 'light-theme') {
-        document.body.classList.remove(cls);
-      }
-    });
+    // Remove all theme classes — collect first, since classList is a live
+    // list and removing while iterating it directly can skip entries.
+    const classesToRemove = Array.from(document.body.classList).filter(
+      (cls) => cls.startsWith('theme-') || cls === 'light-theme'
+    );
+    classesToRemove.forEach((cls) => document.body.classList.remove(cls));
 
     // Add new theme class
     document.body.classList.add(`theme-${theme}`);

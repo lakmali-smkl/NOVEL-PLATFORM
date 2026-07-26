@@ -8,13 +8,13 @@
 }
 
 .request-card {
-    background: linear-gradient(145deg, #161616 0%, #0f0f0f 100%);
+    background: var(--card-bg);
     border: 1px solid rgba(185, 28, 28, 0.2);
     padding: 45px;
     border-radius: 24px;
     max-width: 550px;
     width: 100%;
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.08);
     backdrop-filter: blur(10px); /* Modern Glass Effect */
 }
 
@@ -31,18 +31,18 @@
 }
 
 .request-header h2 {
-    color: white;
+    color: var(--text-main);
     margin-top: 20px;
     font-size: 2.2rem;
     font-weight: 800;
-    background: linear-gradient(to right, #ffffff, #f87171);
+    background: linear-gradient(to right, var(--text-main), #f87171);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
 .request-header p {
-    color: #8b949e;
+    color: var(--text-muted);
     margin-bottom: 35px;
     line-height: 1.6;
 }
@@ -50,7 +50,7 @@
 /* Form Elements */
 .input-group label {
     display: block;
-    color: #d1d5db;
+    color: var(--text-main);
     margin-bottom: 12px;
     font-weight: 600;
     font-size: 0.9rem;
@@ -58,10 +58,10 @@
 
 .input-group textarea {
     width: 100%;
-    background: #0d1117;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
-    color: white;
+    color: var(--text-main);
     padding: 18px;
     min-height: 140px;
     font-family: inherit;
@@ -71,7 +71,7 @@
 
 .input-group textarea:focus {
     border-color: #ef4444;
-    background: #12181f;
+    background: var(--input-bg);
     outline: none;
     box-shadow: 0 0 15px rgba(239, 68, 68, 0.15);
 }
@@ -117,14 +117,14 @@
 }
 
 .status-display h3 {
-    color: #fff;
+    color: var(--text-main);
     font-size: 1.5rem;
     font-weight: 700;
     margin-bottom: 12px;
 }
 
 .status-display.pending p {
-    color: #8b949e;
+    color: var(--text-muted);
     font-size: 1rem;
     line-height: 1.5;
 }
@@ -143,14 +143,14 @@
 }
 
 .status-display.rejected h3 {
-    color: #fff;
+    color: var(--text-main);
     font-size: 1.5rem;
     font-weight: 700;
     margin-bottom: 12px;
 }
 
 .status-display.rejected p {
-    color: #8b949e;
+    color: var(--text-muted);
     font-size: 1rem;
     line-height: 1.5;
     margin-bottom: 25px;

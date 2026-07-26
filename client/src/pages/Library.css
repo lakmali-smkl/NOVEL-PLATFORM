@@ -10,8 +10,8 @@
   margin: 0 auto;
   padding: 100px 32px 80px;
   min-height: 100vh;
-  background: #080a0f;
-  color: #e2e8f0;
+  background: var(--dark-bg);
+  color: var(--text-main);
   font-family: 'Inter', sans-serif;
   position: relative;
   overflow: hidden;
@@ -51,10 +51,7 @@
   font-weight: 900;
   letter-spacing: -0.03em;
   margin-bottom: 10px;
-  background: linear-gradient(135deg, #ffffff 30%, rgba(255,255,255,0.55) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--text-main);
   position: relative;
   z-index: 1;
   animation: libFadeUp 0.6s ease both;
@@ -81,8 +78,8 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: #111318;
-  border: 1px solid #1e2330;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
   border-radius: 999px;
   z-index: -1;
   width: fit-content;
@@ -92,7 +89,7 @@
 
 .tab-buttons button {
   background: transparent;
-  color: #64748b;
+  color: var(--text-muted);
   border: none;
   padding: 11px 36px;
   border-radius: 999px;
@@ -106,7 +103,7 @@
 }
 
 .tab-buttons button:hover:not(.active) {
-  color: #cbd5e1;
+  color: var(--text-main);
 }
 
 .tab-buttons button.active {
@@ -126,11 +123,11 @@
 /* Force text colours inside library */
 .library-container h2,
 .library-container h3 {
-  color: #f1f5f9 !important;
+  color: var(--text-main) !important;
 }
 
 .library-container p {
-  color: #94a3b8 !important;
+  color: var(--text-muted) !important;
 }
 
 @keyframes libFadeUp {

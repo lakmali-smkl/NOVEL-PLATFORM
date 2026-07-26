@@ -2,9 +2,9 @@
 
 .fav-content {
   padding: 80px 40px;
-  background-color: var(--dark-bg, #080a0f);
+  background-color: var(--dark-bg, var(--dark-bg));
   min-height: 100vh;
-  color: var(--text-main, #e2e8f0);
+  color: var(--text-main, var(--text-main));
   font-family: 'Inter', 'Segoe UI', sans-serif;
   box-sizing: border-box;
 }
@@ -22,7 +22,7 @@
 }
 
 .fav-subtitle {
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, var(--text-muted));
   font-size: 1.05rem;
   margin: 0;
 }
@@ -32,7 +32,7 @@
   display: flex;
   gap: 12px;
   margin-bottom: 30px;
-  border-bottom: 1px solid var(--border-color, #1e2330);
+  border-bottom: 1px solid var(--border-color, var(--border-color));
   padding-bottom: 14px;
 }
 
@@ -41,8 +41,8 @@
   align-items: center;
   gap: 8px;
   background: var(--hover-bg, rgba(255, 255, 255, 0.03));
-  border: 1px solid var(--border-color, #1e2330);
-  color: var(--text-main, #e2e8f0);
+  border: 1px solid var(--border-color, var(--border-color));
+  color: var(--text-main, var(--text-main));
   padding: 10px 20px;
   border-radius: 20px;
   font-weight: 600;
@@ -53,14 +53,14 @@
 
 .fav-tab:hover {
   background: var(--hover-bg, rgba(255, 255, 255, 0.08));
-  border-color: var(--text-muted, #64748b);
+  border-color: var(--text-muted, var(--text-muted));
   transform: translateY(-1px);
 }
 
 .fav-tab.active {
-  background: var(--accent, #3b82f6);
+  background: var(--accent, var(--accent));
   color: #ffffff;
-  border-color: var(--accent, #3b82f6);
+  border-color: var(--accent, var(--accent));
   box-shadow: 0 4px 15px var(--accent-glow, rgba(59, 130, 246, 0.3));
 }
 
@@ -82,10 +82,10 @@
 
 /* ── The Card ── */
 .fav-card {
-  background: var(--card-bg, #111318);
+  background: var(--card-bg, var(--card-bg));
   border-radius: 16px;
   padding: 25px;
-  border: 1px solid var(--border-color, #1e2330);
+  border: 1px solid var(--border-color, var(--border-color));
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
@@ -99,14 +99,14 @@
 .fav-card:hover {
   border-color: var(--accent, #770307);
   transform: translateY(-5px);
-  box-shadow: 0 16px 35px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 16px 35px rgba(0, 0, 0, 0.08);
 }
 
 .fav-card-type-tag {
   font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
-  color: var(--accent, #3b82f6);
+  color: var(--accent, var(--accent));
   margin-bottom: 12px;
   letter-spacing: 0.05em;
 }
@@ -176,10 +176,10 @@
   justify-content: center;
   padding: 60px 20px;
   grid-column: 1 / -1;
-  color: var(--text-muted, #64748b);
+  color: var(--text-muted, var(--text-muted));
   text-align: center;
   background: var(--card-bg, rgba(255, 255, 255, 0.02));
-  border: 1px dashed var(--border-color, #1e2330);
+  border: 1px dashed var(--border-color, var(--border-color));
   border-radius: 16px;
 }
 

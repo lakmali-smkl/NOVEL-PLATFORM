@@ -9,8 +9,8 @@
   margin: 0 auto;
   padding: 100px 32px 80px;
   min-height: 100vh;
-  background: #080a0f;
-  color: #e2e8f0;
+  background: var(--dark-bg);
+  color: var(--text-main);
   font-family: 'Inter', sans-serif;
 }
 
@@ -25,14 +25,11 @@
   font-weight: 900;
   letter-spacing: -0.03em;
   margin: 0 0 10px 0;
-  background: linear-gradient(135deg, #ffffff 30%, rgba(255,255,255,0.55) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--text-main);
 }
 
 .writer-header p {
-  color: #94a3b8;
+  color: var(--text-muted);
   font-size: 1.05rem;
   margin: 0;
 }
@@ -57,8 +54,8 @@
 }
 
 .collection-card {
-  background: #111318;
-  border: 1px solid #1e2330;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
   border-radius: 18px;
   padding: 32px 28px;
   display: flex;
@@ -82,28 +79,28 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: #1e2330;
+  background: var(--border-color);
   transition: background 0.3s ease;
 }
 
 .collection-card:hover {
   transform: translateY(-8px) scale(1.01);
-  border-color: #3b82f6;
-  background: #14171f;
+  border-color: var(--accent);
+  background: var(--hover-bg);
   box-shadow: 
-    0 20px 48px rgba(0,0,0,0.5),
+    0 20px 48px rgba(0, 0, 0, 0.08),
     0 0 0 1px rgba(59,130,246,0.15),
     0 0 24px rgba(59,130,246,0.08);
 }
 
 .collection-card:hover::before {
-  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+  background: linear-gradient(90deg, var(--accent), #60a5fa);
 }
 
 /* ── Create New Card (Special) ── */
 .collection-card.create-card {
   background: rgba(59,130,246,0.03);
-  border: 2px dashed #1e2330;
+  border: 2px dashed var(--border-color);
   align-items: center;
   justify-content: center;
   text-align: center;
@@ -115,9 +112,9 @@
 }
 
 .collection-card.create-card:hover {
-  border-color: #3b82f6;
+  border-color: var(--accent);
   background: rgba(59,130,246,0.08);
-  box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
 }
 
 .collection-card.create-card .card-icon {
@@ -155,7 +152,7 @@
 }
 
 .card-content h4 {
-  color: #f1f5f9;
+  color: var(--text-main);
   font-size: 1.15rem;
   font-weight: 700;
   margin: 0 0 8px 0;
@@ -163,7 +160,7 @@
 }
 
 .card-content p {
-  color: #64748b;
+  color: var(--text-muted);
   font-size: 0.85rem;
   margin: 0;
   font-weight: 500;
@@ -171,7 +168,7 @@
 }
 
 .collection-card:hover .card-content p {
-  color: #94a3b8;
+  color: var(--text-muted);
 }
 
 /* ── Delete Button ── */
@@ -211,10 +208,10 @@
   grid-column: 1 / -1;
   text-align: center;
   padding: 60px 20px;
-  background: #111318;
-  border: 1px dashed #1e2330;
+  background: var(--card-bg);
+  border: 1px dashed var(--border-color);
   border-radius: 16px;
-  color: #64748b;
+  color: var(--text-muted);
   font-size: 0.95rem;
 }
 
@@ -237,13 +234,13 @@
 }
 
 .collection-modal {
-  background: #111318;
-  border: 1px solid #1e2330;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
   border-radius: 16px;
   padding: 32px;
   width: 90%;
   max-width: 420px;
-  box-shadow: 0 24px 60px rgba(0,0,0,0.6);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.08);
   animation: modalSlideUp 0.3s cubic-bezier(0.34,1.56,0.64,1) both;
 }
 
@@ -253,7 +250,7 @@
 }
 
 .collection-modal h3 {
-  color: #f1f5f9;
+  color: var(--text-main);
   font-size: 1.2rem;
   font-weight: 700;
   margin: 0 0 20px 0;
@@ -261,9 +258,9 @@
 
 .collection-modal input {
   width: 100%;
-  background: #080a0f;
-  border: 1px solid #1e2330;
-  color: #f1f5f9;
+  background: var(--dark-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
   padding: 14px 16px;
   border-radius: 10px;
   font-size: 0.95rem;
@@ -275,7 +272,7 @@
 
 .collection-modal input:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
 }
 
@@ -296,19 +293,19 @@
 
 .cancel-btn {
   background: transparent;
-  color: #94a3b8;
-  border: 1px solid #1e2330;
+  color: var(--text-muted);
+  border: 1px solid var(--border-color);
 }
 
 .cancel-btn:hover {
   background: rgba(255,255,255,0.05);
-  color: #f1f5f9;
+  color: var(--text-main);
 }
 
 .create-btn {
-  background: #3b82f6;
+  background: var(--accent);
   color: #fff;
-  border: 1px solid #3b82f6;
+  border: 1px solid var(--accent);
 }
 
 .create-btn:hover {

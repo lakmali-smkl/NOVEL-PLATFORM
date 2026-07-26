@@ -3,16 +3,16 @@
     max-width: 900px; /* Wider for comfortable writing */
     margin: 40px auto;
     padding: 30px;
-    background-color: #1a1a1a;
+    background-color: var(--card-bg);
     border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
 .edit-novel-container h1 {
-    color: #fff;
+    color: var(--text-main);
     margin-bottom: 25px;
     font-size: 2rem;
-    border-left: 5px solid #a50000; /* Red accent mark */
+    border-left: 5px solid var(--brand-red); /* Red accent mark */
     padding-left: 15px;
 }
 
@@ -24,7 +24,7 @@
 }
 
 .edit-form-group label {
-    color: #a0a0a0;
+    color: var(--text-muted);
     margin-bottom: 8px;
     font-weight: 600;
 }
@@ -36,7 +36,7 @@
     font-family: 'Georgia', serif; /* Serif fonts are better for long-form reading */
     padding: 20px;
     background-color: #fdfdfd; /* Light background for the actual text area */
-    color: #1a1a1a;
+    color: #1f2937; /* Fixed dark text — this textarea stays paper-light regardless of theme */
     border: none;
     border-radius: 4px;
     font-size: 1.1rem;
@@ -47,7 +47,7 @@
 .save-changes-btn {
     width: 100%;
     padding: 15px;
-    background-color: #a50000;
+    background-color: var(--brand-red);
     color: white;
     text-transform: uppercase;
     letter-spacing: 2px;

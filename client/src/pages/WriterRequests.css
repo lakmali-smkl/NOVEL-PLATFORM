@@ -1,12 +1,10 @@
 
 :root {
-  --surface: #ffffff;
-  --surface-alt: #f8fafc;
-  --surface-strong: #eef2ff;
-  --surface-border: #dbe3ef;
-  --text-primary: #111827;
-  --text-secondary: #4b5563;
-  --text-muted: #6b7280;
+  --surface: var(--card-bg);
+  --surface-alt: var(--card-bg);
+  --surface-border: var(--border-color);
+  --text-primary: var(--text-main);
+  --text-secondary: var(--text-muted);
   --accent-success: #0f766e;
   --accent-danger: #dc2626;
   --accent-info: #2563eb;
@@ -53,8 +51,8 @@
   gap: 18px;
   padding: 24px 26px;
   border-radius: 22px;
-  border: 1px solid #e7edf5;
-  background: #ffffff;
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
   margin-bottom: 18px;
   transition: transform 0.2s ease, border-color 0.2s ease;
 }
@@ -163,8 +161,8 @@
 .empty-notice {
   padding: 24px 26px;
   border-radius: 22px;
-  background: #f8fafc;
-  border: 1px solid #e5e8ef;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
   color: var(--text-muted);
   font-size: 1rem;
   line-height: 1.7;
@@ -228,7 +226,7 @@
   border-radius: 12px;
   margin-bottom: 4px;
   border-left: 4px solid transparent;
-  background: #f9fafb;
+  background: var(--card-bg);
   transition: background 0.18s ease, transform 0.15s ease;
   cursor: default;
 }
@@ -238,7 +236,7 @@
 }
 
 .notif-item:hover {
-  background: #f1f5f9;
+  background: var(--hover-bg);
   transform: translateX(2px);
 }
 
@@ -277,19 +275,19 @@
 .notif-text {
   margin: 0 0 3px 0;
   font-size: 0.9rem;
-  color: #374151;
+  color: var(--text-main);
   line-height: 1.4;
 }
 
 .notif-username {
   font-weight: 700;
-  color: #111827;
+  color: var(--text-main);
 }
 
 .notif-reason {
   margin: 0 0 5px 0;
   font-size: 0.82rem;
-  color: #6b7280;
+  color: var(--text-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -299,7 +297,7 @@
 .notif-time {
   font-size: 0.76rem;
   font-weight: 600;
-  color: #9ca3af;
+  color: var(--text-muted);
   letter-spacing: 0.02em;
 }
 
@@ -345,7 +343,7 @@
   border: none;
   border-radius: 6px;
   background: transparent;
-  color: #d1d5db;
+  color: var(--text-muted);
   cursor: pointer;
   transition: background 0.15s ease, color 0.15s ease;
   padding: 0;
