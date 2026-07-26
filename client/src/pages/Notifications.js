@@ -24,7 +24,9 @@ const getIcon = (type) => {
 const getBadgeColor = (type) => {
   switch (type) {
     case 'like': return 'badge-like';
-    case 'comment': return 'badge-comment';
+    case 'comment':
+    case 'reply':
+      return 'badge-comment';
     default: return 'badge-default';
   }
 };
@@ -88,7 +90,14 @@ const Notifications = ({ user }) => {
       if (n.message.toLowerCase().includes('novel')) type = 'novel';
       else if (n.message.toLowerCase().includes('article')) type = 'article';
     }
-    return n.contentId && type ? `/read/${type}/${n.contentId}` : null;
+    if (!n.contentId || !type) return null;
+
+    const params = new URLSearchParams();
+    if (n.commentId) params.set('commentId', n.commentId);
+    if (n.replyId) params.set('replyId', n.replyId);
+    const qs = params.toString();
+
+    return `/read/${type}/${n.contentId}${qs ? `?${qs}` : ''}`;
   };
 
   const tabs = [

@@ -234,6 +234,17 @@
   flex-direction: column;
 }
 
+/* Deep-link highlight — briefly draws the eye to the linked comment/reply */
+.comment-card-highlighted,
+.reply-card-highlighted {
+  animation: deepLinkHighlight 2.5s ease;
+}
+
+@keyframes deepLinkHighlight {
+  0% { box-shadow: 0 0 0 3px var(--accent); background: var(--hover-bg); }
+  100% { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25); background: var(--card-bg); }
+}
+
 .comment-main {
   display: flex;
   gap: 12px;

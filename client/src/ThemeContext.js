@@ -1,18 +1,18 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // All available themes — order matters for the picker UI
-// Content is always light/professional — only the navbar color and
-// accent (buttons/links/highlights) differ between themes.
+// Midnight Dark is a genuine dark theme; the rest are light/professional
+// and only change navbar color + accent (buttons/links/highlights).
 export const THEMES = [
   {
     id: 'midnight',
     name: 'Midnight Dark',
     emoji: '🌙',
     navbar: '#770307',
-    bg: '#f3f4f6',
-    card: '#ffffff',
-    accent: '#2563eb',
-    text: '#1f2937',
+    bg: '#080a0f',
+    card: '#111318',
+    accent: '#3b82f6',
+    text: '#e2e8f0',
   },
   {
     id: 'snow',
@@ -76,8 +76,10 @@ export const ThemeProvider = ({ children }) => {
     // Migrate old theme format
     if (!saved) {
       const oldTheme = localStorage.getItem('theme');
-      if (oldTheme === 'light') return 'snow';
-      return 'midnight';
+      if (oldTheme === 'dark') return 'midnight';
+      // New visitors (and anyone previously on 'light') default to the
+      // light theme, not dark — Midnight Dark is now an explicit opt-in.
+      return 'snow';
     }
     return saved;
   });

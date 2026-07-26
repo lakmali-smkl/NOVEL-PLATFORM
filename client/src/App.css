@@ -1,7 +1,8 @@
 /* ============================================================
    ROOT & DEFAULT THEME
-   Content is always light/professional — themes only change the
-   navbar color and the accent used for buttons/links/highlights.
+   Content is light/professional for every theme EXCEPT Midnight
+   Dark, which is a genuine dark theme. Themes otherwise only
+   change the navbar color and the accent used for buttons/links.
    ============================================================ */
 :root {
   --brand-red: #770307;
@@ -19,19 +20,19 @@
 }
 
 /* ============================================================
-   THEME: Midnight Dark (default — no extra class needed)
+   THEME: Midnight Dark — the one genuinely dark theme
    ============================================================ */
 body.theme-midnight {
-  --dark-bg: #f3f4f6;
-  --card-bg: #ffffff;
-  --text-main: #1f2937;
-  --text-muted: #6b7280;
-  --accent: #2563eb;
-  --accent-glow: rgba(37, 98, 235, 0.18);
+  --dark-bg: #080a0f;
+  --card-bg: #111318;
+  --text-main: #e2e8f0;
+  --text-muted: #94a3b8;
+  --accent: #3b82f6;
+  --accent-glow: rgba(59, 130, 246, 0.25);
   --navbar-bg: rgba(119, 3, 7, 0.95);
-  --border-color: #e5e7eb;
-  --input-bg: #ffffff;
-  --hover-bg: rgba(37, 98, 235, 0.06);
+  --border-color: #1e2330;
+  --input-bg: #080a0f;
+  --hover-bg: rgba(255, 255, 255, 0.04);
 }
 
 /* ============================================================

@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom';
 import './ReadPage.css';
 
 const ReadPage = () => {
-    const { type, id } = useParams(); 
-    const navigate = useNavigate();    const [data, setData] = useState(null);
+    const { type, id } = useParams();
+    const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const targetCommentId = searchParams.get('commentId');
+    const targetReplyId = searchParams.get('replyId');
+    const [highlightedId, setHighlightedId] = useState(null);
+    const [data, setData] = useState(null);
     const [isFavorite, setIsFavorite] = useState(false);
     const [isLiked, setIsLiked] = useState(false);
     const [likesCount, setLikesCount] = useState(0);
@@ -211,6 +216,28 @@ const ReadPage = () => {
     const [replyText, setReplyText] = useState("");
     const [visibleReplies, setVisibleReplies] = useState({});
 
+    // 🔗 DEEP LINK: jump to a specific comment/reply from a notification (Facebook-style)
+    useEffect(() => {
+        if (!targetCommentId || comments.length === 0) return;
+
+        if (targetReplyId) {
+            setVisibleReplies(prev => ({ ...prev, [targetCommentId]: true }));
+        }
+
+        // Wait a tick so the reply list (if just expanded) is in the DOM before scrolling
+        const scrollTimer = setTimeout(() => {
+            const elementId = targetReplyId ? `reply-${targetReplyId}` : `comment-${targetCommentId}`;
+            const el = document.getElementById(elementId);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                setHighlightedId(targetReplyId || targetCommentId);
+                setTimeout(() => setHighlightedId(null), 2500);
+            }
+        }, 300);
+
+        return () => clearTimeout(scrollTimer);
+    }, [comments, targetCommentId, targetReplyId]);
+
     const handlePostReply = async (commentId) => {
         if (!user) return alert("Please login to reply!");
         if (!replyText.trim()) return;
@@ -380,7 +407,11 @@ const ReadPage = () => {
                             );
 
                             return (
-                                <div key={commentId} className="comment-card">
+                                <div
+                                    key={commentId}
+                                    id={c._id ? `comment-${c._id}` : undefined}
+                                    className={`comment-card ${highlightedId === c._id ? 'comment-card-highlighted' : ''}`}
+                                >
                                     <div className="comment-main">
                                         <div className="comment-avatar">
                                             {c.username ? c.username.charAt(0).toUpperCase() : '?'}
@@ -475,7 +506,11 @@ const ReadPage = () => {
                                                 );
 
                                                 return (
-                                                    <div key={replyId} className="reply-card">
+                                                    <div
+                                                        key={replyId}
+                                                        id={reply._id ? `reply-${reply._id}` : undefined}
+                                                        className={`reply-card ${highlightedId === reply._id ? 'reply-card-highlighted' : ''}`}
+                                                    >
                                                         <div className="reply-avatar">
                                                             {reply.username ? reply.username.charAt(0).toUpperCase() : '?'}
                                                         </div>
