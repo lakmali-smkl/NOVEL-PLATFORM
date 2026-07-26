@@ -1,8 +1,8 @@
 // Navbar.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import { useTheme } from '../ThemeContext';
+import { useTheme, THEMES } from '../ThemeContext';
 import './Navbar.css';
 
 // Helper to convert hex to rgba
@@ -19,10 +19,22 @@ const Navbar = ({ user, setUser, toggleSidebar, closeSidebar }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [unreadCount, setUnreadCount] = useState(0);
-  const { currentTheme } = useTheme();
+  const [themeMenuOpen, setThemeMenuOpen] = useState(false);
+  const { theme, setTheme, currentTheme } = useTheme();
+  const themeMenuRef = useRef(null);
 
   const isLibraryPage = location.pathname === '/library';
   const isHomePage = location.pathname === '/';
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (themeMenuRef.current && !themeMenuRef.current.contains(e.target)) {
+        setThemeMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     const fetchUnreadCount = async () => {
@@ -86,22 +98,44 @@ const Navbar = ({ user, setUser, toggleSidebar, closeSidebar }) => {
 
       <ul className="nav-right">
         {/* THEME INDICATOR */}
-        <li className="nav-item">
-          <Link 
-            to={user ? (user.isWriter && !user.isAdmin ? "/writer-dashboard/settings" : "/dashboard/settings") : "/login"} 
-            className="theme-indicator-btn" 
+        <li className="nav-item theme-menu-wrapper" ref={themeMenuRef}>
+          <button
+            type="button"
+            className="theme-indicator-btn"
             title={`Theme: ${currentTheme.name}`}
-            style={{ 
+            onClick={() => setThemeMenuOpen((open) => !open)}
+            style={{
               borderColor: hexToRgba(currentTheme.accent, 0.3),
               background: hexToRgba(currentTheme.accent, 0.08)
             }}
           >
-            <span 
-              className="theme-dot" 
+            <span
+              className="theme-dot"
               style={{ background: currentTheme.accent }}
             />
             <span className="theme-indicator-label">{currentTheme.emoji}</span>
-          </Link>
+          </button>
+
+          {themeMenuOpen && (
+            <div className="theme-menu-dropdown">
+              {THEMES.map((t) => (
+                <button
+                  key={t.id}
+                  type="button"
+                  className={`theme-menu-option ${theme === t.id ? 'active' : ''}`}
+                  onClick={() => {
+                    setTheme(t.id);
+                    setThemeMenuOpen(false);
+                  }}
+                >
+                  <span className="theme-menu-dot" style={{ background: t.accent }} />
+                  <span className="theme-menu-emoji">{t.emoji}</span>
+                  <span className="theme-menu-name">{t.name}</span>
+                  {theme === t.id && <span className="theme-menu-check">✓</span>}
+                </button>
+              ))}
+            </div>
+          )}
         </li>
 
         {user ? (

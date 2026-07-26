@@ -10,11 +10,11 @@
   font-size: 1.8rem;
   font-weight: 700;
   margin: 0 0 6px 0;
-  color: #ffffff;
+  color: var(--text-main);
 }
 
 .oversight-header .subtitle {
-  color: #8b949e;
+  color: var(--text-muted);
   margin: 0;
   font-size: 0.95rem;
 }
@@ -48,6 +48,6 @@
 .oversight-loading, .oversight-error {
   padding: 60px;
   text-align: center;
-  color: #8b949e;
+  color: var(--text-muted);
   font-size: 1.1rem;
 }

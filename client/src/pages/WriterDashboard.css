@@ -7,9 +7,9 @@
 .wd-page {
   min-height: 100vh;
   padding: 30px 40px 60px;
-  background: #060608;
+  background: var(--dark-bg);
   font-family: 'Inter', sans-serif;
-  color: #e2e8f0;
+  color: var(--text-main);
   position: relative;
   overflow: hidden;
 }
@@ -26,7 +26,7 @@
   z-index: 0;
 }
 .wd-glow-1 { top: -10%; left: -8%; background: #770307; }
-.wd-glow-2 { bottom: -15%; right: -8%; background: #3b82f6; }
+.wd-glow-2 { bottom: -15%; right: -8%; background: var(--accent); }
 
 /* ── Header ── */
 .wd-header {
@@ -44,7 +44,7 @@
 
 .wd-greeting {
   font-size: 0.9rem;
-  color: #64748b;
+  color: var(--text-muted);
   margin: 0 0 4px;
   font-weight: 500;
   text-transform: uppercase;
@@ -56,14 +56,11 @@
   font-weight: 900;
   letter-spacing: -0.04em;
   margin: 0 0 8px;
-  background: linear-gradient(135deg, #ffffff 30%, rgba(255,255,255,0.55));
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--text-main);
 }
 
 .wd-subtitle {
-  color: #64748b;
+  color: var(--text-muted);
   font-size: 1rem;
   margin: 0;
   font-weight: 400;
@@ -104,7 +101,7 @@
 
 .wd-create-btn.secondary {
   background: rgba(255,255,255,0.05);
-  color: #e2e8f0;
+  color: var(--text-main);
   border: 1px solid rgba(255,255,255,0.12);
 }
 .wd-create-btn.secondary:hover {
@@ -141,7 +138,7 @@
 .wd-stat-card:hover {
   transform: translateY(-4px);
   border-color: var(--accent, #770307);
-  box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
   background: rgba(255,255,255,0.06);
 }
 
@@ -167,14 +164,14 @@
 .wd-stat-value {
   font-size: 1.6rem;
   font-weight: 800;
-  color: #f1f5f9;
+  color: var(--text-main);
   line-height: 1.2;
 }
 
 .wd-stat-label {
   font-size: 0.78rem;
   font-weight: 600;
-  color: #64748b;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
@@ -212,7 +209,7 @@
   font-size: 1.2rem;
   font-weight: 800;
   margin: 0;
-  color: #f1f5f9;
+  color: var(--text-main);
 }
 
 .wd-card-badge {
@@ -226,7 +223,7 @@
 }
 
 .wd-see-all {
-  color: #64748b;
+  color: var(--text-muted);
   font-size: 0.82rem;
   font-weight: 600;
   text-decoration: none;
@@ -241,7 +238,7 @@
   align-items: center;
   gap: 12px;
   padding: 60px 20px;
-  color: #64748b;
+  color: var(--text-muted);
 }
 
 .wd-spinner {
@@ -265,7 +262,7 @@
 }
 .wd-empty.small { padding: 30px 16px; }
 .wd-empty-icon { font-size: 3rem; opacity: 0.3; }
-.wd-empty p { color: #64748b; margin: 0; font-size: 0.95rem; }
+.wd-empty p { color: var(--text-muted); margin: 0; font-size: 0.95rem; }
 
 /* ── Publications Table ── */
 .wd-table-wrap {
@@ -280,7 +277,7 @@
 .wd-table th {
   text-align: left;
   font-size: 0.72rem;
-  color: #475569;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   padding: 12px 14px;
@@ -306,7 +303,7 @@
 
 /* Title link */
 .wd-title-link {
-  color: #f1f5f9;
+  color: var(--text-main);
   text-decoration: none;
   font-weight: 600;
   transition: color 0.2s;
@@ -314,8 +311,8 @@
 .wd-title-link:hover { color: #f87171; }
 
 .wd-td-title { max-width: 260px; }
-.wd-td-num { text-align: center; color: #94a3b8; font-weight: 600; }
-.wd-td-date { color: #64748b; font-size: 0.82rem; white-space: nowrap; }
+.wd-td-num { text-align: center; color: var(--text-muted); font-weight: 600; }
+.wd-td-date { color: var(--text-muted); font-size: 0.82rem; white-space: nowrap; }
 
 /* Type Tag */
 .wd-type-tag {
@@ -396,7 +393,7 @@
 
 .wd-view-more {
   text-align: center;
-  color: #475569;
+  color: var(--text-muted);
   font-size: 0.8rem;
   margin: 16px 0 0;
 }
@@ -429,7 +426,7 @@
 .wd-activity-text {
   margin: 0;
   font-size: 0.85rem;
-  color: #cbd5e1;
+  color: var(--text-main);
   line-height: 1.45;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -438,13 +435,13 @@
   overflow: hidden;
 }
 .wd-activity-item.unread .wd-activity-text {
-  color: #f1f5f9;
+  color: var(--text-main);
   font-weight: 500;
 }
 
 .wd-activity-time {
   font-size: 0.72rem;
-  color: #475569;
+  color: var(--text-muted);
   margin-top: 3px;
   display: block;
 }
@@ -476,11 +473,11 @@
 .wd-tip p {
   margin: 0;
   font-size: 0.88rem;
-  color: #94a3b8;
+  color: var(--text-muted);
   line-height: 1.5;
 }
 
-.wd-tip p strong { color: #e2e8f0; }
+.wd-tip p strong { color: var(--text-main); }
 
 .wd-tip a {
   color: #a855f7;
@@ -512,7 +509,7 @@
 /* ── Legacy Compat (keeps ManageWorks styles from breaking elsewhere) ── */
 .writer-container {
   padding: 0;
-  background-color: #060608;
+  background-color: var(--dark-bg);
   min-height: 100vh;
   box-sizing: border-box;
 }

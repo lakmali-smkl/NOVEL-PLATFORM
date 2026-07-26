@@ -11,7 +11,7 @@
 }
 
 .welcome-modal {
-    background: #121212;
+    background: var(--card-bg);
     border: 1px solid #b91c1c; /* Your theme Red */
     padding: 50px;
     border-radius: 30px;
@@ -32,13 +32,13 @@
 }
 
 .welcome-modal h2 {
-    color: white;
+    color: var(--text-main);
     font-size: 2rem;
     margin: 20px 0;
 }
 
 .welcome-modal p {
-    color: #9ca3af;
+    color: var(--text-muted);
     line-height: 1.6;
     margin-bottom: 30px;
 }

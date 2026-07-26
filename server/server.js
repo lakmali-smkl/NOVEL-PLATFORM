@@ -719,6 +719,7 @@ app.post('/api/:type/:id/comment', async (req, res) => {
 
     item.comments.push(newComment);
     await item.save();
+    const savedComment = item.comments[item.comments.length - 1];
 
     // Trigger Notification: notify the author if another reader leaves a comment
     if (item.authorId && item.authorId.toString() !== userId) {
@@ -728,6 +729,7 @@ app.post('/api/:type/:id/comment', async (req, res) => {
         type: 'comment',
         contentId: item._id,
         contentType: req.params.type,
+        commentId: savedComment._id,
         message: `${username} commented on your ${req.params.type}: "${item.title}"`
       });
       await newNotif.save();
@@ -762,15 +764,18 @@ app.post('/api/:type/:id/comment/:commentId/reply', async (req, res) => {
     }
     comment.replies.push(newReply);
     await item.save();
+    const savedReply = comment.replies[comment.replies.length - 1];
 
     // Trigger Notification: notify the comment author
     if (comment.userId && comment.userId.toString() !== userId) {
       const newNotif = new Notification({
         recipient: comment.userId,
         sender: userId,
-        type: 'comment',
+        type: 'reply',
         contentId: item._id,
         contentType: req.params.type,
+        commentId: comment._id,
+        replyId: savedReply._id,
         message: `${username} replied to your comment on "${item.title}"`
       });
       await newNotif.save();
@@ -781,9 +786,11 @@ app.post('/api/:type/:id/comment/:commentId/reply', async (req, res) => {
       const newNotif = new Notification({
         recipient: item.authorId,
         sender: userId,
-        type: 'comment',
+        type: 'reply',
         contentId: item._id,
         contentType: req.params.type,
+        commentId: comment._id,
+        replyId: savedReply._id,
         message: `${username} replied to a comment on your ${req.params.type}: "${item.title}"`
       });
       await newNotif.save();

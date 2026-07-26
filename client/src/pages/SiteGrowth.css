@@ -3,11 +3,11 @@
    ========================================================================== */
 :root {
   /* Premium Dark Core Canvas Surfaces */
-  --bg-workspace-dark: #0f172a;       /* Deep slate base canvas */
-  --surface-card-dark: #1e293b;      /* Lighter container slate */
-  --border-glow-dark: #334155;       /* Crisp border separator */
-  --text-primary-dark: #f8fafc;      /* Brilliant, stark readable white */
-  --text-secondary-dark: #94a3b8;    /* Smooth ash gray commentary text */
+  --bg-workspace-dark: var(--dark-bg);       /* Deep slate base canvas */
+  --surface-card-dark: var(--card-bg);      /* Lighter container slate */
+  --border-glow-dark: var(--border-color);       /* Crisp border separator */
+  --text-primary-dark: var(--text-main);      /* Brilliant, stark readable white */
+  --text-secondary-dark: var(--text-muted);    /* Smooth ash gray commentary text */
   
   /* Status/Categorization Neon Accent Palettes */
   --neon-blue: #38bdf8;
@@ -30,7 +30,7 @@
   --radius-panel: 14px;
   --radius-input: 8px;
   --transition-snappy: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  --shadow-glow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 4px 20px -2px rgba(0, 0, 0, 0.08);
 }
 
 /* Base Panel Core Container Rules */
@@ -59,7 +59,7 @@
   font-weight: 800;
   letter-spacing: -0.03em;
   /* ✨ FIX: Swapped dark blue for a brilliant crisp gradient flow text */
-  background: linear-gradient(to right, #ffffff, #e2e8f0, #94a3b8);
+  background: linear-gradient(to right, var(--text-main), var(--text-main), var(--text-muted));
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -95,7 +95,7 @@
 
 .growth-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 24px -4px rgba(0, 0, 0, 0.65);
+  box-shadow: 0 12px 24px -4px rgba(0, 0, 0, 0.08);
 }
 
 .growth-card span {
@@ -259,7 +259,7 @@
   transition: var(--transition-snappy);
 }
 
-.bulletin-item:hover { border-color: #475569; }
+.bulletin-item:hover { border-color: var(--text-muted); }
 
 /* Announcement Alert Sub-variants */
 .bulletin-item.border-info { border-left: 4px solid var(--neon-blue); }
@@ -287,7 +287,7 @@
 .tag-warning { background-color: rgba(251, 191, 36, 0.15); color: var(--neon-gold); }
 .tag-important { background-color: rgba(248, 113, 113, 0.15); color: var(--neon-rose); }
 
-.bulletin-item p { margin: 0 0 0.75rem 0; font-size: 0.95rem; color: #cbd5e1; line-height: 1.5; }
+.bulletin-item p { margin: 0 0 0.75rem 0; font-size: 0.95rem; color: var(--text-main); line-height: 1.5; }
 .bulletin-item small { color: var(--text-secondary-dark); font-size: 0.775rem; }
 
 /* ==========================================================================
@@ -328,7 +328,7 @@
 
 /* Table Heading Formatting */
 .growth-table-header {
-  background-color: #0f172a;
+  background-color: var(--dark-bg);
   font-weight: 700;
   color: var(--text-secondary-dark);
   text-transform: uppercase;
@@ -339,7 +339,7 @@
 
 .font-mono { 
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; 
-  color: #e2e8f0; 
+  color: var(--text-main); 
   font-weight: 500; 
 }
 

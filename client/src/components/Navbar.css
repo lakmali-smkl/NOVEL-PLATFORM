@@ -249,6 +249,77 @@
   line-height: 1;
 }
 
+.theme-indicator-btn {
+  font-family: inherit;
+}
+
+/* ── Theme Menu Dropdown ── */
+.theme-menu-wrapper {
+  position: relative;
+}
+
+.theme-menu-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  min-width: 200px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 10000;
+}
+
+.theme-menu-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: transparent;
+  border: none;
+  border-radius: 10px;
+  padding: 9px 10px;
+  cursor: pointer;
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 0.85rem;
+  text-align: left;
+  transition: background-color 0.15s ease;
+}
+
+.theme-menu-option:hover {
+  background-color: var(--hover-bg);
+}
+
+.theme-menu-option.active {
+  background-color: var(--hover-bg);
+  font-weight: 600;
+}
+
+.theme-menu-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 8px currentColor;
+}
+
+.theme-menu-emoji {
+  flex-shrink: 0;
+}
+
+.theme-menu-name {
+  flex: 1;
+}
+
+.theme-menu-check {
+  color: #4ade80;
+  font-weight: 700;
+}
+
 /* Logout Button */
 .logout-btn-nav {
   background: rgba(255, 255, 255, 0.08);

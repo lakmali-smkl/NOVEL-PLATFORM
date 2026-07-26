@@ -28,12 +28,12 @@
   font-size: clamp(1.4rem, 3vw, 1.9rem);
   font-weight: 800;
   letter-spacing: -0.03em;
-  color: #f1f5f9;
+  color: var(--text-main);
   margin: 0;
 }
 
 .rec-ai-label {
-  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  background: linear-gradient(135deg, var(--accent) 0%, #8b5cf6 100%);
   color: white;
   font-size: 0.7rem;
   font-weight: 800;
@@ -45,7 +45,7 @@
 }
 
 .rec-subtitle {
-  color: #64748b;
+  color: var(--text-muted);
   font-size: 0.9rem;
   margin: 0;
 }
@@ -68,8 +68,8 @@
 .rec-card {
   flex-shrink: 0;
   width: 200px;
-  background: #111318;
-  border: 1px solid #1e2330;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
   border-radius: 16px;
   overflow: hidden;
   text-decoration: none;
@@ -87,7 +87,7 @@
 
 .rec-card:hover {
   transform: translateY(-6px) scale(1.02);
-  border-color: #3b82f6;
+  border-color: var(--accent);
   box-shadow: 0 16px 40px rgba(59, 130, 246, 0.2);
 }
 
@@ -97,7 +97,7 @@
   width: 100%;
   height: 160px;
   overflow: hidden;
-  background: #0d1117;
+  background: var(--input-bg);
   flex-shrink: 0;
 }
 
@@ -120,8 +120,8 @@
   justify-content: center;
   font-size: 3.5rem;
   font-weight: 900;
-  background: linear-gradient(135deg, #1e2330 0%, #0d1117 100%);
-  color: #3b82f6;
+  background: linear-gradient(135deg, var(--border-color) 0%, var(--input-bg) 100%);
+  color: var(--accent);
 }
 
 /* ── Badges overlaying the image ── */
@@ -129,7 +129,7 @@
   position: absolute;
   top: 10px;
   left: 10px;
-  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  background: linear-gradient(135deg, var(--accent) 0%, #8b5cf6 100%);
   color: white;
   font-size: 0.65rem;
   font-weight: 800;
@@ -171,7 +171,7 @@
 .rec-card-title {
   font-size: 0.95rem;
   font-weight: 700;
-  color: #f1f5f9;
+  color: var(--text-main);
   margin: 0 0 4px 0;
   line-height: 1.35;
   display: -webkit-box;
@@ -183,7 +183,7 @@
 
 .rec-card-author {
   font-size: 0.78rem;
-  color: #64748b;
+  color: var(--text-muted);
   margin: 0 0 8px 0;
 }
 
@@ -203,7 +203,7 @@
 
 .rec-reason {
   font-size: 0.72rem;
-  color: #475569;
+  color: var(--text-muted);
   margin: auto 0 10px;
   font-style: italic;
   line-height: 1.4;
@@ -213,10 +213,10 @@
   display: flex;
   gap: 12px;
   font-size: 0.75rem;
-  color: #475569;
+  color: var(--text-muted);
   margin-top: auto;
   padding-top: 8px;
-  border-top: 1px solid #1e2330;
+  border-top: 1px solid var(--border-color);
 }
 
 /* ── Loading Skeleton ── */
@@ -230,16 +230,16 @@
 .rec-skeleton-card {
   flex-shrink: 0;
   width: 200px;
-  background: #111318;
+  background: var(--card-bg);
   border-radius: 16px;
   overflow: hidden;
-  border: 1px solid #1e2330;
+  border: 1px solid var(--border-color);
 }
 
 .skeleton-img {
   width: 100%;
   height: 160px;
-  background: linear-gradient(90deg, #1e2330 25%, #252d3d 50%, #1e2330 75%);
+  background: linear-gradient(90deg, var(--border-color) 25%, #252d3d 50%, var(--border-color) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
@@ -248,7 +248,7 @@
   height: 12px;
   border-radius: 6px;
   margin: 12px 14px 6px;
-  background: linear-gradient(90deg, #1e2330 25%, #252d3d 50%, #1e2330 75%);
+  background: linear-gradient(90deg, var(--border-color) 25%, #252d3d 50%, var(--border-color) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }

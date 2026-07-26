@@ -11,23 +11,23 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 40px;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid var(--border-color);
     padding-bottom: 20px;
 }
 
 .publications-header h2 {
     font-size: 2rem;
-    color: #fff;
+    color: var(--text-main);
     margin: 0;
 }
 
 .subtitle {
-    color: #888;
+    color: var(--text-muted);
     margin-top: 5px;
 }
 
 .publish-btn {
-    background-color: #a50000;
+    background-color: var(--brand-red);
     color: white;
     text-decoration: none;
     padding: 12px 24px;
@@ -50,8 +50,8 @@
 
 /* The Card */
 .publication-card {
-    background: #1a1a1a;
-    border: 1px solid #333;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 24px;
     display: flex;
@@ -63,16 +63,16 @@
 }
 
 .publication-card:hover {
-    border-color: #a50000;
+    border-color: var(--brand-red);
     transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
 }
 
 .card-tag {
     position: absolute;
     top: 0;
     right: 0;
-    background: #a50000;
+    background: var(--brand-red);
     color: white;
     font-size: 0.7rem;
     padding: 4px 12px;
@@ -84,13 +84,13 @@
 .card-info h3 {
     margin: 10px 0;
     font-size: 1.3rem;
-    color: #f5f5f5;
+    color: var(--text-main);
     line-height: 1.4;
 }
 
 .card-date {
     font-size: 0.85rem;
-    color: #666;
+    color: var(--text-muted);
 }
 
 /* Action Buttons */
@@ -113,13 +113,13 @@
 }
 
 .btn-edit {
-    background: #333;
+    background: var(--brand-red);
     color: #fff;
     border: none;
 }
 
 .btn-edit:hover {
-    background: #444;
+    background: var(--accent);
 }
 
 .btn-delete {

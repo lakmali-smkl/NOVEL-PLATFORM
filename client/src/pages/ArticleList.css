@@ -12,8 +12,8 @@
 
 /* ── Article Card ── */
 .article-card {
-  background: #111318 !important;
-  border: 1px solid #1e2330 !important;
+  background: var(--card-bg) !important;
+  border: 1px solid var(--border-color) !important;
   border-radius: 18px !important;
   padding: 0 !important;
   overflow: hidden;
@@ -69,7 +69,7 @@
   left: 0;
   right: 0;
   height: 60px;
-  background: linear-gradient(to bottom, transparent, #111318);
+  background: linear-gradient(to bottom, transparent, var(--card-bg));
   pointer-events: none;
   z-index: 1;
 }
@@ -86,7 +86,7 @@
 
 /* Since ArticleList.js doesn't use .article-card-body, we target direct children */
 .article-card > h3 {
-  color: #f1f5f9 !important;
+  color: var(--text-main) !important;
   font-size: 1rem;
   font-weight: 700;
   margin: 18px 20px 6px !important;
@@ -99,7 +99,7 @@
 }
 
 .article-card > p {
-  color: #64748b !important;
+  color: var(--text-muted) !important;
   font-size: 0.8rem;
   line-height: 1.6;
   margin: 0 20px 8px !important;
@@ -165,7 +165,7 @@
 
 /* ── Empty state ── */
 .article-list > p {
-  color: #475569 !important;
+  color: var(--text-muted) !important;
   text-align: center;
   padding: 60px 0;
   font-size: 0.95rem;
