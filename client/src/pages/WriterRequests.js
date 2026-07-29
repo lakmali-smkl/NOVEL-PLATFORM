@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './WriterRequests.css';
 
+import { API_BASE_URL } from '../config';
 const WriterRequests = () => {
   const [requests, setRequests] = useState([]);
 
@@ -11,7 +12,7 @@ const WriterRequests = () => {
   // Load all writer application records
   useEffect(() => {
     const fetchRequests = async () => {
-      const res = await axios.get('http://localhost:5000/api/admin/writer-requests', {
+      const res = await axios.get(`${API_BASE_URL}/api/admin/writer-requests`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -23,7 +24,7 @@ const WriterRequests = () => {
 
   const approveWriter = async (userId, requestId, action) => {
     try {
-      const response = await axios.post(`http://localhost:5000/api/admin/approve-writer/${userId}`, {
+      const response = await axios.post(`${API_BASE_URL}/api/admin/approve-writer/${userId}`, {
         action: action
       }, {
         headers: {
@@ -45,7 +46,7 @@ const WriterRequests = () => {
   const deleteRequest = async (requestId) => {
     if (!window.confirm('Remove this record from history?')) return;
     try {
-      await axios.delete(`http://localhost:5000/api/admin/writer-requests/${requestId}`, {
+      await axios.delete(`${API_BASE_URL}/api/admin/writer-requests/${requestId}`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
       setRequests(prev => prev.filter(r => r._id !== requestId));

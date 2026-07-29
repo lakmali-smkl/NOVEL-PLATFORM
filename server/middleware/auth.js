@@ -10,7 +10,7 @@ const auth = async (req, res, next) => {
       return res.status(401).json({ error: "UNAUTHORIZED", message: "Access denied. No session token provided." });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'super_secure_jwt_key_novel_platform_123');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     
     const user = await User.findById(decoded.id).select('status isAdmin isWriter username email');
     if (!user) {

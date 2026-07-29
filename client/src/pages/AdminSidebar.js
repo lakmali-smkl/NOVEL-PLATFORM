@@ -4,6 +4,7 @@ import axios from 'axios';
 import SidebarProfile from './SidebarProfile';
 import './AdminSidebar.css';
 
+import { API_BASE_URL } from '../config';
 const AdminSidebar = ({ user, closeSidebar }) => {
   const location = useLocation();
   const [pendingCount, setPendingCount] = useState(0);
@@ -11,7 +12,7 @@ const AdminSidebar = ({ user, closeSidebar }) => {
   useEffect(() => {
     const fetchPendingCount = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/admin/writer-requests');
+        const res = await axios.get(`${API_BASE_URL}/api/admin/writer-requests`);
         const pending = Array.isArray(res.data)
           ? res.data.filter((r) => r.status === 'pending').length
           : 0;

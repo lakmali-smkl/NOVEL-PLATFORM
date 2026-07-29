@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './Profile.css';
 
-const API = 'http://localhost:5000';
-
+import { API_BASE_URL as API } from '../config';
 const Profile = () => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './ChatPage.css';
 
+import { API_BASE_URL } from '../config';
 const ChatPage = () => {
   const { username: targetUsername } = useParams();
   const navigate = useNavigate();
@@ -32,7 +33,7 @@ const ChatPage = () => {
   const fetchConversations = useCallback(async () => {
     if (!userId) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/messages/conversations/${userId}`);
+      const res = await fetch(`${API_BASE_URL}/api/messages/conversations/${userId}`);
       const data = await res.json();
       if (res.ok) {
         setConversations(data.conversations || []);
@@ -54,12 +55,12 @@ const ChatPage = () => {
   const fetchMessages = useCallback(async () => {
     if (!userId || !activeConversation) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/messages/${userId}/${activeConversation._id}`);
+      const res = await fetch(`${API_BASE_URL}/api/messages/${userId}/${activeConversation._id}`);
       const data = await res.json();
       if (res.ok) {
         setMessages(data.messages || []);
         // Mark as read
-        fetch(`http://localhost:5000/api/messages/read/${activeConversation._id}/${userId}`, {
+        fetch(`${API_BASE_URL}/api/messages/read/${activeConversation._id}/${userId}`, {
           method: 'PUT'
         });
         // Clear unread count for this conversation
@@ -89,7 +90,7 @@ const ChatPage = () => {
       // Look up user by username
       const initChat = async () => {
         try {
-          const res = await fetch(`http://localhost:5000/api/users/by-username/${targetUsername}`);
+          const res = await fetch(`${API_BASE_URL}/api/users/by-username/${targetUsername}`);
           const data = await res.json();
           if (res.ok && data.user) {
             setActiveConversation({
@@ -139,7 +140,7 @@ const ChatPage = () => {
 
     setSending(true);
     try {
-      const res = await fetch('http://localhost:5000/api/messages', {
+      const res = await fetch(`${API_BASE_URL}/api/messages`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -172,7 +173,7 @@ const ChatPage = () => {
 
     setIsSearching(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/users/search?q=${encodeURIComponent(query)}&excludeId=${userId}`);
+      const res = await fetch(`${API_BASE_URL}/api/users/search?q=${encodeURIComponent(query)}&excludeId=${userId}`);
       const data = await res.json();
       if (res.ok) {
         setSearchResults(data.users || []);
@@ -239,7 +240,7 @@ const ChatPage = () => {
               <button key={u._id} className="chat-conv-item search-result" onClick={() => startConversation(u)}>
                 <div className="chat-conv-avatar">
                   {u.profilePicture ? (
-                    <img src={`http://localhost:5000/${u.profilePicture}`} alt="" />
+                    <img src={`${API_BASE_URL}/${u.profilePicture}`} alt="" />
                   ) : (
                     <span>{u.username.charAt(0).toUpperCase()}</span>
                   )}
@@ -279,7 +280,7 @@ const ChatPage = () => {
               >
                 <div className="chat-conv-avatar">
                   {conv.profilePicture ? (
-                    <img src={`http://localhost:5000/${conv.profilePicture}`} alt="" />
+                    <img src={`${API_BASE_URL}/${conv.profilePicture}`} alt="" />
                   ) : (
                     <span>{conv.username.charAt(0).toUpperCase()}</span>
                   )}
@@ -313,7 +314,7 @@ const ChatPage = () => {
               </button>
               <div className="chat-header-avatar">
                 {activeConversation.profilePicture ? (
-                  <img src={`http://localhost:5000/${activeConversation.profilePicture}`} alt="" />
+                  <img src={`${API_BASE_URL}/${activeConversation.profilePicture}`} alt="" />
                 ) : (
                   <span>{activeConversation.username.charAt(0).toUpperCase()}</span>
                 )}

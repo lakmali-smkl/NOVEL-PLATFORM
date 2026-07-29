@@ -189,66 +189,6 @@
   color: white;
 }
 
-/* ── Dynamic Statistics Dashboard ── */
-.stats-dashboard {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  margin-bottom: 32px;
-  animation: profFadeUp 0.6s ease 0.15s both;
-}
-
-.stat-card {
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 20px;
-  padding: 24px;
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-  transition: transform 0.2s ease, border-color 0.2s ease;
-}
-
-.stat-card:hover {
-  transform: translateY(-4px);
-  border-color: var(--accent);
-}
-
-.stat-icon {
-  font-size: 2.2rem;
-  background: rgba(59, 130, 246, 0.08);
-  width: 56px;
-  height: 56px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.stat-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.stat-number {
-  font-size: 1.8rem;
-  font-weight: 800;
-  color: var(--text-main);
-  line-height: 1.2;
-}
-
-.stat-label {
-  color: var(--text-muted);
-  font-size: 0.85rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
 /* ── Account Details Card ── */
 .profile-grid {
   position: relative;
@@ -353,10 +293,6 @@
     margin: 0 auto;
   }
 
-  .stats-dashboard {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
 }
 
 /* ── Welcome Header ── */
@@ -396,18 +332,6 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
-}
-
-/* ── Stat cards as links ── */
-.stat-card-link {
-  text-decoration: none;
-  color: inherit;
-}
-
-.stat-card-link:hover {
-  transform: translateY(-6px);
-  border-color: var(--accent);
-  box-shadow: 0 12px 30px rgba(59,130,246,0.2);
 }
 
 /* ── Reading Activity & Streak Tracker ── */

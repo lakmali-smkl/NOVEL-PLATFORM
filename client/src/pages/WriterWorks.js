@@ -3,8 +3,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import './WriterDashboard.css';
 
-const API = 'http://localhost:5000';
-
+import { API_BASE_URL as API } from '../config';
 const WriterWorks = ({ user }) => {
   const [works, setWorks] = useState([]);
   const [loading, setLoading] = useState(true);

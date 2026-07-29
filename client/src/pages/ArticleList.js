@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './ArticleList.css';
 
+import { API_BASE_URL } from '../config';
 const ArticleList = () => {
   const [articles, setArticles] = useState([]);
 
   useEffect(() => {
     // This fetches the articles from your backend
-    fetch('http://localhost:5000/api/articles')
+    fetch(`${API_BASE_URL}/api/articles`)
       .then(res => res.json())
       .then(data => setArticles(data))
       .catch(err => console.error("Error fetching articles:", err));
@@ -20,7 +21,7 @@ const ArticleList = () => {
           <div key={article._id} className="article-card" style={{ padding: '20px', border: '1px solid #ddd', margin: '10px 0' }}>
             {article.coverPhoto && (
               <img 
-                src={`http://localhost:5000/${article.coverPhoto}`} 
+                src={`${API_BASE_URL}/${article.coverPhoto}`} 
                 alt={article.title} 
                 style={{ width: '100%', height: 'auto', marginBottom: '10px' }} 
               />

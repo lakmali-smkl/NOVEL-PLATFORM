@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../config';
 import './writerForms.css'; // Importing the separate CSS file
 
 const AddArticle = ({ user }) => {
@@ -109,7 +110,7 @@ const AddArticle = ({ user }) => {
         }
 
         try {
-            const response = await fetch('http://localhost:5000/api/articles', {
+            const response = await fetch(`${API_BASE_URL}/api/articles`, {
                 method: 'POST',
                 body: data,
             });

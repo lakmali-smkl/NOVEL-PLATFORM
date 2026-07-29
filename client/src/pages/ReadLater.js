@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './ReadLater.css';
 
+import { API_BASE_URL } from '../config';
 const ReadLater = ({ user }) => {
   const [collections, setCollections] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -19,7 +20,7 @@ const ReadLater = ({ user }) => {
       return;
     }
 
-    fetch(`http://localhost:5000/api/collections/${activeUserId}`)
+    fetch(`${API_BASE_URL}/api/collections/${activeUserId}`)
       .then((res) => res.json())
       .then((data) => {
         setCollections(data);
@@ -39,7 +40,7 @@ const ReadLater = ({ user }) => {
       return;
     }
 
-    fetch('http://localhost:5000/api/collections/create', {
+    fetch(`${API_BASE_URL}/api/collections/create`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -68,7 +69,7 @@ const ReadLater = ({ user }) => {
     e.preventDefault(); // don't follow the Link
     if (!window.confirm('Delete this collection and all its saved items?')) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/collections/${collectionId}`, {
+      const res = await fetch(`${API_BASE_URL}/api/collections/${collectionId}`, {
         method: 'DELETE'
       });
       if (!res.ok) throw new Error('Failed');

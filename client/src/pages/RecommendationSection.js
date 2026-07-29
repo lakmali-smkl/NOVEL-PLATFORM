@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './RecommendationSection.css';
 
-const API_BASE = 'http://localhost:5000';
-
+import { API_BASE_URL as API_BASE } from '../config';
 const RecommendationSection = ({ user }) => {
   const [recommendations, setRecommendations] = useState([]);
   const [hasHistory, setHasHistory] = useState(false);

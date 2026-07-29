@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from 'react';
 
+import { API_BASE_URL } from '../config';
 const AddToCollectionModal = ({ item, userId, onClose }) => {
   const [collections, setCollections] = useState([]);
 
   // Fetch user's collections to display in the list
   useEffect(() => {
-    fetch(`http://localhost:5000/api/collections/${userId}`)
+    fetch(`${API_BASE_URL}/api/collections/${userId}`)
       .then(res => res.json())
       .then(data => setCollections(data))
       .catch(err => console.error(err));
   }, [userId]);
 
   const handleSave = (collectionId) => {
-    fetch(`http://localhost:5000/api/collections/${collectionId}/add-item`, {
+    fetch(`${API_BASE_URL}/api/collections/${collectionId}/add-item`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

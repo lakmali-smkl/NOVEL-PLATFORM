@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom';
 import './ReadPage.css';
 
+import { API_BASE_URL } from '../config';
 const ReadPage = () => {
     const { type, id } = useParams();
     const navigate = useNavigate();
@@ -28,7 +29,7 @@ const ReadPage = () => {
     // 📥 LOAD: Sync user collections from the MongoDB Database on load
     useEffect(() => {
         if (userId) {
-            fetch(`http://localhost:5000/api/collections/${userId}`)
+            fetch(`${API_BASE_URL}/api/collections/${userId}`)
                 .then((res) => {
                     if (!res.ok) throw new Error("Failed to pull collections");
                     return res.json();
@@ -50,8 +51,8 @@ const ReadPage = () => {
     // Load main content data (Novels / Articles)
     useEffect(() => {
         const url = userId
-            ? `http://localhost:5000/api/${type}s/${id}?userId=${userId}`
-            : `http://localhost:5000/api/${type}s/${id}`;
+            ? `${API_BASE_URL}/api/${type}s/${id}?userId=${userId}`
+            : `${API_BASE_URL}/api/${type}s/${id}`;
 
         fetch(url)
             .then((res) => res.json())
@@ -76,7 +77,7 @@ const ReadPage = () => {
     // 🕒 HISTORY: Log reading activity when data loads successfully
     useEffect(() => {
         if (userId && data) {
-            fetch(`http://localhost:5000/api/users/${userId}/history`, {
+            fetch(`${API_BASE_URL}/api/users/${userId}/history`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -98,7 +99,7 @@ const ReadPage = () => {
 
         try {
             // Send the request directly to your item append route matching server.js
-            const response = await fetch(`http://localhost:5000/api/collections/${collectionId}/add-item`, {
+            const response = await fetch(`${API_BASE_URL}/api/collections/${collectionId}/add-item`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
@@ -134,7 +135,7 @@ const ReadPage = () => {
         if (!user) return alert("Please login first!");
 
         try {
-            const response = await fetch('http://localhost:5000/api/favorites', {
+            const response = await fetch(`${API_BASE_URL}/api/favorites`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
@@ -160,7 +161,7 @@ const ReadPage = () => {
         if (!user) return alert("Please login to like!");
         
         try {
-            const response = await fetch(`http://localhost:5000/api/${type}/${id}/like`, {
+            const response = await fetch(`${API_BASE_URL}/api/${type}/${id}/like`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ userId: userId })
@@ -181,7 +182,7 @@ const ReadPage = () => {
         if (!user) return alert("Please login to comment!");
         if (!commentText.trim()) return;
 
-        const res = await fetch(`http://localhost:5000/api/${type}/${id}/comment`, {
+        const res = await fetch(`${API_BASE_URL}/api/${type}/${id}/comment`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userId: userId, username: user.username, text: commentText })
@@ -199,7 +200,7 @@ const ReadPage = () => {
         }
         
         try {
-            const res = await fetch(`http://localhost:5000/api/users/status/${data.authorId}`);
+            const res = await fetch(`${API_BASE_URL}/api/users/status/${data.authorId}`);
             const authorData = await res.json();
             if (res.ok && authorData.username) {
                 navigate(`/chat/${authorData.username}`);
@@ -243,7 +244,7 @@ const ReadPage = () => {
         if (!replyText.trim()) return;
 
         try {
-            const res = await fetch(`http://localhost:5000/api/${type}/${id}/comment/${commentId}/reply`, {
+            const res = await fetch(`${API_BASE_URL}/api/${type}/${id}/comment/${commentId}/reply`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ userId: userId, username: user.username, text: replyText })
@@ -271,7 +272,7 @@ const ReadPage = () => {
     const handleDeleteComment = async (commentId) => {
         if (!window.confirm("Are you sure you want to delete this comment?")) return;
         try {
-            const res = await fetch(`http://localhost:5000/api/${type}/${id}/comment/${commentId}`, {
+            const res = await fetch(`${API_BASE_URL}/api/${type}/${id}/comment/${commentId}`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ userId })
@@ -290,7 +291,7 @@ const ReadPage = () => {
     const handleDeleteReply = async (commentId, replyId) => {
         if (!window.confirm("Are you sure you want to delete this reply?")) return;
         try {
-            const res = await fetch(`http://localhost:5000/api/${type}/${id}/comment/${commentId}/reply/${replyId}`, {
+            const res = await fetch(`${API_BASE_URL}/api/${type}/${id}/comment/${commentId}/reply/${replyId}`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ userId })

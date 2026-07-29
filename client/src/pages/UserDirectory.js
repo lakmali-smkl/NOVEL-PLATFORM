@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './UserDirectory.css';
 
+import { API_BASE_URL } from '../config';
 const UserDirectory = () => {
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -11,7 +12,7 @@ const UserDirectory = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/admin/users', {
+        const response = await fetch(`${API_BASE_URL}/api/admin/users`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
           }
@@ -38,7 +39,7 @@ const UserDirectory = () => {
     // Optimistic UI update
     setUsers(users.map(u => u._id === userId ? { ...u, isWriter: !currentStatus } : u));
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/users/${userId}/toggle-writer`, {
+      const res = await fetch(`${API_BASE_URL}/api/admin/users/${userId}/toggle-writer`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -64,7 +65,7 @@ const UserDirectory = () => {
     // Optimistic UI update
     setUsers(users.map(u => u._id === userId ? { ...u, status: newStatus } : u));
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/users/${userId}/status`, {
+      const res = await fetch(`${API_BASE_URL}/api/admin/users/${userId}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

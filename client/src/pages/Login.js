@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import './Login.css';
 
+import { API_BASE_URL } from '../config';
 const Login = ({ setUser }) => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
@@ -27,7 +28,7 @@ const Login = ({ setUser }) => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5000/login', {
+      const response = await fetch(`${API_BASE_URL}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -63,7 +64,7 @@ const Login = ({ setUser }) => {
     setFpMsg({ type: '', text: '' });
     setFpLoading(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/forgot-password/hint?email=${encodeURIComponent(fpEmail)}`);
+      const res = await fetch(`${API_BASE_URL}/api/forgot-password/hint?email=${encodeURIComponent(fpEmail)}`);
       const data = await res.json();
       if (res.ok) {
         setFpHint(data.hintQuestion);
@@ -88,7 +89,7 @@ const Login = ({ setUser }) => {
     }
     setFpLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/api/forgot-password/reset', {
+      const res = await fetch(`${API_BASE_URL}/api/forgot-password/reset`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: fpEmail, hintAnswer: fpAnswer, newPassword: fpNewPw })

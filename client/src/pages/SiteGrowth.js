@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './SiteGrowth.css';
 
+import { API_BASE_URL } from '../config';
 // Animates a number counting up from 0 to `target` — used on the summary cards.
 const useCountUp = (target, duration = 1200) => {
   const [value, setValue] = useState(0);
@@ -98,7 +99,7 @@ const SiteGrowth = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const BASE_URL = 'http://localhost:5000/api/admin';
+  const BASE_URL = `${API_BASE_URL}/api/admin`;
 
   // Fetch all administrative metrics and records concurrently
   const loadDashboardData = async () => {

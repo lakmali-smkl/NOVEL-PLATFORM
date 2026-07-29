@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './writerForms.css'; 
 
+import { API_BASE_URL } from '../config';
 const AddNovel = ({ user }) => {
   const [formData, setFormData] = useState({
     title: '',
@@ -109,7 +110,7 @@ const AddNovel = ({ user }) => {
     if (textFile) data.append('textFile', textFile);
 
     try {
-      const response = await fetch('http://localhost:5000/api/novels', {
+      const response = await fetch(`${API_BASE_URL}/api/novels`, {
         method: 'POST',
         body: data
       });

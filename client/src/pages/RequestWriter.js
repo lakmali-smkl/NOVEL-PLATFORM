@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './RequestWriter.css';
 
+import { API_BASE_URL } from '../config';
 const RequestWriter = ({ user, setUser }) => {
   const [requestStatus, setRequestStatus] = useState('none');
   const [reason, setReason] = useState('');
@@ -31,7 +32,7 @@ const RequestWriter = ({ user, setUser }) => {
 
     try {
       // 1. Send request to backend
-      await axios.post('http://localhost:5000/api/writer-requests', {
+      await axios.post(`${API_BASE_URL}/api/writer-requests`, {
         userId: user._id,
         username: user.username,
         reason: reason

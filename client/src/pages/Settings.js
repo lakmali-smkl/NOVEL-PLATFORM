@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme, THEMES } from '../ThemeContext';
 import './Settings.css';
 
+import { API_BASE_URL } from '../config';
 const Settings = ({ setUser: setAppUser }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -34,7 +35,7 @@ const Settings = ({ setUser: setAppUser }) => {
     setUsername(localUser.username || '');
     setEmail(localUser.email || '');
     if (localUser.profilePicture) {
-      setProfilePicturePreview(`http://localhost:5000/${localUser.profilePicture}`);
+      setProfilePicturePreview(`${API_BASE_URL}/${localUser.profilePicture}`);
     }
   }, [navigate]);
 
@@ -76,7 +77,7 @@ const Settings = ({ setUser: setAppUser }) => {
         formData.append('profilePicture', profilePictureFile);
       }
 
-      const res = await fetch(`http://localhost:5000/api/users/${user._id || user.id}/settings`, {
+      const res = await fetch(`${API_BASE_URL}/api/users/${user._id || user.id}/settings`, {
         method: 'PUT',
         body: formData
         // Note: Do not set Content-Type header when using FormData; the browser sets it automatically with boundary.
@@ -100,7 +101,7 @@ const Settings = ({ setUser: setAppUser }) => {
         
         // Update preview from server-normalized path
         if (data.user.profilePicture) {
-          setProfilePicturePreview(`http://localhost:5000/${data.user.profilePicture}`);
+          setProfilePicturePreview(`${API_BASE_URL}/${data.user.profilePicture}`);
         }
 
         // Reset password fields

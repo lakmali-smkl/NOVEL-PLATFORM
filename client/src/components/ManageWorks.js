@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import './ManageWorks.css';
 
+import { API_BASE_URL } from '../config';
 const ManageWorks = ({ user }) => {
   const [works, setWorks] = useState([]);
   
@@ -10,8 +11,8 @@ const ManageWorks = ({ user }) => {
     const fetchWorks = async () => {
       try {
         const [novelRes, articleRes] = await Promise.all([
-          fetch('http://localhost:5000/api/novels'),
-          fetch('http://localhost:5000/api/articles')
+          fetch(`${API_BASE_URL}/api/novels`),
+          fetch(`${API_BASE_URL}/api/articles`)
         ]);
         
         const allNovels = await novelRes.json();

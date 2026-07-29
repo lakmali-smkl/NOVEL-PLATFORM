@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import './Notifications.css';
 
+import { API_BASE_URL } from '../config';
 const timeAgo = (dateStr) => {
   const diff = (Date.now() - new Date(dateStr)) / 1000;
   if (diff < 60) return 'Just now';
@@ -40,10 +41,10 @@ const Notifications = ({ user }) => {
     if (!user?._id) return;
     try {
       setLoading(true);
-      const res = await axios.get(`http://localhost:5000/api/notifications/${user._id}`);
+      const res = await axios.get(`${API_BASE_URL}/api/notifications/${user._id}`);
       setNotifications(res.data || []);
       // Mark all as read silently
-      await axios.put(`http://localhost:5000/api/notifications/read-all/${user._id}`);
+      await axios.put(`${API_BASE_URL}/api/notifications/read-all/${user._id}`);
     } catch (err) {
       console.error('Error fetching notifications', err);
     } finally {
@@ -59,7 +60,7 @@ const Notifications = ({ user }) => {
     e.preventDefault();
     e.stopPropagation();
     try {
-      await axios.delete(`http://localhost:5000/api/notifications/${id}`);
+      await axios.delete(`${API_BASE_URL}/api/notifications/${id}`);
       setNotifications((prev) => prev.filter((n) => n._id !== id));
     } catch (err) {
       console.error('Error deleting notification', err);
@@ -68,7 +69,7 @@ const Notifications = ({ user }) => {
 
   const handleClearAll = async () => {
     try {
-      await Promise.all(notifications.map((n) => axios.delete(`http://localhost:5000/api/notifications/${n._id}`)));
+      await Promise.all(notifications.map((n) => axios.delete(`${API_BASE_URL}/api/notifications/${n._id}`)));
       setNotifications([]);
     } catch (err) {
       console.error('Error clearing all notifications', err);

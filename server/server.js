@@ -1,10 +1,23 @@
 require('dotenv').config();
+
+// Fail fast rather than silently falling back to a guessable secret in production
+if (!process.env.JWT_SECRET) {
+  console.error('FATAL: JWT_SECRET environment variable is not set. Refusing to start.');
+  process.exit(1);
+}
+if (!process.env.MONGO_URI) {
+  console.error('FATAL: MONGO_URI environment variable is not set. Refusing to start.');
+  process.exit(1);
+}
+
 const dns = require('dns');
 dns.setServers(['8.8.8.8', '8.8.4.4']);
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const multer = require('multer');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 
 const User = require('./models/User');
 const Novel = require('./models/Novel');
@@ -31,13 +44,34 @@ const upload = multer({ storage: storage });
 
 const app = express();
 
+app.use(helmet({
+  // Serving cross-origin cover photos/avatars from /uploads needs this relaxed
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+}));
+
+// Comma-separated list of allowed frontend origins, e.g.
+// "https://your-app.vercel.app,http://localhost:3000"
+const allowedOrigins = (process.env.CLIENT_URL || 'http://localhost:3000')
+  .split(',')
+  .map((o) => o.trim());
+
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: allowedOrigins,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
 app.use('/uploads', express.static('uploads'));
+
+// Rate-limit auth endpoints against brute-forcing
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'TOO_MANY_ATTEMPTS', message: 'Too many attempts. Please try again later.' },
+});
+app.use(['/login', '/register', '/api/forgot-password'], authLimiter);
 
 // 🗺️ MOUNT ADMIN ROUTER 
 // This automatically adds the '/api/admin' prefix to everything inside routes/admin.js
@@ -138,7 +172,7 @@ app.post('/login', async (req, res) => {
     // Sign JWT token
     const token = jwt.sign(
       { id: user._id, isAdmin: user.isAdmin, isWriter: user.isWriter },
-      process.env.JWT_SECRET || 'super_secure_jwt_key_novel_platform_123',
+      process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
 
@@ -468,7 +502,18 @@ app.post('/api/novels', upload.fields([{ name: 'coverPhoto' }, { name: 'textFile
 
 app.get('/api/novels', async (req, res) => {
   try {
-    const novels = await Novel.find({ status: 'published' }).sort({ createdAt: -1 });
+    let query = Novel.find({ status: 'published' }).sort({ createdAt: -1 });
+
+    // Pagination is opt-in via ?page=&limit= — omitting them keeps the
+    // existing full-array response so current callers are unaffected.
+    const { page, limit } = req.query;
+    if (page || limit) {
+      const p = Math.max(1, parseInt(page, 10) || 1);
+      const l = Math.max(1, Math.min(100, parseInt(limit, 10) || 20));
+      query = query.skip((p - 1) * l).limit(l);
+    }
+
+    const novels = await query;
     res.json(novels);
   } catch (error) { res.status(500).json({ error: "Failed to fetch novels" }); }
 });
@@ -520,7 +565,18 @@ app.post('/api/articles', upload.fields([{ name: 'coverPhoto' }, { name: 'textFi
 
 app.get('/api/articles', async (req, res) => {
   try {
-    const articles = await Article.find({ status: 'published' }).sort({ createdAt: -1 });
+    let query = Article.find({ status: 'published' }).sort({ createdAt: -1 });
+
+    // Pagination is opt-in via ?page=&limit= — omitting them keeps the
+    // existing full-array response so current callers are unaffected.
+    const { page, limit } = req.query;
+    if (page || limit) {
+      const p = Math.max(1, parseInt(page, 10) || 1);
+      const l = Math.max(1, Math.min(100, parseInt(limit, 10) || 20));
+      query = query.skip((p - 1) * l).limit(l);
+    }
+
+    const articles = await query;
     res.json(articles);
   } catch (error) { res.status(500).json({ error: "Failed to fetch articles" }); }
 });
@@ -1694,3 +1750,14 @@ app.post('/api/bot/message', async (req, res) => {
 // ==========================================
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// Log unexpected errors. An uncaught exception leaves the process in an undefined
+// state, so we log and exit rather than limp along — pm2 (see ecosystem.config.js)
+// restarts it immediately.
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled Promise Rejection:', reason);
+});
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+  process.exit(1);
+});

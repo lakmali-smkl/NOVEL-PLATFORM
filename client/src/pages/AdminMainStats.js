@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './AdminDashboard.css';
 
+import { API_BASE_URL } from '../config';
 /* ── Animated count-up hook ── */
 const useCountUp = (target, duration = 1400) => {
   const [value, setValue] = useState(0);
@@ -60,10 +61,11 @@ const AdminMainStats = ({ setActiveTab }) => {
   useEffect(() => {
     const load = async () => {
       try {
+        const authHeaders = { Authorization: `Bearer ${token}` };
         const [statsRes, reqRes, contentRes] = await Promise.all([
-          fetch('http://localhost:5000/api/admin/stats',            { headers }),
-          axios.get('http://localhost:5000/api/admin/writer-requests', { headers }),
-          axios.get('http://localhost:5000/api/admin/content',         { headers }),
+          fetch(`${API_BASE_URL}/api/admin/stats`,            { headers: authHeaders }),
+          axios.get(`${API_BASE_URL}/api/admin/writer-requests`, { headers: authHeaders }),
+          axios.get(`${API_BASE_URL}/api/admin/content`,         { headers: authHeaders }),
         ]);
         const statsData = await statsRes.json();
         setStats({
@@ -89,12 +91,12 @@ const AdminMainStats = ({ setActiveTab }) => {
       }
     };
     load();
-  }, []);
+  }, [token]);
 
   /* Quick approve/reject from dashboard */
   const handleQuickAction = async (userId, reqId, action) => {
     try {
-      await axios.post(`http://localhost:5000/api/admin/approve-writer/${userId}`, { action }, { headers });
+      await axios.post(`${API_BASE_URL}/api/admin/approve-writer/${userId}`, { action }, { headers });
       setPending(prev => prev.filter(r => r._id !== reqId));
       setStats(prev => ({
         ...prev,

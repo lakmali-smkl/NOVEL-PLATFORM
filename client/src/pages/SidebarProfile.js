@@ -1,8 +1,7 @@
 import React from 'react';
 import './SidebarProfile.css';
 
-const API = 'http://localhost:5000';
-
+import { API_BASE_URL as API } from '../config';
 const roleConfig = {
   admin:  { label: 'Administrator', color: '#3399ff', bg: 'rgba(0,123,255,0.12)', border: 'rgba(0,123,255,0.3)',  icon: '🛡️' },
   writer: { label: 'Writer',        color: '#f97316', bg: 'rgba(249,115,22,0.12)', border: 'rgba(249,115,22,0.3)', icon: '✍️' },

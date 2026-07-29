@@ -4,8 +4,7 @@ import axios from 'axios';
 import WriterWelcome from './WriterWelcome';
 import './WriterDashboard.css';
 
-const API = 'http://localhost:5000';
-
+import { API_BASE_URL as API } from '../config';
 const getGreeting = () => {
   const h = new Date().getHours();
   if (h < 12) return 'Good morning';

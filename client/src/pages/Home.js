@@ -5,6 +5,7 @@ import myVideo from './backgroundVideo.mp4';
 import RecommendationSection from './RecommendationSection';
 import ChatbotWidget from '../components/ChatbotWidget';
 
+import { API_BASE_URL } from '../config';
 const literaryQuotes = [
   { text: "A reader lives a thousand lives before he dies. The man who never reads lives only one.", author: "George R.R. Martin" },
   { text: "There is no barrier, obstacle, or limitation that can be placed on a mind that loves stories.", author: "Unknown" },
@@ -30,7 +31,6 @@ const Home = ({ user }) => {
   const [selectedGenre, setSelectedGenre] = useState('All');
   const [currentQuoteIdx, setCurrentQuoteIdx] = useState(0);
   const [faqOpen, setFaqOpen] = useState({});
-  const API_BASE_URL = 'http://localhost:5000'; 
 
   useEffect(() => {
     // Fetch all novels for guest view trending and logged-in genre explorer
@@ -48,7 +48,7 @@ const Home = ({ user }) => {
       const userId = user._id || user.id;
 
       // Fetch Reading Stats
-      fetch(`http://localhost:5000/api/users/${userId}/reading-stats`)
+      fetch(`${API_BASE_URL}/api/users/${userId}/reading-stats`)
         .then(res => res.json())
         .then(data => {
           if (data && !data.error) {
@@ -57,7 +57,7 @@ const Home = ({ user }) => {
         })
         .catch(err => console.error("Error loading reading stats:", err));
 
-      fetch(`http://localhost:5000/api/announcements`)
+      fetch(`${API_BASE_URL}/api/announcements`)
         .then(res => {
           if (!res.ok) throw new Error("Route not found on server");
           return res.json();
@@ -71,7 +71,7 @@ const Home = ({ user }) => {
       }
 
       // Collections Count
-      fetch(`http://localhost:5000/api/collections/${userId}`)
+      fetch(`${API_BASE_URL}/api/collections/${userId}`)
         .then(res => res.json())
         .then(data => {
           if (Array.isArray(data)) {
@@ -81,7 +81,7 @@ const Home = ({ user }) => {
         .catch(() => {});
 
       // History
-      fetch(`http://localhost:5000/api/users/${userId}/history`)
+      fetch(`${API_BASE_URL}/api/users/${userId}/history`)
         .then(res => res.json())
         .then(data => {
           if (Array.isArray(data)) {
