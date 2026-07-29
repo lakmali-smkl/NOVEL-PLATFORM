@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useTheme, THEMES } from '../ThemeContext';
 import './Navbar.css';
 
+import { API_BASE_URL } from '../config';
 // Helper to convert hex to rgba
 const hexToRgba = (hex, alpha) => {
   if (!hex) return '';
@@ -15,7 +16,7 @@ const hexToRgba = (hex, alpha) => {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 };
 
-const Navbar = ({ user, setUser, toggleSidebar, closeSidebar }) => {
+const Navbar = ({ user, setUser, toggleSidebar, closeSidebar, isSidebarOpen }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [unreadCount, setUnreadCount] = useState(0);
@@ -40,7 +41,7 @@ const Navbar = ({ user, setUser, toggleSidebar, closeSidebar }) => {
     const fetchUnreadCount = async () => {
       if (user?._id) {
         try {
-          const res = await axios.get(`http://localhost:5000/api/notifications/unread/${user._id}`);
+          const res = await axios.get(`${API_BASE_URL}/api/notifications/unread/${user._id}`);
           setUnreadCount(res.data.count);
         } catch (err) {
           console.error("Error fetching unread notifications", err);
@@ -76,8 +77,8 @@ const Navbar = ({ user, setUser, toggleSidebar, closeSidebar }) => {
     >
       <div className="nav-left">
         {user && (
-          <button className="menu-btn" onClick={toggleSidebar} aria-label="Toggle Sidebar">
-            <span className="menu-btn-icon"></span>
+          <button className="menu-btn" onClick={toggleSidebar} aria-label="Toggle Sidebar" aria-expanded={isSidebarOpen}>
+            <span className={`menu-btn-icon ${isSidebarOpen ? 'open' : ''}`}></span>
           </button>
         )}
         <Link to="/" className="nav-brand">

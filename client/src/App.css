@@ -36,6 +36,23 @@ body.theme-midnight {
 }
 
 /* ============================================================
+   THEME: Dark Mode — neutral slate dark theme (no red navbar)
+   ============================================================ */
+body.theme-dark {
+  --dark-bg: #0b0f19;
+  --card-bg: #161b26;
+  --text-main: #e5e7eb;
+  --text-muted: #94a3b8;
+  --accent: #38bdf8;
+  --accent-glow: rgba(56, 189, 248, 0.22);
+  --navbar-bg: rgba(17, 24, 39, 0.95);
+  --border-color: #232838;
+  --input-bg: #0b0f19;
+  --hover-bg: rgba(255, 255, 255, 0.04);
+  --brand-red: #38bdf8;
+}
+
+/* ============================================================
    THEME: Snow Light
    ============================================================ */
 body.theme-snow {

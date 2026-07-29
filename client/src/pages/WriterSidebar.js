@@ -4,6 +4,7 @@ import axios from 'axios';
 import SidebarProfile from './SidebarProfile';
 import './WriterSidebar.css';
 
+import { API_BASE_URL } from '../config';
 const WriterSidebar = ({ user, closeSidebar }) => {
   const location = useLocation();
   const [unreadCount, setUnreadCount] = useState(0);
@@ -14,10 +15,10 @@ const WriterSidebar = ({ user, closeSidebar }) => {
     if (!user?._id) return;
     const fetchCount = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/notifications/unread/${user._id}`);
+        const res = await axios.get(`${API_BASE_URL}/api/notifications/unread/${user._id}`);
         setUnreadCount(res.data.count || 0);
 
-        const msgRes = await axios.get(`http://localhost:5000/api/messages/unread-count/${user._id}`);
+        const msgRes = await axios.get(`${API_BASE_URL}/api/messages/unread-count/${user._id}`);
         setUnreadMsgCount(msgRes.data.count || 0);
       } catch (err) {
         // silently fail
@@ -56,6 +57,11 @@ const WriterSidebar = ({ user, closeSidebar }) => {
           <li>
             <Link to="/add-article" className={`nav-item ${isActive('/add-article')}`} onClick={closeSidebar}>
               <span className="nav-icon">📝</span> Create Article
+            </Link>
+          </li>
+          <li>
+            <Link to="/writer-dashboard/works" className={`nav-item ${isActive('/writer-dashboard/works')}`} onClick={closeSidebar}>
+              <span className="nav-icon">🗂️</span> My Works
             </Link>
           </li>
 

@@ -45,6 +45,16 @@
   -webkit-font-smoothing: antialiased;
 }
 
+/* Staggered entrance animation applied to header / cards / sections */
+@keyframes growthFadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.growth-card-anim {
+  animation: growthFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
 /* ==========================================================================
    👑 HEADER STYLES (FIXES THE BLANK DULL TEXT DETECTED IN IMAGE)
    ========================================================================== */
@@ -120,6 +130,132 @@
 .growth-card.green { border: 1px solid var(--neon-green-border); background: linear-gradient(145deg, var(--surface-card-dark) 0%, var(--neon-green-surface) 100%); color: var(--neon-green); }
 
 /* ==========================================================================
+   📈 GROWTH TREND CHART (visual summary — complements the data table below)
+   ========================================================================== */
+.growth-chart-section {
+  border-top: 3px solid var(--accent);
+}
+
+.growth-chart-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.growth-chart-subtitle {
+  margin: 0.35rem 0 0 0;
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: var(--text-secondary-dark);
+}
+
+.growth-chart-legend {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.legend-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary-dark);
+}
+
+.legend-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 6px currentColor;
+}
+
+.growth-chart-wrap {
+  position: relative;
+}
+
+.growth-chart-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+  cursor: crosshair;
+}
+
+.chart-gridline {
+  stroke: var(--border-glow-dark);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+}
+
+.chart-axis-label {
+  fill: var(--text-secondary-dark);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.chart-area {
+  animation: growthAreaFadeIn 1s ease 0.3s both;
+}
+
+@keyframes growthAreaFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.chart-line {
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.15));
+}
+
+.chart-dot {
+  transition: r 0.15s ease;
+  stroke: var(--surface-card-dark);
+  stroke-width: 1.5;
+}
+
+.chart-hover-line {
+  stroke: var(--text-secondary-dark);
+  stroke-width: 1;
+  stroke-dasharray: 2 3;
+  pointer-events: none;
+}
+
+.chart-tooltip {
+  position: absolute;
+  transform: translate(-50%, -115%);
+  background: var(--surface-card-dark);
+  border: 1px solid var(--border-glow-dark);
+  border-radius: 10px;
+  padding: 10px 14px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 5;
+  animation: growthFadeUp 0.15s ease both;
+}
+
+.chart-tooltip strong {
+  display: block;
+  font-size: 0.82rem;
+  color: var(--text-primary-dark);
+  margin-bottom: 6px;
+}
+
+.chart-tooltip-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: var(--text-secondary-dark);
+  margin-top: 3px;
+}
+
+/* ==========================================================================
    🧱 CONTAINERS & INPUT CONTROLS BLOCK RULES
    ========================================================================== */
 .dashboard-section {
@@ -151,7 +287,7 @@
   color: var(--text-secondary-dark);
   padding: 3.5rem 1.5rem;
   font-style: italic;
-  background-color: rgba(15, 23, 42, 0.4);
+  background-color: var(--hover-bg);
   border-radius: var(--radius-input);
   border: 1px dashed var(--border-glow-dark);
   margin: 0;
@@ -209,6 +345,7 @@
   .form-submit-row {
     display: flex;
     justify-content: flex-start;
+    gap: 0.75rem;
     margin-top: 0.5rem;
   }
 
@@ -229,6 +366,23 @@
   .btn-submit-broadcast:hover {
     background-color: #38bdf8;
     transform: translateY(-1px);
+  }
+
+  .btn-cancel-edit {
+    background-color: transparent;
+    color: var(--text-secondary-dark);
+    padding: 0.95rem 1.35rem;
+    border-radius: var(--radius-input);
+    font-size: 0.95rem;
+    font-weight: 600;
+    border: 1px solid var(--border-glow-dark);
+    cursor: pointer;
+    transition: var(--transition-snappy);
+  }
+
+  .btn-cancel-edit:hover {
+    border-color: var(--neon-rose);
+    color: var(--neon-rose);
   }
 
   .form-feedback {
@@ -253,13 +407,18 @@
 
 .bulletin-item {
   padding: 1.25rem;
-  background-color: rgba(15, 23, 42, 0.2);
+  background-color: var(--hover-bg);
   border-radius: var(--radius-input);
   border: 1px solid var(--border-glow-dark);
   transition: var(--transition-snappy);
 }
 
 .bulletin-item:hover { border-color: var(--text-muted); }
+
+.bulletin-item.bulletin-editing {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
 
 /* Announcement Alert Sub-variants */
 .bulletin-item.border-info { border-left: 4px solid var(--neon-blue); }
@@ -290,6 +449,54 @@
 .bulletin-item p { margin: 0 0 0.75rem 0; font-size: 0.95rem; color: var(--text-main); line-height: 1.5; }
 .bulletin-item small { color: var(--text-secondary-dark); font-size: 0.775rem; }
 
+.bulletin-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.bulletin-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.bulletin-edit-btn,
+.bulletin-delete-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-snappy);
+  background: transparent;
+}
+
+.bulletin-edit-btn {
+  border: 1px solid var(--accent);
+  color: var(--accent);
+}
+
+.bulletin-edit-btn:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+.bulletin-delete-btn {
+  border: 1px solid var(--neon-rose-border);
+  color: var(--neon-rose);
+}
+
+.bulletin-delete-btn:hover {
+  background: var(--neon-rose);
+  color: #fff;
+}
+
 /* ==========================================================================
    📊 TIMELINE STRUCTURAL REGISTRY DATA TABLES
    ========================================================================== */
@@ -298,7 +505,8 @@
   padding: 2rem;
   border-radius: var(--radius-panel);
   border: 1px solid var(--border-glow-dark);
-  box-shadow: var(--shadow-glow);
+  border-top: 3px solid var(--accent);
+  box-shadow: var(--shadow-glow), 0 0 0 1px var(--accent-glow);
 }
 
 .growth-table-section h3 {
@@ -318,23 +526,29 @@
   grid-template-columns: 1.5fr repeat(3, 1fr);
   padding: 1.1rem 1.5rem;
   border-bottom: 1px solid var(--border-glow-dark);
+  border-left: 3px solid transparent;
   font-size: 0.95rem;
   align-items: center;
   background-color: var(--surface-card-dark);
+  transition: background-color 0.15s ease, border-left-color 0.15s ease;
 }
 
 .growth-table-row:last-child { border-bottom: none; }
-.growth-table-row:nth-child(even):not(.growth-table-header) { background-color: rgba(15, 23, 42, 0.15); }
+.growth-table-row:nth-child(even):not(.growth-table-header) { background-color: var(--hover-bg); }
+.growth-table-row:not(.growth-table-header):hover {
+  background-color: var(--accent-glow);
+  border-left-color: var(--accent);
+}
 
 /* Table Heading Formatting */
 .growth-table-header {
-  background-color: var(--dark-bg);
+  background: linear-gradient(180deg, var(--accent-glow), transparent);
   font-weight: 700;
   color: var(--text-secondary-dark);
   text-transform: uppercase;
   font-size: 0.775rem;
   letter-spacing: 0.08em;
-  border-bottom: 2px solid var(--border-glow-dark);
+  border-bottom: 2px solid var(--accent);
 }
 
 .font-mono { 

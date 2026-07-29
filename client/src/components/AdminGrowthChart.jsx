@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { API_BASE_URL } from '../config';
 import { 
   ResponsiveContainer, 
   LineChart, 
@@ -19,7 +20,7 @@ const AdminGrowthChart = () => {
     const fetchGrowthData = async () => {
       try {
         // Note: Assumes proxy or baseUrl handles your backend location
-        const response = await fetch('http://localhost:5000/api/admin/growth', {
+        const response = await fetch(`${API_BASE_URL}/api/admin/growth`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
           }

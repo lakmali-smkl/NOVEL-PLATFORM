@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Favorites.css';
 
+import { API_BASE_URL } from '../config';
 const Favorites = () => {
   const [favs, setFavs] = useState([]);
   const [activeTab, setActiveTab] = useState('all'); // 'all', 'novel', 'article'
@@ -10,7 +11,7 @@ const Favorites = () => {
 
   useEffect(() => {
     if (user && user.email) {
-      fetch(`http://localhost:5000/api/users/${user.email}`)
+      fetch(`${API_BASE_URL}/api/users/${user.email}`)
         .then(res => res.json())
         .then(data => setFavs(data.favorites || []))
         .catch(err => console.error("Error fetching favorites:", err));
@@ -30,7 +31,7 @@ const Favorites = () => {
   const handleDelete = async (contentId) => {
     if (window.confirm("Remove from favorites?")) {
       try {
-        const response = await fetch(`http://localhost:5000/api/users/${user._id}/favorites/${contentId}`, { 
+        const response = await fetch(`${API_BASE_URL}/api/users/${user._id}/favorites/${contentId}`, { 
           method: 'DELETE' 
         });
         

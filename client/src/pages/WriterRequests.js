@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './WriterRequests.css';
 
+import { API_BASE_URL } from '../config';
 const WriterRequests = () => {
   const [requests, setRequests] = useState([]);
 
@@ -11,7 +12,7 @@ const WriterRequests = () => {
   // Load all writer application records
   useEffect(() => {
     const fetchRequests = async () => {
-      const res = await axios.get('http://localhost:5000/api/admin/writer-requests', {
+      const res = await axios.get(`${API_BASE_URL}/api/admin/writer-requests`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -23,7 +24,7 @@ const WriterRequests = () => {
 
   const approveWriter = async (userId, requestId, action) => {
     try {
-      const response = await axios.post(`http://localhost:5000/api/admin/approve-writer/${userId}`, {
+      const response = await axios.post(`${API_BASE_URL}/api/admin/approve-writer/${userId}`, {
         action: action
       }, {
         headers: {
@@ -45,7 +46,7 @@ const WriterRequests = () => {
   const deleteRequest = async (requestId) => {
     if (!window.confirm('Remove this record from history?')) return;
     try {
-      await axios.delete(`http://localhost:5000/api/admin/writer-requests/${requestId}`, {
+      await axios.delete(`${API_BASE_URL}/api/admin/writer-requests/${requestId}`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
       setRequests(prev => prev.filter(r => r._id !== requestId));
@@ -64,30 +65,52 @@ const WriterRequests = () => {
   };
 
   return (
-    <div className="admin-requests-page">
-      <h1>Writer Applications</h1>
+    <div className="wreq-page">
+      <div className="wreq-page-header">
+        <h1>Writer Applications</h1>
+        <p className="wreq-page-subtitle">Review and manage requests from readers who want publishing rights.</p>
+      </div>
 
-      <section className="writer-section">
-        <h2>Pending Requests ({pendingRequests.length})</h2>
+      <section className="wreq-section">
+        <div className="wreq-section-title-row">
+          <h2>Pending Requests</h2>
+          {pendingRequests.length > 0 && (
+            <span className="wreq-count wreq-count-pending">{pendingRequests.length}</span>
+          )}
+        </div>
+
         {pendingRequests.length === 0 ? (
-          <p className="empty-notice">No pending requests at this time.</p>
+          <div className="wreq-empty">
+            <span className="wreq-empty-icon">✅</span>
+            <p>No pending requests at this time.</p>
+          </div>
         ) : (
           pendingRequests.map((req) => (
-            <div key={req._id} className="request-list-item">
-              <p><strong>User:</strong> {req.username}</p>
-              <p><strong>Reason:</strong> {req.reason}</p>
-              <div className="request-actions">
-                <button 
+            <div key={req._id} className="wreq-item">
+              <div className="wreq-item-top">
+                <div className="wreq-item-identity">
+                  <div className="wreq-avatar">{req.username.charAt(0).toUpperCase()}</div>
+                  <div>
+                    <p className="wreq-item-name">{req.username}</p>
+                    <span className="wreq-status-pill wreq-status-pending">Awaiting Review</span>
+                  </div>
+                </div>
+              </div>
+
+              <p className="wreq-item-reason">“{req.reason}”</p>
+
+              <div className="wreq-actions">
+                <button
                   onClick={() => approveWriter(req.userId, req._id, 'approve')}
-                  className="approve-btn"
+                  className="wreq-approve-btn"
                 >
-                  Approve
+                  <span>✓</span> Approve
                 </button>
-                <button 
+                <button
                   onClick={() => approveWriter(req.userId, req._id, 'reject')}
-                  className="reject-btn"
+                  className="wreq-reject-btn"
                 >
-                  Reject
+                  <span>✕</span> Reject
                 </button>
               </div>
             </div>
@@ -95,32 +118,38 @@ const WriterRequests = () => {
         )}
       </section>
 
-      <section className="writer-section previous-requests">
-        <div className="notif-section-header">
+      <section className="wreq-section">
+        <div className="wreq-section-title-row">
           <h2>Previous Requests</h2>
-          <span className="notif-count">{handledRequests.length}</span>
+          {handledRequests.length > 0 && (
+            <span className="wreq-count">{handledRequests.length}</span>
+          )}
         </div>
+
         {handledRequests.length === 0 ? (
-          <p className="empty-notice">No approved or rejected requests yet.</p>
+          <div className="wreq-empty">
+            <span className="wreq-empty-icon">🗂️</span>
+            <p>No approved or rejected requests yet.</p>
+          </div>
         ) : (
-          <ul className="notif-feed">
+          <ul className="wreq-feed">
             {handledRequests.map((req) => (
-              <li key={req._id} className={`notif-item notif-${req.status}`}>
-                <div className="notif-avatar">{req.username.charAt(0).toUpperCase()}</div>
-                <div className="notif-body">
-                  <p className="notif-text">
-                    <span className="notif-username">{req.username}</span>
+              <li key={req._id} className={`wreq-history-item wreq-history-${req.status}`}>
+                <div className="wreq-avatar">{req.username.charAt(0).toUpperCase()}</div>
+                <div className="wreq-history-body">
+                  <p className="wreq-history-text">
+                    <span className="wreq-username">{req.username}</span>
                     {' '}applied to become a writer
                   </p>
-                  <p className="notif-reason">{req.reason}</p>
-                  <span className="notif-time">{timeAgo(req.createdAt)}</span>
+                  <p className="wreq-reason">{req.reason}</p>
+                  <span className="wreq-time">{timeAgo(req.createdAt)}</span>
                 </div>
-                <div className="notif-right">
-                  <span className={`notif-badge notif-badge-${req.status}`}>
+                <div className="wreq-history-right">
+                  <span className={`wreq-status-pill wreq-status-${req.status}`}>
                     {req.status === 'approved' ? '✓ Approved' : '✕ Rejected'}
                   </span>
                   <button
-                    className="notif-delete-btn"
+                    className="wreq-delete-btn"
                     onClick={() => deleteRequest(req._id)}
                     title="Remove from history"
                   >

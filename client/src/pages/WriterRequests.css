@@ -1,224 +1,268 @@
+/* ============================================================
+   WRITER APPLICATIONS — Admin Review Page
+   All classes are prefixed "wreq-" to avoid colliding with
+   similarly-named classes in Navbar.css / Notifications.css /
+   RequestWriter.css (this app has no CSS module scoping, so
+   generic names like .notif-item or .request-header leak globally).
+   ============================================================ */
 
-:root {
-  --surface: var(--card-bg);
-  --surface-alt: var(--card-bg);
-  --surface-border: var(--border-color);
-  --text-primary: var(--text-main);
-  --text-secondary: var(--text-muted);
-  --accent-success: #0f766e;
-  --accent-danger: #dc2626;
-  --accent-info: #2563eb;
-  --shadow-soft: 0 20px 44px rgba(15, 23, 42, 0.08);
-}
-
-.admin-requests-page {
-  padding: 36px 30px;
+.wreq-page {
+  padding: 36px 30px 60px;
   max-width: 1160px;
   margin: 0 auto;
 }
 
-.admin-requests-page h1 {
+.wreq-page-header {
   margin-bottom: 30px;
+}
+
+.wreq-page-header h1 {
+  margin: 0 0 8px 0;
   font-size: clamp(2rem, 1.9vw, 2.4rem);
   line-height: 1.1;
   font-weight: 800;
-  color: var(--text-primary);
+  color: var(--text-main);
 }
 
-.writer-section {
-  background: var(--surface);
-  border: 1px solid var(--surface-border);
-  border-radius: 28px;
+.wreq-page-subtitle {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 1rem;
+}
+
+/* ── Section Shell ── */
+.wreq-section {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
   padding: 32px;
   margin-bottom: 28px;
-  box-shadow: var(--shadow-soft);
+  box-shadow: 0 20px 44px rgba(15, 23, 42, 0.06);
 }
 
-.writer-section:last-child {
+.wreq-section:last-child {
   margin-bottom: 0;
 }
 
-.writer-section h2 {
+.wreq-section-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   margin-bottom: 22px;
+}
+
+.wreq-section-title-row h2 {
+  margin: 0;
   font-size: 1.2rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--text-main);
 }
 
-.request-list-item {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 18px;
-  padding: 24px 26px;
-  border-radius: 22px;
-  border: 1px solid var(--border-color);
-  background: var(--card-bg);
-  margin-bottom: 18px;
-  transition: transform 0.2s ease, border-color 0.2s ease;
-}
-
-.request-list-item:hover {
-  transform: translateY(-2px);
-  border-color: rgba(37, 99, 235, 0.16);
-}
-
-.request-list-item:nth-child(even) {
-  background: var(--surface-alt);
-}
-
-.request-list-item:last-child {
-  margin-bottom: 0;
-}
-
-.request-header {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 12px;
-  align-items: flex-start;
-  margin-bottom: 10px;
-}
-
-.request-list-item p {
-  margin: 8px 0;
-  color: var(--text-secondary);
-  line-height: 1.75;
-}
-
-.request-list-item strong {
-  color: var(--text-primary);
-}
-
-.status-badge {
+.wreq-count {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 108px;
-  padding: 10px 16px;
-  border-radius: 999px;
-  text-transform: capitalize;
+  background: var(--accent-glow);
+  color: var(--accent);
+  font-size: 0.78rem;
   font-weight: 700;
-  font-size: 0.92rem;
+  border-radius: 999px;
+  padding: 2px 11px;
+  min-width: 26px;
 }
 
-.status-approved {
-  background: rgba(16, 185, 129, 0.16);
-  color: var(--accent-success);
+.wreq-count-pending {
+  background: rgba(220, 38, 38, 0.14);
+  color: #dc2626;
 }
 
-.status-rejected {
-  background: rgba(220, 38, 38, 0.12);
-  color: var(--accent-danger);
+/* ── Empty States ── */
+.wreq-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 40px 20px;
+  border-radius: 18px;
+  background: var(--hover-bg);
+  border: 1px dashed var(--border-color);
+  color: var(--text-muted);
+  text-align: center;
 }
 
-.status-pending {
-  background: rgba(37, 99, 235, 0.14);
-  color: var(--accent-info);
+.wreq-empty-icon {
+  font-size: 2rem;
+  opacity: 0.8;
 }
 
-.request-actions {
+.wreq-empty p {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+/* ── Pending Request Card ── */
+.wreq-item {
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+  padding: 22px 24px;
+  margin-bottom: 16px;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.wreq-item:last-child {
+  margin-bottom: 0;
+}
+
+.wreq-item:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+}
+
+.wreq-item-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+
+.wreq-item-identity {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.wreq-avatar {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.05rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+
+.wreq-item-name {
+  margin: 0 0 4px 0;
+  font-weight: 700;
+  color: var(--text-main);
+  font-size: 1rem;
+}
+
+/* ── Status pills (shared: pending card + history rows) ── */
+.wreq-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.wreq-status-pending {
+  background: rgba(245, 158, 11, 0.14);
+  color: #b45309;
+}
+
+.wreq-status-approved {
+  background: rgba(16, 185, 129, 0.14);
+  color: #047857;
+}
+
+.wreq-status-rejected {
+  background: rgba(239, 68, 68, 0.12);
+  color: #b91c1c;
+}
+
+.wreq-item-reason {
+  margin: 0 0 18px 0;
+  padding: 14px 16px;
+  border-left: 3px solid var(--accent);
+  background: var(--hover-bg);
+  border-radius: 0 10px 10px 0;
+  color: var(--text-muted);
+  font-style: italic;
+  line-height: 1.6;
+}
+
+.wreq-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  justify-content: flex-end;
-  align-items: center;
 }
 
-.approve-btn,
-.reject-btn {
-  min-width: 130px;
-  padding: 12px 20px;
+.wreq-approve-btn,
+.wreq-reject-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
   border: none;
   border-radius: 999px;
   cursor: pointer;
   font-weight: 700;
-  font-size: 0.96rem;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+  font-size: 0.9rem;
+  color: #fff;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
 }
 
-.approve-btn {
-  background: var(--accent-success);
-  color: #ffffff;
-  box-shadow: 0 14px 30px rgba(15, 118, 110, 0.16);
-}
-
-.approve-btn:hover {
-  transform: translateY(-1px);
-  background: #115e59;
-}
-
-.reject-btn {
-  background: var(--accent-danger);
-  color: #ffffff;
-  box-shadow: 0 14px 30px rgba(220, 38, 38, 0.18);
-}
-
-.reject-btn:hover {
-  transform: translateY(-1px);
-  background: #b91c1c;
-}
-
-.empty-notice {
-  padding: 24px 26px;
-  border-radius: 22px;
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  color: var(--text-muted);
-  font-size: 1rem;
-  line-height: 1.7;
-}
-
-@media (max-width: 860px) {
-  .admin-requests-page {
-    padding: 24px 20px;
-  }
-
-  .request-list-item {
-    grid-template-columns: 1fr;
-  }
-
-  .request-actions {
-    justify-content: flex-start;
-  }
-}
-
-/* =============================================
-   NOTIFICATION FEED — Previous Requests only
-   ============================================= */
-
-.notif-section-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.notif-section-header h2 {
-  margin-bottom: 0;
-}
-
-.notif-count {
+.wreq-approve-btn span,
+.wreq-reject-btn span {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: #e0e7ff;
-  color: #3730a3;
-  font-size: 0.78rem;
-  font-weight: 700;
-  border-radius: 999px;
-  padding: 2px 10px;
-  min-width: 28px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.22);
+  font-size: 0.75rem;
 }
 
-/* Feed list resets */
-.notif-feed {
+.wreq-approve-btn {
+  background: linear-gradient(90deg, #0f766e, #10b981);
+  box-shadow: 0 10px 24px rgba(15, 118, 110, 0.25);
+}
+
+.wreq-approve-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.08);
+}
+
+.wreq-reject-btn {
+  background: linear-gradient(90deg, #b91c1c, #ef4444);
+  box-shadow: 0 10px 24px rgba(220, 38, 38, 0.22);
+}
+
+.wreq-reject-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.08);
+}
+
+@media (max-width: 860px) {
+  .wreq-page {
+    padding: 24px 20px 50px;
+  }
+}
+
+/* ============================================================
+   HISTORY FEED — Previous Requests
+   ============================================================ */
+.wreq-feed {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-/* Each notification row */
-.notif-item {
+.wreq-history-item {
   display: flex;
   align-items: flex-start;
   gap: 14px;
@@ -228,63 +272,43 @@
   border-left: 4px solid transparent;
   background: var(--card-bg);
   transition: background 0.18s ease, transform 0.15s ease;
-  cursor: default;
 }
 
-.notif-item:last-child {
+.wreq-history-item:last-child {
   margin-bottom: 0;
 }
 
-.notif-item:hover {
+.wreq-history-item:hover {
   background: var(--hover-bg);
   transform: translateX(2px);
 }
 
-/* Approved → green left border */
-.notif-item.notif-approved {
+.wreq-history-item.wreq-history-approved {
   border-left-color: #10b981;
 }
 
-/* Rejected → red left border */
-.notif-item.notif-rejected {
+.wreq-history-item.wreq-history-rejected {
   border-left-color: #ef4444;
 }
 
-/* Circular avatar with initial */
-.notif-avatar {
-  flex-shrink: 0;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  color: #fff;
-  font-weight: 700;
-  font-size: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
-}
-
-/* Body text area */
-.notif-body {
+.wreq-history-body {
   flex: 1;
   min-width: 0;
 }
 
-.notif-text {
+.wreq-history-text {
   margin: 0 0 3px 0;
   font-size: 0.9rem;
   color: var(--text-main);
   line-height: 1.4;
 }
 
-.notif-username {
+.wreq-username {
   font-weight: 700;
   color: var(--text-main);
 }
 
-.notif-reason {
+.wreq-reason {
   margin: 0 0 5px 0;
   font-size: 0.82rem;
   color: var(--text-muted);
@@ -294,15 +318,14 @@
   max-width: 420px;
 }
 
-.notif-time {
+.wreq-time {
   font-size: 0.76rem;
   font-weight: 600;
   color: var(--text-muted);
   letter-spacing: 0.02em;
 }
 
-/* Right column: badge + delete */
-.notif-right {
+.wreq-history-right {
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
@@ -310,31 +333,7 @@
   gap: 8px;
 }
 
-/* Status pill badge */
-.notif-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  padding: 3px 10px;
-  border-radius: 999px;
-  letter-spacing: 0.01em;
-  white-space: nowrap;
-}
-
-.notif-badge-approved {
-  background: rgba(16, 185, 129, 0.12);
-  color: #065f46;
-}
-
-.notif-badge-rejected {
-  background: rgba(239, 68, 68, 0.1);
-  color: #991b1b;
-}
-
-/* Trash delete button */
-.notif-delete-btn {
+.wreq-delete-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -349,21 +348,21 @@
   padding: 0;
 }
 
-.notif-delete-btn svg {
+.wreq-delete-btn svg {
   width: 15px;
   height: 15px;
 }
 
-.notif-delete-btn:hover {
+.wreq-delete-btn:hover {
   background: rgba(239, 68, 68, 0.1);
   color: #ef4444;
 }
 
 @media (max-width: 600px) {
-  .notif-reason {
+  .wreq-reason {
     max-width: 160px;
   }
-  .notif-right {
+  .wreq-history-right {
     gap: 6px;
   }
 }

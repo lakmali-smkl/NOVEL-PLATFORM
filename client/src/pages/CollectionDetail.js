@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import './CollectionDetail.css';
 
+import { API_BASE_URL } from '../config';
 const CollectionDetail = () => {
   const { collectionId } = useParams();
-  const navigate = useNavigate();
   const [collection, setCollection] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`http://localhost:5000/api/collections/single/${collectionId}`)
+    fetch(`${API_BASE_URL}/api/collections/single/${collectionId}`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to load collection details.");
         return res.json();
@@ -29,7 +29,7 @@ const CollectionDetail = () => {
     if (!window.confirm('Remove this item from the collection?')) return;
     try {
       const res = await fetch(
-        `http://localhost:5000/api/collections/${collectionId}/items/${itemId}`,
+        `${API_BASE_URL}/api/collections/${collectionId}/items/${itemId}`,
         { method: 'DELETE' }
       );
       if (!res.ok) throw new Error('Failed');

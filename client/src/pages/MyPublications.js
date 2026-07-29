@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './MyPublications.css'; 
 
+import { API_BASE_URL } from '../config';
 const MyPublications = () => {
   const [works, setWorks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -16,8 +17,8 @@ const MyPublications = () => {
 
       try {
         const [novelsRes, articlesRes] = await Promise.all([
-          fetch(`http://localhost:5000/api/novels/author/${user._id}`),
-          fetch(`http://localhost:5000/api/articles/author/${user._id}`)
+          fetch(`${API_BASE_URL}/api/novels/author/${user._id}`),
+          fetch(`${API_BASE_URL}/api/articles/author/${user._id}`)
         ]);
 
         const novels = await novelsRes.json();
@@ -44,7 +45,7 @@ const MyPublications = () => {
   const handleDelete = async (work) => {
     if (window.confirm(`Are you sure you want to delete "${work.title}"?`)) {
       try {
-        const endpoint = `http://localhost:5000/api/${work.workType}s/${work._id}`;
+        const endpoint = `${API_BASE_URL}/api/${work.workType}s/${work._id}`;
         const response = await fetch(endpoint, { method: 'DELETE' });
 
         if (response.ok) {

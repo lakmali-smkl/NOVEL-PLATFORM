@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import './UserDirectory.css';
 
+import { API_BASE_URL } from '../config';
 const UserDirectory = () => {
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null); 
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/admin/users', {
+        const response = await fetch(`${API_BASE_URL}/api/admin/users`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
           }
@@ -38,9 +39,9 @@ const UserDirectory = () => {
     // Optimistic UI update
     setUsers(users.map(u => u._id === userId ? { ...u, isWriter: !currentStatus } : u));
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/users/${userId}/toggle-writer`, {
+      const res = await fetch(`${API_BASE_URL}/api/admin/users/${userId}/toggle-writer`, {
         method: 'PATCH',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -64,9 +65,9 @@ const UserDirectory = () => {
     // Optimistic UI update
     setUsers(users.map(u => u._id === userId ? { ...u, status: newStatus } : u));
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/users/${userId}/status`, {
+      const res = await fetch(`${API_BASE_URL}/api/admin/users/${userId}/status`, {
         method: 'PATCH',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
@@ -91,10 +92,10 @@ const UserDirectory = () => {
   const filteredUsers = users.filter(user => {
     const username = user.username || '';
     const email = user.email || '';
-    
-    const matchesSearch = username.toLowerCase().includes(searchTerm.toLowerCase()) || 
+
+    const matchesSearch = username.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           email.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     if (roleFilter === 'all') return matchesSearch;
     if (roleFilter === 'admin') return matchesSearch && user.isAdmin;
     if (roleFilter === 'writer') return matchesSearch && user.isWriter && !user.isAdmin;
@@ -109,48 +110,73 @@ const UserDirectory = () => {
     suspended: users.filter(u => u.status === 'suspended').length
   };
 
-  if (loading) return <div className="directory-loading">Loading Account Directory...</div>;
-  
-  if (error) return <div className="table-empty" style={{color: '#da3633', padding: '40px'}}>⚠️ Connection Error: Failed to fetch data from backend. ({error})</div>;
+  if (loading) return <div className="ud-loading">Loading Account Directory...</div>;
+
+  if (error) return <div className="ud-error">⚠️ Connection Error: Failed to fetch data from backend. ({error})</div>;
 
   return (
-    <div className="directory-workspace">
-      
+    <div className="ud-workspace">
+
       {/* SECTION HEADER */}
-      <div className="directory-header">
+      <div className="ud-header">
         <div>
-          <h2>User Directory</h2>
-          <p className="subtitle">Manage user permissions, account privileges, and node activity states.</p>
+          <h2><span className="ud-header-icon">👥</span> User Directory</h2>
+          <p className="ud-subtitle">Manage user permissions, account privileges, and node activity states.</p>
         </div>
       </div>
 
       {/* METRICS ROW */}
-      <div className="metrics-grid">
-        <div className="metric-card">
-          <span className="metric-label">Total Accounts</span>
-          <span className="metric-value">{metrics.total}</span>
+      <div className="ud-metrics-grid">
+        <div className="ud-metric-card">
+          <div className="ud-metric-icon ud-metric-icon-total">🧑‍🤝‍🧑</div>
+          <div>
+            <span className="ud-metric-label">Total Accounts</span>
+            <span className="ud-metric-value">{metrics.total}</span>
+          </div>
         </div>
-        <div className="metric-card">
-          <span className="metric-label">Independent Writers</span>
-          <span className="metric-value writers-count">{metrics.writers}</span>
+        <div className="ud-metric-card">
+          <div className="ud-metric-icon ud-metric-icon-writers">✍️</div>
+          <div>
+            <span className="ud-metric-label">Independent Writers</span>
+            <span className="ud-metric-value ud-metric-value-writers">{metrics.writers}</span>
+          </div>
         </div>
-        <div className="metric-card">
-          <span className="metric-label">Suspended Nodes</span>
-          <span className="metric-value suspended-count">{metrics.suspended}</span>
+        <div className="ud-metric-card">
+          <div className="ud-metric-icon ud-metric-icon-suspended">⛔</div>
+          <div>
+            <span className="ud-metric-label">Suspended Nodes</span>
+            <span className="ud-metric-value ud-metric-value-suspended">{metrics.suspended}</span>
+          </div>
         </div>
       </div>
 
       {/* FILTER BAR MANAGEMENT */}
-      <div className="filter-action-bar">
-        <input 
-          type="text" 
-          className="search-input"
-          placeholder="Search by username or email asset..." 
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <select 
-          className="role-select"
+      <div className="ud-filter-bar">
+        <div className="ud-filter-label">
+          <span className="ud-filter-icon">⚙️</span> Filters
+        </div>
+        <div className="ud-search-wrap">
+          <span className="ud-search-icon">🔎</span>
+          <input
+            type="text"
+            className="ud-search-input"
+            placeholder="Search by username or email asset..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          {searchTerm && (
+            <button
+              type="button"
+              className="ud-search-clear"
+              onClick={() => setSearchTerm('')}
+              aria-label="Clear search"
+            >
+              ✕
+            </button>
+          )}
+        </div>
+        <select
+          className="ud-role-select"
           value={roleFilter}
           onChange={(e) => setRoleFilter(e.target.value)}
         >
@@ -162,66 +188,69 @@ const UserDirectory = () => {
       </div>
 
       {/* DATA GRID TABLE */}
-      <div className="table-responsive-wrapper">
-        <table className="directory-table">
+      <div className="ud-table-wrap">
+        <table className="ud-table">
           <thead>
             <tr>
               <th>Identified User</th>
               <th>System Role</th>
               <th>Node Status</th>
               <th>Registration Date</th>
-              <th className="text-right">Administrative Actions</th>
+              <th className="ud-text-right">Administrative Actions</th>
             </tr>
           </thead>
           <tbody>
             {filteredUsers.map((user) => (
-              <tr key={user._id} className={user.status === 'suspended' ? 'row-suspended' : ''}>
+              <tr key={user._id} className={user.status === 'suspended' ? 'ud-row-suspended' : ''}>
                 <td>
-                  <div className="user-info-cell">
-                    <span className="cell-username">{user.username}</span>
-                    <span className="cell-email">{user.email}</span>
+                  <div className="ud-user-cell">
+                    <div className="ud-user-avatar">{(user.username || '?').charAt(0).toUpperCase()}</div>
+                    <div className="ud-user-text">
+                      <span className="ud-username">{user.username}</span>
+                      <span className="ud-email">{user.email}</span>
+                    </div>
                   </div>
                 </td>
                 <td>
-                  <div className="roles-pill-container">
-                    {user.isAdmin && <span className="pill badge-admin">Admin</span>}
-                    {user.isWriter && <span className="pill badge-writer">Writer</span>}
-                    {!user.isAdmin && !user.isWriter && <span className="pill badge-reader">Reader</span>}
+                  <div className="ud-roles-group">
+                    {user.isAdmin && <span className="ud-pill ud-badge-admin">Admin</span>}
+                    {user.isWriter && <span className="ud-pill ud-badge-writer">Writer</span>}
+                    {!user.isAdmin && !user.isWriter && <span className="ud-pill ud-badge-reader">Reader</span>}
                   </div>
                 </td>
                 <td>
-                  <span className={`status-tag dot-${user.status || 'active'}`}>
+                  <span className={`ud-status-tag ud-status-${user.status || 'active'}`}>
+                    <span className="ud-status-dot"></span>
                     {user.status || 'active'}
                   </span>
                 </td>
-                <td className="date-cell">
-                  {user.createdAt 
+                <td className="ud-date-cell">
+                  {user.createdAt
                     ? new Date(user.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
                     : 'N/A'
                   }
                 </td>
                 <td>
-                  <div className="action-button-group">
+                  <div className="ud-action-group">
                     {!user.isAdmin && (
                       <>
-                        {/* 💡 FIXED DISPLAY LABEL BELOW */}
-                        <button 
-                          className={`btn-table ${user.isWriter ? 'btn-revoke' : 'btn-grant'}`}
+                        <button
+                          className={`ud-btn ${user.isWriter ? 'ud-btn-revoke' : 'ud-btn-grant'}`}
                           onClick={() => toggleWriterRole(user._id, user.isWriter)}
                         >
                           {user.isWriter ? 'Demote to Reader' : 'Promote to Writer'}
                         </button>
-                        
+
                         {user.status === 'suspended' ? (
-                          <button 
-                            className="btn-table btn-activate" 
+                          <button
+                            className="ud-btn ud-btn-activate"
                             onClick={() => updateUserStatus(user._id, 'active')}
                           >
                             Activate
                           </button>
                         ) : (
-                          <button 
-                            className="btn-table btn-suspend" 
+                          <button
+                            className="ud-btn ud-btn-suspend"
                             onClick={() => updateUserStatus(user._id, 'suspended')}
                           >
                             Suspend
@@ -229,7 +258,7 @@ const UserDirectory = () => {
                         )}
                       </>
                     )}
-                    {user.isAdmin && <span className="immutable-label">System Owner</span>}
+                    {user.isAdmin && <span className="ud-immutable-label">System Owner</span>}
                   </div>
                 </td>
               </tr>
@@ -237,7 +266,7 @@ const UserDirectory = () => {
           </tbody>
         </table>
         {filteredUsers.length === 0 && (
-          <div className="table-empty">No workspace nodes found matching your database records.</div>
+          <div className="ud-table-empty">No workspace nodes found matching your database records.</div>
         )}
       </div>
 

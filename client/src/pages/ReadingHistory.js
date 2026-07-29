@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './ReadingHistory.css';
 
+import { API_BASE_URL } from '../config';
 const ReadingHistory = () => {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,7 +18,7 @@ const ReadingHistory = () => {
       return;
     }
     
-    fetch(`http://localhost:5000/api/users/${userId}/history`)
+    fetch(`${API_BASE_URL}/api/users/${userId}/history`)
       .then(res => res.json())
       .then(data => {
         setHistory(data);
@@ -32,7 +33,7 @@ const ReadingHistory = () => {
   // ✂️ REMOVE SINGLE ITEM
   const handleRemove = async (contentId) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/users/${userId}/history/${contentId}`, {
+      const res = await fetch(`${API_BASE_URL}/api/users/${userId}/history/${contentId}`, {
         method: 'DELETE'
       });
       if (res.ok) {
@@ -47,7 +48,7 @@ const ReadingHistory = () => {
   const handleClearAll = async () => {
     if (!window.confirm("Are you sure you want to clear your entire reading history?")) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/users/${userId}/history`, {
+      const res = await fetch(`${API_BASE_URL}/api/users/${userId}/history`, {
         method: 'DELETE'
       });
       if (res.ok) {
@@ -108,7 +109,7 @@ const ReadingHistory = () => {
               <div className="history-cover-wrap">
                 {item.coverPhoto ? (
                   <img 
-                    src={`http://localhost:5000/${item.coverPhoto}`} 
+                    src={`${API_BASE_URL}/${item.coverPhoto}`} 
                     alt={item.title} 
                     className="history-cover"
                   />

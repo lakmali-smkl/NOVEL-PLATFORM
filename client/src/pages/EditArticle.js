@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './EditNovel.css'; 
 
+import { API_BASE_URL } from '../config';
 const EditArticle = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -9,7 +10,7 @@ const EditArticle = () => {
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user'));
-    const url = user ? `http://localhost:5000/api/articles/${id}?userId=${user._id}` : `http://localhost:5000/api/articles/${id}`;
+    const url = user ? `${API_BASE_URL}/api/articles/${id}?userId=${user._id}` : `${API_BASE_URL}/api/articles/${id}`;
     fetch(url)
       .then(res => res.json())
       .then(data => {
@@ -35,7 +36,7 @@ const EditArticle = () => {
     if (!user) return alert("Please login first!");
 
     try {
-      const response = await fetch(`http://localhost:5000/api/articles/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/articles/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...formData, userId: user._id })
@@ -55,6 +56,9 @@ const EditArticle = () => {
 
   return (
     <div className="edit-novel-container"> {/* Reusing your CSS container */}
+      <button type="button" className="form-back-link" onClick={() => navigate('/writer-dashboard')}>
+        ← Back to Dashboard
+      </button>
       <h1>Edit Article</h1>
       <form onSubmit={handleUpdate}>
         <div className="edit-form-group">

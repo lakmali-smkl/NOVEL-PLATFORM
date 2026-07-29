@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './EditNovel.css'; 
 
+import { API_BASE_URL } from '../config';
 const EditNovel = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -9,7 +10,7 @@ const EditNovel = () => {
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user'));
-    const url = user ? `http://localhost:5000/api/novels/${id}?userId=${user._id}` : `http://localhost:5000/api/novels/${id}`;
+    const url = user ? `${API_BASE_URL}/api/novels/${id}?userId=${user._id}` : `${API_BASE_URL}/api/novels/${id}`;
     fetch(url)
       .then(res => res.json())
       .then(data => {
@@ -41,7 +42,7 @@ const EditNovel = () => {
     if (!user) return alert("Please login first!");
 
     try {
-      const response = await fetch(`http://localhost:5000/api/novels/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/novels/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...formData, userId: user._id })
@@ -61,6 +62,9 @@ const EditNovel = () => {
 
   return (
     <div className="edit-novel-container">
+      <button type="button" className="form-back-link" onClick={() => navigate('/writer-dashboard')}>
+        ← Back to Dashboard
+      </button>
       <h1>Edit Novel</h1>
       <form onSubmit={handleUpdate}>
         

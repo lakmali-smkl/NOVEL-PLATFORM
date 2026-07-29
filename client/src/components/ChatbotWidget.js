@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './ChatbotWidget.css';
 
+import { API_BASE_URL } from '../config';
 const QUICK_PROMPTS = [
   { text: '📚 Suggest a story', label: 'Suggest' },
   { text: '✍️ How to write?', label: 'Writer' },
@@ -47,7 +48,7 @@ const ChatbotWidget = () => {
     setIsLoading(true);
 
     try {
-      const res = await fetch('http://localhost:5000/api/bot/message', {
+      const res = await fetch(`${API_BASE_URL}/api/bot/message`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: textToSend }),

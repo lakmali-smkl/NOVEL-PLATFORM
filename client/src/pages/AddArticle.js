@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../config';
 import './writerForms.css'; // Importing the separate CSS file
 
 const AddArticle = ({ user }) => {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         title: '',
         content: '',
@@ -107,7 +110,7 @@ const AddArticle = ({ user }) => {
         }
 
         try {
-            const response = await fetch('http://localhost:5000/api/articles', {
+            const response = await fetch(`${API_BASE_URL}/api/articles`, {
                 method: 'POST',
                 body: data,
             });
@@ -129,6 +132,9 @@ const AddArticle = ({ user }) => {
 
     return (
         <div className="writer-form-container">
+            <button type="button" className="form-back-link" onClick={() => navigate('/writer-dashboard')}>
+                ← Back to Dashboard
+            </button>
             <h2>Write New Article</h2>
             <form onSubmit={handleSubmit}>
                 <div className="form-group">

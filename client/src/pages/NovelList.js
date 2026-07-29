@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react';
 import './NovelList.css';
 import { Link } from 'react-router-dom';
 
+import { API_BASE_URL } from '../config';
 const NovelList = () => {
   const [novels, setNovels] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/novels')
+    fetch(`${API_BASE_URL}/api/novels`)
       .then(res => res.json())
       .then(data => setNovels(data))
       .catch(err => console.error("Error:", err));
@@ -20,7 +21,7 @@ const NovelList = () => {
             {/* Display the Cover Photo */}
             {novel.coverPhoto && (
               <img 
-                src={`http://localhost:5000/${novel.coverPhoto}`} 
+                src={`${API_BASE_URL}/${novel.coverPhoto}`} 
                 alt={novel.title} 
                 className="cover-img"
               />

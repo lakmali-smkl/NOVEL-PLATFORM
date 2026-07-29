@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import './Login.css';
 
+import { API_BASE_URL } from '../config';
 const Login = ({ setUser }) => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
@@ -27,7 +28,7 @@ const Login = ({ setUser }) => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5000/login', {
+      const response = await fetch(`${API_BASE_URL}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -63,7 +64,7 @@ const Login = ({ setUser }) => {
     setFpMsg({ type: '', text: '' });
     setFpLoading(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/forgot-password/hint?email=${encodeURIComponent(fpEmail)}`);
+      const res = await fetch(`${API_BASE_URL}/api/forgot-password/hint?email=${encodeURIComponent(fpEmail)}`);
       const data = await res.json();
       if (res.ok) {
         setFpHint(data.hintQuestion);
@@ -88,7 +89,7 @@ const Login = ({ setUser }) => {
     }
     setFpLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/api/forgot-password/reset', {
+      const res = await fetch(`${API_BASE_URL}/api/forgot-password/reset`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: fpEmail, hintAnswer: fpAnswer, newPassword: fpNewPw })
@@ -128,13 +129,28 @@ const Login = ({ setUser }) => {
       <div className="auth-bg-orb orb-2" />
       <div className="auth-bg-orb orb-3" />
 
-      <div className="auth-card">
-        {/* Logo / Brand */}
-        <div className="auth-brand">
-          <span className="auth-brand-icon">📖</span>
-          <span className="auth-brand-name">NovelVerse</span>
+      <div className="auth-shell">
+        {/* ── Branding side panel ── */}
+        <div className="auth-side-panel">
+          <div className="auth-side-blob blob-1" />
+          <div className="auth-side-blob blob-2" />
+          <div className="auth-side-top">
+            <Link to="/" className="auth-side-brand">
+              <span className="auth-brand-icon">📖</span>
+              <span>NovelVerse</span>
+            </Link>
+            <h2 className="auth-side-headline">Pick up right where you left off.</h2>
+            <p className="auth-side-sub">Sign in to sync your library, reading streaks, and conversations across every device.</p>
+          </div>
+          <ul className="auth-side-features">
+            <li><span className="auth-side-feature-icon">🧠</span> AI-matched story recommendations</li>
+            <li><span className="auth-side-feature-icon">💬</span> Live chats with your favorite writers</li>
+            <li><span className="auth-side-feature-icon">🔥</span> Reading streaks &amp; milestones</li>
+          </ul>
         </div>
 
+        {/* ── Form panel ── */}
+        <div className="auth-card">
         <h1 className="auth-title">Welcome back</h1>
         <p className="auth-subtitle">Sign in to continue reading</p>
 
@@ -197,6 +213,7 @@ const Login = ({ setUser }) => {
           Don't have an account?{' '}
           <Link to="/register" className="auth-switch-link">Create one free</Link>
         </p>
+        </div>
       </div>
 
       {/* ── Forgot Password Modal ── */}
