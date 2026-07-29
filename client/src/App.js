@@ -33,6 +33,7 @@ import ChatPage from './pages/ChatPage';
 import './App.css';
 import './theme.css';
 
+import { API_BASE_URL } from './config';
 function App() {
   const [user, setUser] = useState(() => {
     // Load user from localStorage on mount
@@ -75,7 +76,7 @@ function App() {
 
       try {
         // 1. First, call the backend to check if the user account is active or suspended
-        const statusResponse = await fetch(`http://localhost:5000/api/users/check-status/${user._id}`);
+        const statusResponse = await fetch(`${API_BASE_URL}/api/users/check-status/${user._id}`);
         if (!statusResponse.ok) return;
 
         const statusData = await statusResponse.json();
@@ -92,7 +93,7 @@ function App() {
 
         // 2. Synchronize permissions / roles if the user is an active standard reader
         if (!user.isWriter && !user.isAdmin) {
-          const roleResponse = await fetch(`http://localhost:5000/api/users/status/${user._id}`);
+          const roleResponse = await fetch(`${API_BASE_URL}/api/users/status/${user._id}`);
           if (!roleResponse.ok) return; // Exit if server error
 
           const roleData = await roleResponse.json();
@@ -158,6 +159,7 @@ function App() {
         user={user} setUser={setUser}
         handleLogout={handleLogout}
         toggleSidebar={toggleSidebar} closeSidebar={closeSidebar}
+        isSidebarOpen={isSidebarOpen}
       />
 
       <aside className={`sidebar 

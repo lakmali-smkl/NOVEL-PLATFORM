@@ -77,6 +77,21 @@
   bottom: -6px;
 }
 
+/* Open state — morphs the three bars into an X */
+.menu-btn-icon.open {
+  background: transparent;
+}
+
+.menu-btn-icon.open::before {
+  top: 0;
+  transform: rotate(45deg);
+}
+
+.menu-btn-icon.open::after {
+  bottom: 0;
+  transform: rotate(-45deg);
+}
+
 /* ── Brand / Logo ── */
 .nav-brand {
   display: flex;
