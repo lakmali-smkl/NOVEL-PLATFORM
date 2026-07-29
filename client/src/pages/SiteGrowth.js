@@ -101,46 +101,46 @@ const SiteGrowth = () => {
 
   const BASE_URL = `${API_BASE_URL}/api/admin`;
 
-  // Fetch all administrative metrics and records concurrently
-  const loadDashboardData = async () => {
-    try {
-      const [growthRes, announcementsRes] = await Promise.all([
-        fetch(`${BASE_URL}/growth`, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        }),
-        fetch(`${BASE_URL}/announcements`, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        })
-      ]);
-
-      if (!growthRes.ok || !announcementsRes.ok) {
-        throw new Error('One or more systemic endpoints failed to respond properly.');
-      }
-
-      const growthData = await growthRes.json();
-      const announcementsData = await announcementsRes.json();
-
-      setGrowth({
-        users: growthData.users || [],
-        novels: growthData.novels || [],
-        articles: growthData.articles || []
-      });
-      setAnnouncements(announcementsData || []);
-    } catch (err) {
-      console.error('Admin panel loading issue:', err);
-      setError(err.message || 'Failed to assemble administrative views.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    // Fetch all administrative metrics and records concurrently
+    const loadDashboardData = async () => {
+      try {
+        const [growthRes, announcementsRes] = await Promise.all([
+          fetch(`${BASE_URL}/growth`, {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+          }),
+          fetch(`${BASE_URL}/announcements`, {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+          })
+        ]);
+
+        if (!growthRes.ok || !announcementsRes.ok) {
+          throw new Error('One or more systemic endpoints failed to respond properly.');
+        }
+
+        const growthData = await growthRes.json();
+        const announcementsData = await announcementsRes.json();
+
+        setGrowth({
+          users: growthData.users || [],
+          novels: growthData.novels || [],
+          articles: growthData.articles || []
+        });
+        setAnnouncements(announcementsData || []);
+      } catch (err) {
+        console.error('Admin panel loading issue:', err);
+        setError(err.message || 'Failed to assemble administrative views.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
     loadDashboardData();
-  }, []);
+  }, [BASE_URL]);
 
   // Refetch the admin bulletin list (used after create/update/delete)
   const refreshAnnouncements = async () => {
