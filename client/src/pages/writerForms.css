@@ -9,6 +9,25 @@
     color: var(--text-main);
 }
 
+.form-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: none;
+    padding: 0;
+    margin-bottom: 20px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+.form-back-link:hover {
+    color: var(--brand-red);
+    transform: translateX(-4px);
+}
+
 .writer-form-container h2 {
     margin-bottom: 30px;
     text-align: center;

@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './writerForms.css'; // Importing the separate CSS file
 
 const AddArticle = ({ user }) => {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         title: '',
         content: '',
@@ -129,6 +131,9 @@ const AddArticle = ({ user }) => {
 
     return (
         <div className="writer-form-container">
+            <button type="button" className="form-back-link" onClick={() => navigate('/writer-dashboard')}>
+                ← Back to Dashboard
+            </button>
             <h2>Write New Article</h2>
             <form onSubmit={handleSubmit}>
                 <div className="form-group">

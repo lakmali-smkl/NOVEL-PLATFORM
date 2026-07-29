@@ -128,13 +128,28 @@ const Login = ({ setUser }) => {
       <div className="auth-bg-orb orb-2" />
       <div className="auth-bg-orb orb-3" />
 
-      <div className="auth-card">
-        {/* Logo / Brand */}
-        <div className="auth-brand">
-          <span className="auth-brand-icon">📖</span>
-          <span className="auth-brand-name">NovelVerse</span>
+      <div className="auth-shell">
+        {/* ── Branding side panel ── */}
+        <div className="auth-side-panel">
+          <div className="auth-side-blob blob-1" />
+          <div className="auth-side-blob blob-2" />
+          <div className="auth-side-top">
+            <Link to="/" className="auth-side-brand">
+              <span className="auth-brand-icon">📖</span>
+              <span>NovelVerse</span>
+            </Link>
+            <h2 className="auth-side-headline">Pick up right where you left off.</h2>
+            <p className="auth-side-sub">Sign in to sync your library, reading streaks, and conversations across every device.</p>
+          </div>
+          <ul className="auth-side-features">
+            <li><span className="auth-side-feature-icon">🧠</span> AI-matched story recommendations</li>
+            <li><span className="auth-side-feature-icon">💬</span> Live chats with your favorite writers</li>
+            <li><span className="auth-side-feature-icon">🔥</span> Reading streaks &amp; milestones</li>
+          </ul>
         </div>
 
+        {/* ── Form panel ── */}
+        <div className="auth-card">
         <h1 className="auth-title">Welcome back</h1>
         <p className="auth-subtitle">Sign in to continue reading</p>
 
@@ -197,6 +212,7 @@ const Login = ({ setUser }) => {
           Don't have an account?{' '}
           <Link to="/register" className="auth-switch-link">Create one free</Link>
         </p>
+        </div>
       </div>
 
       {/* ── Forgot Password Modal ── */}

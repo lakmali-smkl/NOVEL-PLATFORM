@@ -55,6 +55,9 @@ const EditArticle = () => {
 
   return (
     <div className="edit-novel-container"> {/* Reusing your CSS container */}
+      <button type="button" className="form-back-link" onClick={() => navigate('/writer-dashboard')}>
+        ← Back to Dashboard
+      </button>
       <h1>Edit Article</h1>
       <form onSubmit={handleUpdate}>
         <div className="edit-form-group">

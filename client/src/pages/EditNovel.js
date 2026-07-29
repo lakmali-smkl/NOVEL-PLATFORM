@@ -61,6 +61,9 @@ const EditNovel = () => {
 
   return (
     <div className="edit-novel-container">
+      <button type="button" className="form-back-link" onClick={() => navigate('/writer-dashboard')}>
+        ← Back to Dashboard
+      </button>
       <h1>Edit Novel</h1>
       <form onSubmit={handleUpdate}>
         

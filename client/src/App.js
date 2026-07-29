@@ -10,6 +10,7 @@ import WriterDashboard from './pages/WriterDashboard';
 import AddNovel from './pages/AddNovel';
 import AddArticle from './pages/AddArticle';
 import WriterDashboardMain from './pages/WriterDashboardMain';
+import WriterWorks from './pages/WriterWorks';
 import Library from './pages/Library';
 import ReadPage from './pages/ReadPage';
 import Favorites from './pages/Favorites';
@@ -198,6 +199,7 @@ function App() {
 
             <Route path="/writer-dashboard" element={<WriterDashboard user={user} setUser={setUser} />}>
               <Route index element={<WriterDashboardMain user={user} setUser={setUser} />} />
+              <Route path="works" element={<WriterWorks user={user} />} />
               <Route path="profile" element={<Profile />} />
               <Route path="settings" element={<Settings setUser={setUser} />} />
               <Route path="favorites" element={<Favorites />} />

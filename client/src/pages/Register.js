@@ -98,13 +98,28 @@ const Register = () => {
       <div className="auth-bg-orb orb-2" />
       <div className="auth-bg-orb orb-3" />
 
-      <div className="auth-card" style={{ maxWidth: 480 }}>
-        {/* Brand */}
-        <div className="auth-brand">
-          <span className="auth-brand-icon">📖</span>
-          <span className="auth-brand-name">NovelVerse</span>
+      <div className="auth-shell auth-shell-wide">
+        {/* ── Branding side panel ── */}
+        <div className="auth-side-panel">
+          <div className="auth-side-blob blob-1" />
+          <div className="auth-side-blob blob-2" />
+          <div className="auth-side-top">
+            <Link to="/" className="auth-side-brand">
+              <span className="auth-brand-icon">📖</span>
+              <span>NovelVerse</span>
+            </Link>
+            <h2 className="auth-side-headline">Join a community of readers &amp; writers.</h2>
+            <p className="auth-side-sub">Create a free account to build your library, follow your favorite authors, and start your own reading streak.</p>
+          </div>
+          <ul className="auth-side-features">
+            <li><span className="auth-side-feature-icon">🧠</span> AI-matched story recommendations</li>
+            <li><span className="auth-side-feature-icon">💬</span> Live chats with your favorite writers</li>
+            <li><span className="auth-side-feature-icon">🔥</span> Reading streaks &amp; milestones</li>
+          </ul>
         </div>
 
+        {/* ── Form panel ── */}
+        <div className="auth-card">
         <h1 className="auth-title">Create account</h1>
         <p className="auth-subtitle">Join thousands of readers & writers today</p>
 
@@ -243,6 +258,7 @@ const Register = () => {
           Already have an account?{' '}
           <Link to="/login" className="auth-switch-link">Sign in</Link>
         </p>
+        </div>
       </div>
     </div>
   );

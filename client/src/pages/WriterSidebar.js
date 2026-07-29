@@ -58,6 +58,11 @@ const WriterSidebar = ({ user, closeSidebar }) => {
               <span className="nav-icon">📝</span> Create Article
             </Link>
           </li>
+          <li>
+            <Link to="/writer-dashboard/works" className={`nav-item ${isActive('/writer-dashboard/works')}`} onClick={closeSidebar}>
+              <span className="nav-icon">🗂️</span> My Works
+            </Link>
+          </li>
 
           <div className="sidebar-divider"></div>
 
