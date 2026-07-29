@@ -189,11 +189,23 @@
 
 /* ── Card Container ── */
 .wd-card {
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.07);
+  position: relative;
+  overflow: hidden;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
   border-radius: 20px;
   padding: 28px;
-  backdrop-filter: blur(8px);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.06), 0 0 0 1px var(--accent-glow);
+}
+
+.wd-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--brand-red));
 }
 
 .wd-card-header {
@@ -202,7 +214,7 @@
   align-items: center;
   margin-bottom: 24px;
   padding-bottom: 16px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .wd-card-header h2 {
@@ -213,13 +225,13 @@
 }
 
 .wd-card-badge {
-  background: rgba(119,3,7,0.15);
-  color: #f87171;
+  background: var(--accent-glow);
+  color: var(--accent);
   font-size: 0.72rem;
   font-weight: 700;
   padding: 4px 12px;
   border-radius: 100px;
-  border: 1px solid rgba(119,3,7,0.25);
+  border: 1px solid var(--accent);
 }
 
 .wd-see-all {
@@ -281,7 +293,8 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
   padding: 12px 14px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  background: linear-gradient(180deg, var(--accent-glow), transparent);
+  border-bottom: 2px solid var(--accent);
   font-weight: 700;
   white-space: nowrap;
 }
@@ -289,16 +302,22 @@
 .wd-table td {
   padding: 14px 14px;
   font-size: 0.9rem;
-  border-bottom: 1px solid rgba(255,255,255,0.03);
+  border-bottom: 1px solid var(--border-color);
   vertical-align: middle;
 }
 
 .wd-table tbody tr {
-  transition: background 0.15s ease;
+  border-left: 3px solid transparent;
+  transition: background-color 0.15s ease, border-left-color 0.15s ease;
+}
+
+.wd-table tbody tr:nth-child(even) {
+  background-color: var(--hover-bg);
 }
 
 .wd-table tbody tr:hover {
-  background: rgba(255,255,255,0.03);
+  background-color: var(--accent-glow);
+  border-left-color: var(--accent);
 }
 
 /* Title link */
@@ -369,8 +388,8 @@
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.08);
-  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border-color);
+  background: var(--hover-bg);
   font-size: 0.85rem;
   cursor: pointer;
   display: flex;

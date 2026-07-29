@@ -14,7 +14,7 @@
   /* Always visible — never compress */
   padding: 32px 20px 20px;
   margin-bottom: 8px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .admin-badge {
@@ -62,30 +62,66 @@
   color: var(--text-muted);
   text-decoration: none;
   font-weight: 500;
-  padding: 12px 16px;
+  padding: 10px 14px;
   border-radius: 10px;
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid transparent;
 }
 
 .admin-nav-item:hover {
-  background-color: rgba(255, 255, 255, 0.03);
+  background-color: var(--hover-bg);
   color: var(--text-main);
-  padding-left: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding-left: 18px;
+  border: 1px solid var(--border-color);
+}
+
+.admin-nav-label {
+  flex: 1;
 }
 
 .admin-icon {
-  font-size: 1.1rem;
-  opacity: 0.7;
-  transition: opacity 0.2s ease;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  background: var(--hover-bg);
+  border: 1px solid var(--border-color);
+  font-size: 1rem;
+  opacity: 0.8;
+  flex-shrink: 0;
+  transition: all 0.25s ease;
 }
 
 .admin-nav-item:hover .admin-icon {
   opacity: 1;
+  transform: scale(1.05);
+}
+
+.admin-nav-badge {
+  flex-shrink: 0;
+  background: linear-gradient(90deg, #dc2626, #ef4444);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 800;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 0 2px var(--card-bg);
+  animation: adminBadgePulse 2.2s infinite ease-in-out;
+}
+
+@keyframes adminBadgePulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.12); }
 }
 
 .admin-nav-item.active {
@@ -108,10 +144,16 @@
   box-shadow: 0 0 10px rgba(0, 123, 255, 0.8);
 }
 
+.admin-nav-item.active .admin-icon {
+  background: rgba(0, 123, 255, 0.14);
+  border-color: rgba(0, 123, 255, 0.35);
+  opacity: 1;
+}
+
 .admin-sidebar-footer {
   margin-top: auto;
   padding: 20px 12px 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid var(--border-color);
 }
 
 .admin-sidebar-footer p {

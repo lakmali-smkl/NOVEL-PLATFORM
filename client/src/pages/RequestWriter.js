@@ -54,21 +54,36 @@ const RequestWriter = ({ user, setUser }) => {
 
   return (
     <div className="request-container">
+      <div className="request-bg-glow request-bg-glow-1"></div>
+      <div className="request-bg-glow request-bg-glow-2"></div>
+
       <div className="request-card">
         {requestStatus === 'none' && (
           <>
             <div className="request-header">
+              <div className="request-icon-badge">✍️</div>
               <span className="writer-tag">JOIN THE TEAM</span>
               <h2>Become a Writer</h2>
               <p>Apply to get publishing rights and manage your own novels.</p>
             </div>
+
+            <ul className="writer-perks-list">
+              <li><span className="perk-icon">📚</span> Publish unlimited novels &amp; articles</li>
+              <li><span className="perk-icon">📊</span> Track live readership &amp; engagement metrics</li>
+              <li><span className="perk-icon">💬</span> Chat directly with your readers</li>
+            </ul>
+
             <form onSubmit={handleSubmit} className="request-form">
-              <textarea 
-                placeholder="Tell us why you want to become a writer..." 
-                value={reason}
-                onChange={(e) => setReason(e.target.value)}
-                required 
-              />
+              <div className="input-group">
+                <label htmlFor="writer-reason">Why do you want to become a writer?</label>
+                <textarea
+                  id="writer-reason"
+                  placeholder="Tell us why you want to become a writer..."
+                  value={reason}
+                  onChange={(e) => setReason(e.target.value)}
+                  required
+                />
+              </div>
               <button type="submit" className="request-btn">Submit Application</button>
             </form>
           </>
@@ -76,7 +91,7 @@ const RequestWriter = ({ user, setUser }) => {
 
         {requestStatus === 'pending' && (
           <div className="status-display pending">
-            <div className="pulse-icon">⏳</div>
+            <div className="status-icon-badge pulse-icon">⏳</div>
             <h3>Application Pending</h3>
             <p>Your request is being reviewed by our Admin team. You will be notified once you are granted Writer access.</p>
           </div>
@@ -84,14 +99,14 @@ const RequestWriter = ({ user, setUser }) => {
 
         {requestStatus === 'rejected' && (
           <div className="status-display rejected">
-            <div className="error-icon">❌</div>
+            <div className="status-icon-badge error-icon">❌</div>
             <h3>Application Rejected</h3>
             <p>Your writer application was not approved. You can submit a new application below.</p>
-            <button 
+            <button
               onClick={() => {
                 setRequestStatus('none');
                 setReason('');
-              }} 
+              }}
               className="retry-btn"
             >
               Submit New Application

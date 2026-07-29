@@ -900,6 +900,42 @@ app.post('/api/admin/announcements', async (req, res) => {
   } catch (err) { res.status(500).json({ error: "Failed to save announcement" }); }
 });
 
+// Admin management list — all currently-live announcements (no 3-item cap),
+// used by the "Recent Dispatched Bulletins" panel for editing/deleting.
+app.get('/api/admin/announcements', async (req, res) => {
+  try {
+    const list = await Announcement.find().sort({ createdAt: -1 });
+    res.json(list);
+  } catch (err) {
+    res.status(500).json({ error: "Error fetching announcements" });
+  }
+});
+
+app.put('/api/admin/announcements/:id', async (req, res) => {
+  try {
+    const { title, message, type, expiresAt } = req.body;
+    const updated = await Announcement.findByIdAndUpdate(
+      req.params.id,
+      { title, message, type, expiresAt: expiresAt || undefined },
+      { new: true, runValidators: true }
+    );
+    if (!updated) return res.status(404).json({ error: "Announcement not found" });
+    res.json({ message: "Announcement updated successfully!", announcement: updated });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to update announcement" });
+  }
+});
+
+app.delete('/api/admin/announcements/:id', async (req, res) => {
+  try {
+    const deleted = await Announcement.findByIdAndDelete(req.params.id);
+    if (!deleted) return res.status(404).json({ error: "Announcement not found" });
+    res.json({ message: "Announcement deleted successfully!" });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to delete announcement" });
+  }
+});
+
 app.get('/api/announcements', async (req, res) => {
   try {
     // 🌟 FIX: Only find announcements where expiresAt is Greater Than or Equal to right now

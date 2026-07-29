@@ -20,44 +20,83 @@
 
 .interaction-bar {
   display: flex;
-  gap: 15px;
+  gap: 14px;
   margin: 30px 0;
+  flex-wrap: wrap;
 }
 
 /* 🔘 BASE BUTTON UPDATES (Inherited across your interaction rows) */
 .interaction-bar button,
 .collection-trigger {
   flex: 1; /* Retains equal width distribution safely across 3 blocks */
-  padding: 12px;
-  border-radius: 8px;
+  min-width: 150px;
+  padding: 8px 18px 8px 8px;
+  border-radius: 999px;
   border: 1px solid var(--brand-red);
-  background: transparent;
+  background: var(--card-bg);
   color: var(--brand-red);
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
   font-family: inherit;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.interact-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--hover-bg);
   font-size: 1rem;
+  flex-shrink: 0;
+  transition: background 0.25s ease;
+}
+
+.dropdown-caret {
+  font-size: 0.75rem;
+  opacity: 0.8;
+  margin-left: -2px;
 }
 
 .interaction-bar button:hover,
 .collection-trigger:hover {
-  background: rgba(119, 3, 7, 0.1);
+  background: rgba(119, 3, 7, 0.08);
   transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(119, 3, 7, 0.15);
 }
 
-.btn-active-fav {
-  background: var(--brand-red) !important;
-  color: white !important;
+.interaction-bar button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
-.btn-active-like {
-  border-color: #ff4d4d !important;
-  color: #ff4d4d !important;
+/* Active / toggled states */
+.interact-btn.active-fav,
+.interact-btn.active-like {
+  background: var(--brand-red);
+  border-color: var(--brand-red);
+  color: #fff;
+}
+
+.interact-btn.active-fav .interact-icon,
+.interact-btn.active-like .interact-icon {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.interact-btn.active-fav:hover,
+.interact-btn.active-like:hover {
+  background: #9c0c11;
+  box-shadow: 0 10px 24px rgba(119, 3, 7, 0.35);
 }
 
 /* ==========================================================================
@@ -443,10 +482,58 @@
   margin-bottom: 10px;
 }
 
+.author-section-read {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
 .author-name {
   color: var(--text-muted);
   font-weight: bold;
-  margin-bottom: 20px;
+  margin: 0;
+}
+
+.message-writer-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px 6px 6px;
+  border-radius: 999px;
+  border: 1px solid var(--accent);
+  background: var(--accent-glow);
+  color: var(--accent);
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.25s ease, color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+}
+
+.message-writer-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--card-bg);
+  font-size: 0.95rem;
+  flex-shrink: 0;
+  transition: background 0.25s ease;
+}
+
+.message-writer-btn:hover {
+  background: var(--accent);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px var(--accent-glow);
+}
+
+.message-writer-btn:hover .message-writer-icon {
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .content-body {

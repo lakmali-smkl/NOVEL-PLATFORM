@@ -2,10 +2,11 @@
 .action-card.full-width {
     background-color: var(--card-bg);
     border: 1px solid var(--border-color);
+    border-top: 3px solid var(--accent);
     border-radius: 12px;
     padding: 30px;
     margin: 20px 0;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08), 0 0 0 1px var(--accent-glow);
 }
 
 .action-card h3 {
@@ -29,13 +30,13 @@
 .works-table th {
     text-align: left;
     padding: 15px;
-    background-color: var(--input-bg);
+    background: linear-gradient(180deg, var(--accent-glow), transparent);
     color: var(--text-muted);
-    font-weight: 500;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1px;
     font-size: 0.8rem;
-    border-bottom: 2px solid var(--border-color);
+    border-bottom: 2px solid var(--accent);
 }
 
 /* Row styling */
@@ -45,10 +46,19 @@
     vertical-align: middle;
 }
 
+.works-table tbody tr {
+    border-left: 3px solid transparent;
+    transition: background-color 0.2s ease, border-left-color 0.2s ease;
+}
+
+.works-table tbody tr:nth-child(even) {
+    background-color: var(--hover-bg);
+}
+
 /* Subtle hover effect for rows */
 .works-table tr:hover {
-    background-color: var(--hover-bg);
-    transition: background 0.2s ease;
+    background-color: var(--accent-glow);
+    border-left-color: var(--accent);
 }
 
 /* Title column specific styling */
@@ -88,10 +98,10 @@
 }
 
 .edit-btn:hover {
-    background-color: #fff;
-    color: #000;
-    border-color: #fff;
-    box-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
+    background-color: var(--hover-bg);
+    color: var(--text-main);
+    border-color: var(--accent);
+    box-shadow: 0 0 12px var(--accent-glow);
     transform: translateY(-2px);
 }
 

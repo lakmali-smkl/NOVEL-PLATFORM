@@ -15,6 +15,16 @@ export const THEMES = [
     text: '#e2e8f0',
   },
   {
+    id: 'dark',
+    name: 'Dark Mode',
+    emoji: '🌑',
+    navbar: '#111827',
+    bg: '#0b0f19',
+    card: '#161b26',
+    accent: '#38bdf8',
+    text: '#e5e7eb',
+  },
+  {
     id: 'snow',
     name: 'Snow Light',
     emoji: '☀️',

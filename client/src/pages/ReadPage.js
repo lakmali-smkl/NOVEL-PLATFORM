@@ -318,38 +318,41 @@ const ReadPage = () => {
                 </Link>
 
                 <h1>{data.title}</h1>
-                <div className="author-section-read" style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
-                    <p className="author-name" style={{ margin: 0 }}>By: {data.author}</p>
+                <div className="author-section-read">
+                    <p className="author-name">By: {data.author}</p>
                     {userId !== data.authorId && (
-                        <button onClick={handleMessageWriter} className="interact-btn message-writer-btn" style={{ padding: '4px 10px', fontSize: '0.85rem' }}>
-                            💬 Message Writer
+                        <button onClick={handleMessageWriter} className="message-writer-btn">
+                            <span className="message-writer-icon">💬</span>
+                            Message Writer
                         </button>
                     )}
                 </div>
                 
-                <div className="interaction-bar" style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                    <button onClick={handleFavorite} className="interact-btn">
-                        {isFavorite ? '⭐ Favorited' : '☆ Favorite'}
+                <div className="interaction-bar">
+                    <button onClick={handleFavorite} className={`interact-btn ${isFavorite ? 'active-fav' : ''}`}>
+                        <span className="interact-icon">{isFavorite ? '⭐' : '☆'}</span>
+                        {isFavorite ? 'Favorited' : 'Favorite'}
                     </button>
-                    
+
                     {/* ❤️ HEART / LIKE ACTION INTERACTION TRIGGER */}
-                    <button 
-                        onClick={handleLike} 
-                        className={`interact-btn like-trigger ${isLiked ? 'liked' : ''}`}
-                        style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
+                    <button
+                        onClick={handleLike}
+                        className={`interact-btn like-trigger ${isLiked ? 'active-like' : ''}`}
                     >
-                        <span style={{ color: isLiked ? '#ff4b4b' : 'inherit' }}>{isLiked ? '❤️' : '🤍'}</span>
+                        <span className="interact-icon">{isLiked ? '❤️' : '🤍'}</span>
                         <span>{likesCount}</span>
                     </button>
 
                     {/* 📚 ADD TO COLLECTION INTERACTIVE DROPDOWN */}
                     <div className="collection-select-wrapper" style={{ position: 'relative' }}>
-                        <button 
-                            onClick={() => setIsDropdownOpen(!isDropdownOpen)} 
+                        <button
+                            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                             className="interact-btn collection-trigger"
                             disabled={isSaving}
                         >
-                            {isSaving ? "Saving..." : "📁 Add to Collection ▾"}
+                            <span className="interact-icon">📁</span>
+                            {isSaving ? "Saving..." : "Add to Collection"}
+                            <span className="dropdown-caret">▾</span>
                         </button>
 
                         {toastMessage && (
