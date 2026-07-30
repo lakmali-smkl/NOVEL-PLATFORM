@@ -13,10 +13,10 @@ const Footer = ({ user }) => {
         {/* Brand & Mission Column */}
         <div className="footer-column brand-column">
           <h3 className="footer-logo">
-            NOVEL <span className="logo-accent">PLATFORM</span>
+            LUMI <span className="logo-accent">VERSE</span>
           </h3>
           <p className="brand-desc">
-            A premium digital writing and reading sanctuary. Explore thousands of user-submitted web novels and articles, or publish your own work and build your audience.
+            A premium digital writing and reading sanctuary. Explore thousands of user-submitted creative works, or publish your own and build your audience.
           </p>
           <div className="social-links">
             <a href="https://github.com/lakmali-smkl" target="_blank" rel="noreferrer" className="social-icon" aria-label="GitHub">
@@ -75,7 +75,7 @@ const Footer = ({ user }) => {
       <div className="footer-bottom">
         <div className="footer-bottom-container">
           <p className="copyright">
-            &copy; {currentYear} NovelVerse. All rights reserved.
+            &copy; {currentYear} Lumiverse. All rights reserved.
           </p>
           <div className="footer-bottom-links">
             {user && <Link to="/settings">Settings</Link>}

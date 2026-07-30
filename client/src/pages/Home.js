@@ -353,7 +353,7 @@ const Home = ({ user }) => {
         {/* Top Fold Hero Overlay */}
         <section className="hero-overlay">
           <div className="hero-glass-card">
-            <h1>Welcome to <span>NovelVerse</span></h1>
+            <h1>Welcome to <span>Lumiverse</span></h1>
             <p>Explore, read, write, and share your favorite stories with a community of readers and creators.</p>
             <div className="cta-buttons">
               <Link to="/register" className="btn-red">Sign Up</Link>
@@ -369,8 +369,8 @@ const Home = ({ user }) => {
         
         {/* Features Showcase */}
         <section className="guest-section guest-features-section">
-          <h2 className="guest-section-title">Redefining the Storytelling Experience</h2>
-          <p className="guest-section-subtitle">Whether you're a reader seeking your next adventure or a writer forging your first universe, we build the bridges.</p>
+          <h2 className="guest-section-title">Redefining the Creative Publishing Experience</h2>
+          <p className="guest-section-subtitle">Whether you're a reader seeking your next favorite piece or a creator sharing your first work, we build the bridges.</p>
           
           <div className="guest-features-grid">
             <div className="feature-card-premium">
@@ -430,8 +430,8 @@ const Home = ({ user }) => {
           <div className="writer-banner-glow"></div>
           <div className="writer-banner-content">
             <span className="banner-eyebrow">CREATOR PORTAL</span>
-            <h2>Are You a Storyteller?</h2>
-            <p>Publish your novels, track live readership metrics, interact with fans, and join a thriving community of writers. Apply for a writer account inside your profile dashboard.</p>
+            <h2>Are You a Creator?</h2>
+            <p>Publish your creative work, track live readership metrics, interact with fans, and join a thriving community of writers. Apply for a writer account inside your profile dashboard.</p>
             <Link to="/register" className="btn-red writer-cta-btn">Join as Creator</Link>
           </div>
         </section>
@@ -457,7 +457,7 @@ const Home = ({ user }) => {
                 <span className="user-avatar">✍️</span>
                 <div>
                   <strong>Elena Vane</strong>
-                  <span>Sci-Fi Novelist</span>
+                  <span>Sci-Fi Writer</span>
                 </div>
               </div>
             </div>
@@ -472,7 +472,7 @@ const Home = ({ user }) => {
           <div className="faq-accordion-container">
             {[
               {
-                q: "Is NovelVerse free to read?",
+                q: "Is Lumiverse free to read?",
                 a: "Absolutely! Reading published works, setting goals, tracking reading history, and talking to creators is entirely free."
               },
               {
@@ -481,7 +481,7 @@ const Home = ({ user }) => {
               },
               {
                 q: "What options are available for readers?",
-                a: "Readers can save novels to favorites, build customized 'Read Later' collections, track reading streaks, and use the AI bot helper."
+                a: "Readers can save stories to favorites, build customized 'Read Later' collections, track reading streaks, and use the AI bot helper."
               },
               {
                 q: "Is there a desktop and mobile support?",

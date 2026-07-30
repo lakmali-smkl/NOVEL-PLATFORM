@@ -1713,7 +1713,7 @@ app.post('/api/bot/message', async (req, res) => {
 
     // ── What is this site / About ──
     else if (has('what is this', 'about', 'what can i do', 'platform', 'site', 'website', 'this app', 'how does this work', 'features')) {
-      reply = "Welcome to our Novel Platform! 📖✨\n\nThis is a community reading & writing platform where:\n\n👀 Readers can:\n• Browse and read novels & articles\n• Save favorites and organize collections\n• Comment, like and interact with writers\n• Get AI-powered personalized recommendations\n\n✍️ Writers can:\n• Publish novels (with chapters) & articles\n• Track views, likes and reader engagement\n• Chat directly with readers\n• Post announcements\n\nEverything is themed, personalized, and designed for book lovers!";
+      reply = "Welcome to Lumiverse! 📖✨\n\nThis is a site for publishing creative works, where:\n\n👀 Readers can:\n• Browse and read novels & articles\n• Save favorites and organize collections\n• Comment, like and interact with writers\n• Get AI-powered personalized recommendations\n\n✍️ Writers can:\n• Publish novels (with chapters) & articles\n• Track views, likes and reader engagement\n• Chat directly with readers\n• Post announcements\n\nEverything is themed, personalized, and designed for book lovers!";
     }
 
     // ── Help / General ──

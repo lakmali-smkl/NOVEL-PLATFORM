@@ -1,4 +1,4 @@
-# NOVEL-PLATFORM
+# Lumiverse
 
 This project was built using React (Create React App).
 
@@ -19,7 +19,7 @@ Builds the app for production in the `build` folder.
 ---
 
 ## 📚 About the Project
-This is a novel platform where users can read, write, and manage content.
+This is Lumiverse, a site for publishing creative works — read, write, and manage content.
 
 ---
 
@@ -27,13 +27,13 @@ This is a novel platform where users can read, write, and manage content.
 - https://reactjs.org/
 - https://create-react-app.dev/
 
-# 📚 NOVEL PLATFORM (MERN Stack - Work in Progress)
+# 📚 Lumiverse (MERN Stack - Work in Progress)
 
 ## 📌 Overview
 
-The NOVEL PLATFORM is a full-stack web application designed for reading, publishing, and managing novels online. It is currently under active development.
+Lumiverse is a full-stack web application — a site for publishing creative works online. It is currently under active development.
 
-The system aims to provide a modern digital reading experience where users can read novels, track progress, and interact with content, while authors can publish and manage their works efficiently.
+The system aims to provide a modern digital reading experience where users can read creative works, track progress, and interact with content, while authors can publish and manage their works efficiently.
 
 This project is being built using the MERN stack with a focus on scalability, clean architecture, and real-world features such as authentication, role-based access, and content management.
 
@@ -93,7 +93,7 @@ Planned features are being actively implemented and improved.
 ## 🏗️ Project Structure (Planned)
 
 
-NOVEL-PLATFORM/
+Lumiverse/
 │
 ├── client/ # React frontend
 ├── server/ # Express backend

@@ -111,7 +111,7 @@ const ChatbotWidget = () => {
       } else if (has('search', 'find', 'look for', 'look up', 'query')) {
         fallbackReply = "Finding stories is easy! 🔍\n\nWays to search:\n1. Search bar at the top of the Library\n2. Filter by genre, type, or date\n3. '🔥 Trending Now' on home page\n4. '✨ AI Recommendations' on dashboard\n5. Ask me: 'Suggest a story'!";
       } else if (has('what is this', 'about', 'platform', 'this site', 'features', 'how does this work')) {
-        fallbackReply = "Welcome to NovelVerse! 📖✨\n\nA community reading & writing platform where:\n\n👀 Readers can:\n• Read novels & articles\n• Save favorites & collections\n• Comment & like stories\n• Get AI recommendations\n\n✍️ Writers can:\n• Publish novels & articles\n• Track engagement analytics\n• Chat with readers\n• Post announcements";
+        fallbackReply = "Welcome to Lumiverse! 📖✨\n\nA community reading & writing platform where:\n\n👀 Readers can:\n• Read novels & articles\n• Save favorites & collections\n• Comment & like stories\n• Get AI recommendations\n\n✍️ Writers can:\n• Publish novels & articles\n• Track engagement analytics\n• Chat with readers\n• Post announcements";
       } else if (has('thank', 'thanks', 'great', 'awesome', 'perfect', 'nice', 'helpful')) {
         fallbackReply = "You're very welcome! 😊\n\nHappy reading! I'm always here if you need help. Enjoy exploring the library! 📚✨";
       } else if (has('bye', 'goodbye', 'see you', 'later', 'cya')) {
