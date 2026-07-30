@@ -83,7 +83,7 @@ const Navbar = ({ user, setUser, toggleSidebar, closeSidebar, isSidebarOpen }) =
         )}
         <Link to="/" className="nav-brand">
           <span className="brand-logo">📖</span>
-          <span className="brand-text">NovelVerse</span>
+          <span className="brand-text">Lumiverse</span>
         </Link>
         <div className="nav-links-group">
           <Link to="/" className={`nav-link ${isHomePage ? 'active' : ''}`}>

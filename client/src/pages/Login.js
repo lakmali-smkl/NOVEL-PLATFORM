@@ -137,7 +137,7 @@ const Login = ({ setUser }) => {
           <div className="auth-side-top">
             <Link to="/" className="auth-side-brand">
               <span className="auth-brand-icon">📖</span>
-              <span>NovelVerse</span>
+              <span>Lumiverse</span>
             </Link>
             <h2 className="auth-side-headline">Pick up right where you left off.</h2>
             <p className="auth-side-sub">Sign in to sync your library, reading streaks, and conversations across every device.</p>

@@ -107,7 +107,7 @@ const Register = () => {
           <div className="auth-side-top">
             <Link to="/" className="auth-side-brand">
               <span className="auth-brand-icon">📖</span>
-              <span>NovelVerse</span>
+              <span>Lumiverse</span>
             </Link>
             <h2 className="auth-side-headline">Join a community of readers &amp; writers.</h2>
             <p className="auth-side-sub">Create a free account to build your library, follow your favorite authors, and start your own reading streak.</p>

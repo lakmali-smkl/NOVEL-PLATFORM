@@ -11,5 +11,5 @@ test('renders the navbar brand without crashing', () => {
       </ThemeProvider>
     </BrowserRouter>
   );
-  expect(screen.getAllByText(/novelverse/i).length).toBeGreaterThan(0);
+  expect(screen.getAllByText(/lumiverse/i).length).toBeGreaterThan(0);
 });
