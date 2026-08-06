@@ -112,6 +112,7 @@ const AddNovel = ({ user }) => {
     try {
       const response = await fetch(`${API_BASE_URL}/api/novels`, {
         method: 'POST',
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
         body: data
       });
 

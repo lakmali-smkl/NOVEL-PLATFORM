@@ -487,15 +487,15 @@ app.put('/api/users/update-welcome/:userId', auth, async (req, res) => {
 
 // --- Novel Routes ---
 
-app.post('/api/novels', upload.fields([{ name: 'coverPhoto' }, { name: 'textFile' }]), async (req, res) => {
+app.post('/api/novels', auth, upload.fields([{ name: 'coverPhoto' }, { name: 'textFile' }]), async (req, res) => {
   try {
-    const { title, content, authorName, authorSpeech, authorId, status } = req.body;
+    const { title, content, authorName, authorSpeech, status } = req.body;
     const newNovel = new Novel({
-      title, 
-      content, 
-      author: authorName, 
+      title,
+      content,
+      author: authorName,
       authorSpeech,
-      authorId, 
+      authorId: req.user._id,
       coverPhoto: req.files['coverPhoto'] ? req.files['coverPhoto'][0].path : null,
       textFile: req.files['textFile'] ? req.files['textFile'][0].path : null,
       status: status || 'draft'
@@ -555,14 +555,14 @@ app.get('/api/novels/:id', async (req, res) => {
 
 // --- Article Routes ---
 
-app.post('/api/articles', upload.fields([{ name: 'coverPhoto' }, { name: 'textFile' }]), async (req, res) => {
+app.post('/api/articles', auth, upload.fields([{ name: 'coverPhoto' }, { name: 'textFile' }]), async (req, res) => {
   try {
-    const { title, content, authorName, authorId, status } = req.body; 
+    const { title, content, authorName, status } = req.body;
     const newArticle = new Article({
-      title, 
-      content, 
+      title,
+      content,
       author: authorName,
-      authorId: authorId,
+      authorId: req.user._id,
       status: status || 'draft',
       coverPhoto: req.files['coverPhoto'] ? req.files['coverPhoto'][0].path : null,
       textFile: req.files['textFile'] ? req.files['textFile'][0].path : null
