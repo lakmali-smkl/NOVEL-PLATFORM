@@ -1662,7 +1662,7 @@ app.get('/api/messages/:userId/:otherUserId', auth, async (req, res) => {
 // Send message
 app.post('/api/messages', auth, async (req, res) => {
   try {
-    const { receiverId, text } = req.body;
+    const { receiverId, text, replyTo, forwarded } = req.body;
     const senderId = req.user._id.toString();
     if (!receiverId || !text) {
       return res.status(400).json({ error: "Missing required fields" });
@@ -1671,7 +1671,13 @@ app.post('/api/messages', auth, async (req, res) => {
     const newMsg = new Message({
       sender: senderId,
       receiver: receiverId,
-      text: text.trim()
+      text: text.trim(),
+      forwarded: !!forwarded,
+      replyTo: replyTo && replyTo.messageId ? {
+        messageId: replyTo.messageId,
+        text: replyTo.text,
+        senderUsername: replyTo.senderUsername
+      } : undefined
     });
 
     await newMsg.save();
@@ -1690,6 +1696,78 @@ app.post('/api/messages', auth, async (req, res) => {
   } catch (error) {
     console.error("Send message error:", error);
     res.status(500).json({ error: "Server error sending message" });
+  }
+});
+
+// Delete a message (sender only — removes it for both sides, like Telegram's "delete for everyone")
+app.delete('/api/messages/:id', auth, async (req, res) => {
+  try {
+    const msg = await Message.findById(req.params.id);
+    if (!msg) return res.status(404).json({ error: "Message not found" });
+    if (msg.sender.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: "You can only delete messages you sent." });
+    }
+    await Message.findByIdAndDelete(req.params.id);
+    res.json({ message: "Message deleted" });
+  } catch (error) {
+    console.error("Delete message error:", error);
+    res.status(500).json({ error: "Server error deleting message" });
+  }
+});
+
+// Edit a message (sender only)
+app.put('/api/messages/:id', auth, async (req, res) => {
+  try {
+    const { text } = req.body;
+    if (!text || !text.trim()) {
+      return res.status(400).json({ error: "Message text is required" });
+    }
+    const msg = await Message.findById(req.params.id);
+    if (!msg) return res.status(404).json({ error: "Message not found" });
+    if (msg.sender.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: "You can only edit messages you sent." });
+    }
+    msg.text = text.trim();
+    msg.edited = true;
+    await msg.save();
+    res.json({ message: "Message updated", data: msg });
+  } catch (error) {
+    console.error("Edit message error:", error);
+    res.status(500).json({ error: "Server error editing message" });
+  }
+});
+
+// Toggle a reaction on a message (either participant in the conversation)
+app.put('/api/messages/:id/react', auth, async (req, res) => {
+  try {
+    const { emoji } = req.body;
+    if (!emoji) return res.status(400).json({ error: "Emoji is required" });
+
+    const msg = await Message.findById(req.params.id);
+    if (!msg) return res.status(404).json({ error: "Message not found" });
+
+    const userId = req.user._id.toString();
+    const isParticipant = msg.sender.toString() === userId || msg.receiver.toString() === userId;
+    if (!isParticipant) {
+      return res.status(403).json({ error: "Access denied." });
+    }
+
+    const existingIndex = msg.reactions.findIndex(r => r.userId.toString() === userId);
+    if (existingIndex !== -1 && msg.reactions[existingIndex].emoji === emoji) {
+      // Same emoji tapped again → remove reaction
+      msg.reactions.splice(existingIndex, 1);
+    } else if (existingIndex !== -1) {
+      // Different emoji → replace
+      msg.reactions[existingIndex].emoji = emoji;
+    } else {
+      msg.reactions.push({ userId, emoji });
+    }
+
+    await msg.save();
+    res.json({ message: "Reaction updated", data: msg });
+  } catch (error) {
+    console.error("React to message error:", error);
+    res.status(500).json({ error: "Server error updating reaction" });
   }
 });
 
