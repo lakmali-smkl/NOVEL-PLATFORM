@@ -31,6 +31,7 @@ const Collection = require('./models/Collection');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { auth, admin } = require('./middleware/auth');
+const { encryptText, decryptText } = require('./utils/crypto');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -1611,7 +1612,7 @@ app.get('/api/messages/conversations/:userId', auth, async (req, res) => {
       const otherUserId = msg.sender.toString() === userId ? msg.receiver.toString() : msg.sender.toString();
       if (!convMap[otherUserId]) {
         convMap[otherUserId] = {
-          lastMessage: msg.text,
+          lastMessage: decryptText(msg.text),
           lastMessageAt: msg.createdAt,
           unreadCount: 0
         };
@@ -1666,7 +1667,16 @@ app.get('/api/messages/:userId/:otherUserId', auth, async (req, res) => {
       ]
     }).sort({ createdAt: 1 });
 
-    res.json({ messages });
+    const decrypted = messages.map((m) => {
+      const obj = m.toObject();
+      obj.text = decryptText(obj.text);
+      if (obj.replyTo && obj.replyTo.text) {
+        obj.replyTo.text = decryptText(obj.replyTo.text);
+      }
+      return obj;
+    });
+
+    res.json({ messages: decrypted });
   } catch (error) {
     console.error("Get messages error:", error);
     res.status(500).json({ error: "Server error fetching messages" });
@@ -1682,14 +1692,17 @@ app.post('/api/messages', auth, async (req, res) => {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
+    const plainText = text.trim();
+    const plainReplyText = replyTo && replyTo.messageId ? replyTo.text : undefined;
+
     const newMsg = new Message({
       sender: senderId,
       receiver: receiverId,
-      text: text.trim(),
+      text: encryptText(plainText),
       forwarded: !!forwarded,
       replyTo: replyTo && replyTo.messageId ? {
         messageId: replyTo.messageId,
-        text: replyTo.text,
+        text: encryptText(plainReplyText),
         senderUsername: replyTo.senderUsername
       } : undefined
     });
@@ -1697,8 +1710,7 @@ app.post('/api/messages', auth, async (req, res) => {
     await newMsg.save();
 
     const senderName = req.user.username || 'Someone';
-    const trimmedText = text.trim();
-    const preview = trimmedText.length > 80 ? `${trimmedText.slice(0, 80)}…` : trimmedText;
+    const preview = plainText.length > 80 ? `${plainText.slice(0, 80)}…` : plainText;
     const newNotif = new Notification({
       recipient: receiverId,
       sender: senderId,
@@ -1708,7 +1720,14 @@ app.post('/api/messages', auth, async (req, res) => {
     });
     await newNotif.save();
 
-    res.status(201).json({ message: "Message sent!", data: newMsg });
+    // Respond with the plaintext version — the client already has it, no need to decrypt a round-trip
+    const responseMsg = newMsg.toObject();
+    responseMsg.text = plainText;
+    if (responseMsg.replyTo) {
+      responseMsg.replyTo.text = plainReplyText;
+    }
+
+    res.status(201).json({ message: "Message sent!", data: responseMsg });
   } catch (error) {
     console.error("Send message error:", error);
     res.status(500).json({ error: "Server error sending message" });
@@ -1743,10 +1762,18 @@ app.put('/api/messages/:id', auth, async (req, res) => {
     if (msg.sender.toString() !== req.user._id.toString()) {
       return res.status(403).json({ error: "You can only edit messages you sent." });
     }
-    msg.text = text.trim();
+    const plainText = text.trim();
+    msg.text = encryptText(plainText);
     msg.edited = true;
     await msg.save();
-    res.json({ message: "Message updated", data: msg });
+
+    const responseMsg = msg.toObject();
+    responseMsg.text = plainText;
+    if (responseMsg.replyTo && responseMsg.replyTo.text) {
+      responseMsg.replyTo.text = decryptText(responseMsg.replyTo.text);
+    }
+
+    res.json({ message: "Message updated", data: responseMsg });
   } catch (error) {
     console.error("Edit message error:", error);
     res.status(500).json({ error: "Server error editing message" });
@@ -1780,7 +1807,14 @@ app.put('/api/messages/:id/react', auth, async (req, res) => {
     }
 
     await msg.save();
-    res.json({ message: "Reaction updated", data: msg });
+
+    const responseMsg = msg.toObject();
+    responseMsg.text = decryptText(responseMsg.text);
+    if (responseMsg.replyTo && responseMsg.replyTo.text) {
+      responseMsg.replyTo.text = decryptText(responseMsg.replyTo.text);
+    }
+
+    res.json({ message: "Reaction updated", data: responseMsg });
   } catch (error) {
     console.error("React to message error:", error);
     res.status(500).json({ error: "Server error updating reaction" });
