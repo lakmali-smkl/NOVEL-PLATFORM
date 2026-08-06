@@ -41,7 +41,9 @@ const Navbar = ({ user, setUser, toggleSidebar, closeSidebar, isSidebarOpen }) =
     const fetchUnreadCount = async () => {
       if (user?._id) {
         try {
-          const res = await axios.get(`${API_BASE_URL}/api/notifications/unread/${user._id}`);
+          const res = await axios.get(`${API_BASE_URL}/api/notifications/unread/${user._id}`, {
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+          });
           setUnreadCount(res.data.count);
         } catch (err) {
           console.error("Error fetching unread notifications", err);

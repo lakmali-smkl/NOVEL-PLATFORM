@@ -9,7 +9,9 @@ const CollectionDetail = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/api/collections/single/${collectionId}`)
+    fetch(`${API_BASE_URL}/api/collections/single/${collectionId}`, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+    })
       .then((res) => {
         if (!res.ok) throw new Error("Failed to load collection details.");
         return res.json();
@@ -30,7 +32,10 @@ const CollectionDetail = () => {
     try {
       const res = await fetch(
         `${API_BASE_URL}/api/collections/${collectionId}/items/${itemId}`,
-        { method: 'DELETE' }
+        {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        }
       );
       if (!res.ok) throw new Error('Failed');
       setCollection(prev => ({

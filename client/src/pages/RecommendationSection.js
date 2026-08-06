@@ -14,7 +14,9 @@ const RecommendationSection = ({ user }) => {
     if (!userId) return;
 
     setLoading(true);
-    fetch(`${API_BASE}/api/recommendations/${userId}`)
+    fetch(`${API_BASE}/api/recommendations/${userId}`, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+    })
       .then(res => res.json())
       .then(data => {
         if (data.recommendations) {

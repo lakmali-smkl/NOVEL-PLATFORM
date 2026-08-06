@@ -12,7 +12,9 @@ const AdminSidebar = ({ user, closeSidebar }) => {
   useEffect(() => {
     const fetchPendingCount = async () => {
       try {
-        const res = await axios.get(`${API_BASE_URL}/api/admin/writer-requests`);
+        const res = await axios.get(`${API_BASE_URL}/api/admin/writer-requests`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        });
         const pending = Array.isArray(res.data)
           ? res.data.filter((r) => r.status === 'pending').length
           : 0;

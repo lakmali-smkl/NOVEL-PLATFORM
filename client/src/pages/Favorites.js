@@ -31,8 +31,9 @@ const Favorites = () => {
   const handleDelete = async (contentId) => {
     if (window.confirm("Remove from favorites?")) {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/users/${user._id}/favorites/${contentId}`, { 
-          method: 'DELETE' 
+        const response = await fetch(`${API_BASE_URL}/api/users/${user._id}/favorites/${contentId}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         });
         
         if (response.ok) {

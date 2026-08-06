@@ -25,11 +25,12 @@ const ReadPage = () => {
 
     const user = JSON.parse(localStorage.getItem('user'));
     const userId = user?._id || user?.id;
+    const authHeaders = () => ({ 'Authorization': `Bearer ${localStorage.getItem('token')}` });
 
     // 📥 LOAD: Sync user collections from the MongoDB Database on load
     useEffect(() => {
         if (userId) {
-            fetch(`${API_BASE_URL}/api/collections/${userId}`)
+            fetch(`${API_BASE_URL}/api/collections/${userId}`, { headers: authHeaders() })
                 .then((res) => {
                     if (!res.ok) throw new Error("Failed to pull collections");
                     return res.json();
@@ -79,7 +80,7 @@ const ReadPage = () => {
         if (userId && data) {
             fetch(`${API_BASE_URL}/api/users/${userId}/history`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', ...authHeaders() },
                 body: JSON.stringify({
                     contentId: id,
                     title: data.title,
@@ -101,9 +102,9 @@ const ReadPage = () => {
             // Send the request directly to your item append route matching server.js
             const response = await fetch(`${API_BASE_URL}/api/collections/${collectionId}/add-item`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    id: id, 
+                headers: { 'Content-Type': 'application/json', ...authHeaders() },
+                body: JSON.stringify({
+                    id: id,
                     title: data.title, 
                     type: type, 
                     author: data.author 
@@ -137,9 +138,9 @@ const ReadPage = () => {
         try {
             const response = await fetch(`${API_BASE_URL}/api/favorites`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    userId: userId, 
+                headers: { 'Content-Type': 'application/json', ...authHeaders() },
+                body: JSON.stringify({
+                    userId: userId,
                     contentId: id, 
                     title: data.title, 
                     type: type 
@@ -163,7 +164,7 @@ const ReadPage = () => {
         try {
             const response = await fetch(`${API_BASE_URL}/api/${type}/${id}/like`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', ...authHeaders() },
                 body: JSON.stringify({ userId: userId })
             });
 
@@ -184,7 +185,7 @@ const ReadPage = () => {
 
         const res = await fetch(`${API_BASE_URL}/api/${type}/${id}/comment`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', ...authHeaders() },
             body: JSON.stringify({ userId: userId, username: user.username, text: commentText })
         });
         const updatedComments = await res.json();
@@ -246,7 +247,7 @@ const ReadPage = () => {
         try {
             const res = await fetch(`${API_BASE_URL}/api/${type}/${id}/comment/${commentId}/reply`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', ...authHeaders() },
                 body: JSON.stringify({ userId: userId, username: user.username, text: replyText })
             });
             if (res.ok) {
@@ -274,7 +275,7 @@ const ReadPage = () => {
         try {
             const res = await fetch(`${API_BASE_URL}/api/${type}/${id}/comment/${commentId}`, {
                 method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', ...authHeaders() },
                 body: JSON.stringify({ userId })
             });
             if (res.ok) {
@@ -293,7 +294,7 @@ const ReadPage = () => {
         try {
             const res = await fetch(`${API_BASE_URL}/api/${type}/${id}/comment/${commentId}/reply/${replyId}`, {
                 method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', ...authHeaders() },
                 body: JSON.stringify({ userId })
             });
             if (res.ok) {

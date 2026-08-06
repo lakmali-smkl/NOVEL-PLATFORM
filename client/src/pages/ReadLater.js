@@ -20,7 +20,9 @@ const ReadLater = ({ user }) => {
       return;
     }
 
-    fetch(`${API_BASE_URL}/api/collections/${activeUserId}`)
+    fetch(`${API_BASE_URL}/api/collections/${activeUserId}`, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+    })
       .then((res) => res.json())
       .then((data) => {
         setCollections(data);
@@ -42,7 +44,10 @@ const ReadLater = ({ user }) => {
 
     fetch(`${API_BASE_URL}/api/collections/create`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      },
       body: JSON.stringify({
         userId: activeUserId,
         name: newColName,
@@ -70,7 +75,8 @@ const ReadLater = ({ user }) => {
     if (!window.confirm('Delete this collection and all its saved items?')) return;
     try {
       const res = await fetch(`${API_BASE_URL}/api/collections/${collectionId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
       if (!res.ok) throw new Error('Failed');
       setCollections(prev => prev.filter(c => c._id !== collectionId));

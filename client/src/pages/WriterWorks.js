@@ -13,9 +13,10 @@ const WriterWorks = ({ user }) => {
     if (!user?._id) return;
     try {
       setLoading(true);
+      const authHeaders = { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } };
       const [novelsRes, articlesRes] = await Promise.all([
-        axios.get(`${API}/api/novels/author/${user._id}`),
-        axios.get(`${API}/api/articles/author/${user._id}`),
+        axios.get(`${API}/api/novels/author/${user._id}`, authHeaders),
+        axios.get(`${API}/api/articles/author/${user._id}`, authHeaders),
       ]);
       const allWorks = [
         ...novelsRes.data.map((n) => ({ ...n, workType: 'novel' })),
@@ -34,7 +35,9 @@ const WriterWorks = ({ user }) => {
   const handleDelete = async (work) => {
     if (!window.confirm(`Delete "${work.title}"? This cannot be undone.`)) return;
     try {
-      await axios.delete(`${API}/api/${work.workType}s/${work._id}`);
+      await axios.delete(`${API}/api/${work.workType}s/${work._id}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
       setWorks((prev) => prev.filter((w) => w._id !== work._id));
     } catch (err) {
       console.error(err);

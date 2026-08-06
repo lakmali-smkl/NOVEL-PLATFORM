@@ -79,6 +79,7 @@ const Settings = ({ setUser: setAppUser }) => {
 
       const res = await fetch(`${API_BASE_URL}/api/users/${user._id || user.id}/settings`, {
         method: 'PUT',
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
         body: formData
         // Note: Do not set Content-Type header when using FormData; the browser sets it automatically with boundary.
       });

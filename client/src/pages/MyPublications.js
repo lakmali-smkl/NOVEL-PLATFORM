@@ -16,9 +16,10 @@ const MyPublications = () => {
       }
 
       try {
+        const authHeaders = { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } };
         const [novelsRes, articlesRes] = await Promise.all([
-          fetch(`${API_BASE_URL}/api/novels/author/${user._id}`),
-          fetch(`${API_BASE_URL}/api/articles/author/${user._id}`)
+          fetch(`${API_BASE_URL}/api/novels/author/${user._id}`, authHeaders),
+          fetch(`${API_BASE_URL}/api/articles/author/${user._id}`, authHeaders)
         ]);
 
         const novels = await novelsRes.json();

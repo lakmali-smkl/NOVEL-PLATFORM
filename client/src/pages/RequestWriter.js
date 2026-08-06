@@ -36,6 +36,8 @@ const RequestWriter = ({ user, setUser }) => {
         userId: user._id,
         username: user.username,
         reason: reason
+      }, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
 
       // 2. Update local UI state

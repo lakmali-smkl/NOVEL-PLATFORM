@@ -259,8 +259,11 @@ app.get('/api/users/check-status/:id', async (req, res) => {
 });
 
 // User Settings Update
-app.put('/api/users/:id/settings', upload.single('profilePicture'), async (req, res) => {
+app.put('/api/users/:id/settings', auth, upload.single('profilePicture'), async (req, res) => {
   try {
+    if (req.user._id.toString() !== req.params.id) {
+      return res.status(403).json({ error: "Access denied. You can only update your own settings." });
+    }
     const { username, email, currentPassword, newPassword } = req.body;
     const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ error: "User not found" });
@@ -319,7 +322,7 @@ app.put('/api/users/:id/settings', upload.single('profilePicture'), async (req, 
 
 // --- Admin Control Routes (Core Platform) ---
 
-app.get('/api/admin/stats', async (req, res) => {
+app.get('/api/admin/stats', auth, admin, async (req, res) => {
   try {
     const totalUsers = await User.countDocuments();
     const totalWriters = await User.countDocuments({ isWriter: true });
@@ -373,9 +376,11 @@ app.get('/api/platform-stats', async (req, res) => {
   }
 });
 
-app.post('/api/writer-requests', async (req, res) => {
+app.post('/api/writer-requests', auth, async (req, res) => {
     try {
-        const { userId, username, reason } = req.body;
+        const { reason } = req.body;
+        const userId = req.user._id.toString();
+        const username = req.user.username;
         const existingRequest = await WriterRequest.findOne({ userId, status: 'pending' });
         const user = await User.findById(userId);
         
@@ -393,7 +398,7 @@ app.post('/api/writer-requests', async (req, res) => {
     }
 });
 
-app.get('/api/admin/writer-requests', async (req, res) => {
+app.get('/api/admin/writer-requests', auth, admin, async (req, res) => {
   try {
     const writerRequests = await WriterRequest.find().sort({ createdAt: -1 });
     const requestedUserIds = writerRequests.map(wr => wr.userId.toString());
@@ -432,7 +437,7 @@ app.get('/api/admin/writer-requests', async (req, res) => {
   }
 });
 
-app.post('/api/admin/approve-writer/:id', async (req, res) => {
+app.post('/api/admin/approve-writer/:id', auth, admin, async (req, res) => {
   const { action } = req.body; 
   try {
     const update = action === 'approve' 
@@ -451,7 +456,7 @@ app.post('/api/admin/approve-writer/:id', async (req, res) => {
 });
 
 // DELETE history record — only removes the WriterRequest doc, does NOT touch User fields
-app.delete('/api/admin/writer-requests/:id', async (req, res) => {
+app.delete('/api/admin/writer-requests/:id', auth, admin, async (req, res) => {
   try {
     const { id } = req.params;
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -466,8 +471,11 @@ app.delete('/api/admin/writer-requests/:id', async (req, res) => {
   }
 });
 
-app.put('/api/users/update-welcome/:userId', async (req, res) => {
+app.put('/api/users/update-welcome/:userId', auth, async (req, res) => {
   try {
+    if (req.user._id.toString() !== req.params.userId) {
+      return res.status(403).json({ error: "Access denied." });
+    }
     await User.findByIdAndUpdate(req.params.userId, { hasSeenWelcome: true });
     res.status(200).json({ message: "Welcome status updated" });
   } catch (err) {
@@ -518,9 +526,13 @@ app.get('/api/novels', async (req, res) => {
   } catch (error) { res.status(500).json({ error: "Failed to fetch novels" }); }
 });
 
-app.get('/api/novels/author/:authorId', async (req, res) => {
+app.get('/api/novels/author/:authorId', auth, async (req, res) => {
   try {
-    const novels = await Novel.find({ authorId: req.params.authorId }).sort({ createdAt: -1 });
+    const isOwner = req.user._id.toString() === req.params.authorId;
+    const filter = isOwner
+      ? { authorId: req.params.authorId }
+      : { authorId: req.params.authorId, status: 'published' };
+    const novels = await Novel.find(filter).sort({ createdAt: -1 });
     res.json(novels);
   } catch (error) { res.status(500).json({ error: "Failed to fetch author novels" }); }
 });
@@ -581,9 +593,13 @@ app.get('/api/articles', async (req, res) => {
   } catch (error) { res.status(500).json({ error: "Failed to fetch articles" }); }
 });
 
-app.get('/api/articles/author/:authorId', async (req, res) => {
+app.get('/api/articles/author/:authorId', auth, async (req, res) => {
   try {
-    const articles = await Article.find({ authorId: req.params.authorId }).sort({ createdAt: -1 });
+    const isOwner = req.user._id.toString() === req.params.authorId;
+    const filter = isOwner
+      ? { authorId: req.params.authorId }
+      : { authorId: req.params.authorId, status: 'published' };
+    const articles = await Article.find(filter).sort({ createdAt: -1 });
     res.json(articles);
   } catch (error) { res.status(500).json({ error: "Failed to fetch author articles" }); }
 });
@@ -605,8 +621,11 @@ app.get('/api/articles/:id', async (req, res) => {
 
 // --- User & Interaction Routes ---
 
-app.post('/api/favorites', async (req, res) => {
+app.post('/api/favorites', auth, async (req, res) => {
   const { userId, contentId, title, type } = req.body;
+  if (req.user._id.toString() !== userId) {
+    return res.status(403).json({ error: "Access denied." });
+  }
   try {
     const user = await User.findByIdAndUpdate(
       userId,
@@ -622,7 +641,7 @@ app.post('/api/favorites', async (req, res) => {
 
 app.get('/api/users/:email', async (req, res) => {
   try {
-    const user = await User.findOne({ email: req.params.email });
+    const user = await User.findOne({ email: req.params.email }).select('-password -hintAnswer');
     if (!user) return res.status(404).json({ error: "User not found" });
     res.json(user);
   } catch (error) {
@@ -640,8 +659,11 @@ app.get('/api/users/status/:id', async (req, res) => {
   }
 });
 
-app.patch('/api/users/:id', async (req, res) => {
+app.patch('/api/users/:id', auth, async (req, res) => {
   try {
+    if (req.user._id.toString() !== req.params.id) {
+      return res.status(403).json({ error: "Access denied." });
+    }
     const { username } = req.body;
     const updatedUser = await User.findByIdAndUpdate(
       req.params.id,
@@ -655,13 +677,13 @@ app.patch('/api/users/:id', async (req, res) => {
   }
 });
 
-app.put('/api/novels/:id', async (req, res) => {
+app.put('/api/novels/:id', auth, async (req, res) => {
   try {
     const novel = await Novel.findById(req.params.id);
     if (!novel) return res.status(404).json({ error: "Novel not found" });
 
     const { userId, ...updateData } = req.body;
-    if (!novel.authorId || novel.authorId.toString() !== userId) {
+    if (!novel.authorId || novel.authorId.toString() !== req.user._id.toString()) {
       return res.status(403).json({ error: "Access denied. You are not the author of this novel." });
     }
 
@@ -670,13 +692,13 @@ app.put('/api/novels/:id', async (req, res) => {
   } catch (error) { res.status(500).json({ error: "Update failed" }); }
 });
 
-app.put('/api/articles/:id', async (req, res) => {
+app.put('/api/articles/:id', auth, async (req, res) => {
   try {
     const article = await Article.findById(req.params.id);
     if (!article) return res.status(404).json({ error: "Article not found" });
 
     const { userId, ...updateData } = req.body;
-    if (!article.authorId || article.authorId.toString() !== userId) {
+    if (!article.authorId || article.authorId.toString() !== req.user._id.toString()) {
       return res.status(403).json({ error: "Access denied. You are not the author of this article." });
     }
 
@@ -685,9 +707,12 @@ app.put('/api/articles/:id', async (req, res) => {
   } catch (error) { res.status(500).json({ error: "Update failed" }); }
 });
 
-app.delete('/api/users/:userId/favorites/:contentId', async (req, res) => {
+app.delete('/api/users/:userId/favorites/:contentId', auth, async (req, res) => {
   try {
     const { userId, contentId } = req.params;
+    if (req.user._id.toString() !== userId) {
+      return res.status(403).json({ error: "Access denied." });
+    }
     const user = await User.findByIdAndUpdate(
       userId,
       { $pull: { favorites: { contentId: contentId } } },
@@ -700,40 +725,55 @@ app.delete('/api/users/:userId/favorites/:contentId', async (req, res) => {
   }
 });
 
-app.patch('/api/:type/:id/status', async (req, res) => {
-  const { status } = req.body; 
+app.patch('/api/:type/:id/status', auth, async (req, res) => {
+  const { status } = req.body;
   const Model = req.params.type === 'novel' ? Novel : Article;
   try {
-    await Model.findByIdAndUpdate(req.params.id, { status });
+    const item = await Model.findById(req.params.id);
+    if (!item) return res.status(404).json({ error: "Content not found" });
+    if (!item.authorId || item.authorId.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: "Access denied. You are not the author of this content." });
+    }
+    item.status = status;
+    await item.save();
     res.json({ message: "Status updated successfully" });
   } catch (error) {
     res.status(500).json({ error: "Failed to update status" });
   }
 });
 
-app.delete('/api/novels/:id', async (req, res) => {
+app.delete('/api/novels/:id', auth, async (req, res) => {
   try {
+    const novel = await Novel.findById(req.params.id);
+    if (!novel) return res.status(404).json({ error: "Novel not found" });
+    if (!novel.authorId || novel.authorId.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: "Access denied. You are not the author of this novel." });
+    }
     await Novel.findByIdAndDelete(req.params.id);
     res.json({ message: "Novel deleted successfully" });
   } catch (error) { res.status(500).json({ error: "Delete failed" }); }
 });
 
-app.delete('/api/articles/:id', async (req, res) => {
+app.delete('/api/articles/:id', auth, async (req, res) => {
   try {
+    const article = await Article.findById(req.params.id);
+    if (!article) return res.status(404).json({ error: "Article not found" });
+    if (!article.authorId || article.authorId.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: "Access denied. You are not the author of this article." });
+    }
     await Article.findByIdAndDelete(req.params.id);
     res.json({ message: "Article deleted successfully" });
   } catch (error) { res.status(500).json({ error: "Delete failed" }); }
 });
 
-app.post('/api/:type/:id/like', async (req, res) => {
-  const { userId } = req.body;
+app.post('/api/:type/:id/like', auth, async (req, res) => {
+  const userId = req.user._id.toString();
   const Model = req.params.type === 'novel' ? Novel : Article;
   try {
     const item = await Model.findById(req.params.id);
     if (!item) return res.status(404).json({ error: "Content not found" });
 
-    const likingUser = await User.findById(userId);
-    const likerName = likingUser ? likingUser.username : "A reader";
+    const likerName = req.user.username || "A reader";
     const isLiking = !item.likes.includes(userId);
     
     if (isLiking) {
@@ -758,8 +798,10 @@ app.post('/api/:type/:id/like', async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-app.post('/api/:type/:id/comment', async (req, res) => {
-  const { userId, username, text } = req.body;
+app.post('/api/:type/:id/comment', auth, async (req, res) => {
+  const { text } = req.body;
+  const userId = req.user._id.toString();
+  const username = req.user.username;
   const Model = req.params.type === 'novel' ? Novel : Article;
   try {
     const item = await Model.findById(req.params.id);
@@ -798,8 +840,10 @@ app.post('/api/:type/:id/comment', async (req, res) => {
   }
 });
 
-app.post('/api/:type/:id/comment/:commentId/reply', async (req, res) => {
-  const { userId, username, text } = req.body;
+app.post('/api/:type/:id/comment/:commentId/reply', auth, async (req, res) => {
+  const { text } = req.body;
+  const userId = req.user._id.toString();
+  const username = req.user.username;
   const Model = req.params.type === 'novel' ? Novel : Article;
   try {
     const item = await Model.findById(req.params.id);
@@ -860,9 +904,9 @@ app.post('/api/:type/:id/comment/:commentId/reply', async (req, res) => {
 });
 
 // Delete a comment (either work author or comment author can delete)
-app.delete('/api/:type/:id/comment/:commentId', async (req, res) => {
+app.delete('/api/:type/:id/comment/:commentId', auth, async (req, res) => {
   const { type, id, commentId } = req.params;
-  const { userId } = req.body;
+  const userId = req.user._id.toString();
   const Model = type === 'novel' ? Novel : Article;
   try {
     const item = await Model.findById(id);
@@ -888,9 +932,9 @@ app.delete('/api/:type/:id/comment/:commentId', async (req, res) => {
 });
 
 // Delete a reply (either work author or reply author can delete)
-app.delete('/api/:type/:id/comment/:commentId/reply/:replyId', async (req, res) => {
+app.delete('/api/:type/:id/comment/:commentId/reply/:replyId', auth, async (req, res) => {
   const { type, id, commentId, replyId } = req.params;
-  const { userId } = req.body;
+  const userId = req.user._id.toString();
   const Model = type === 'novel' ? Novel : Article;
   try {
     const item = await Model.findById(id);
@@ -918,8 +962,11 @@ app.delete('/api/:type/:id/comment/:commentId/reply/:replyId', async (req, res) 
   }
 });
 
-app.get('/api/notifications/:userId', async (req, res) => {
+app.get('/api/notifications/:userId', auth, async (req, res) => {
   try {
+    if (req.user._id.toString() !== req.params.userId) {
+      return res.status(403).json({ error: "Access denied." });
+    }
     const notifications = await Notification.find({ recipient: req.params.userId })
       .sort({ createdAt: -1 })
       .limit(20);
@@ -927,27 +974,37 @@ app.get('/api/notifications/:userId', async (req, res) => {
   } catch (error) { res.status(500).json({ error: "Failed to fetch notifications" }); }
 });
 
-app.delete('/api/notifications/:id', async (req, res) => {
+app.delete('/api/notifications/:id', auth, async (req, res) => {
   try {
-    const deleted = await Notification.findByIdAndDelete(req.params.id);
-    if (!deleted) return res.status(404).json({ error: "Notification not found" });
+    const notif = await Notification.findById(req.params.id);
+    if (!notif) return res.status(404).json({ error: "Notification not found" });
+    if (notif.recipient.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: "Access denied." });
+    }
+    await Notification.findByIdAndDelete(req.params.id);
     res.json({ message: "Notification deleted" });
   } catch (error) { res.status(500).json({ error: "Failed to delete notification" }); }
 });
 
-app.put('/api/notifications/read-all/:userId', async (req, res) => {
+app.put('/api/notifications/read-all/:userId', auth, async (req, res) => {
+  if (req.user._id.toString() !== req.params.userId) {
+    return res.status(403).json({ error: "Access denied." });
+  }
   await Notification.updateMany({ recipient: req.params.userId }, { isRead: true });
   res.status(200).send("Updated");
 });
 
-app.get('/api/notifications/unread/:userId', async (req, res) => {
+app.get('/api/notifications/unread/:userId', auth, async (req, res) => {
   try {
+    if (req.user._id.toString() !== req.params.userId) {
+      return res.status(403).json({ error: "Access denied." });
+    }
     const count = await Notification.countDocuments({ recipient: req.params.userId, isRead: false });
     res.json({ count });
   } catch (error) { res.status(500).json({ error: "Failed to fetch count" }); }
 });
 
-app.post('/api/admin/announcements', async (req, res) => {
+app.post('/api/admin/announcements', auth, admin, async (req, res) => {
   try {
     const { title, message, type, expiresAt} = req.body;
     const newAnnouncement = new Announcement({ title, message, type, expiresAt: expiresAt || undefined });
@@ -958,7 +1015,7 @@ app.post('/api/admin/announcements', async (req, res) => {
 
 // Admin management list — all currently-live announcements (no 3-item cap),
 // used by the "Recent Dispatched Bulletins" panel for editing/deleting.
-app.get('/api/admin/announcements', async (req, res) => {
+app.get('/api/admin/announcements', auth, admin, async (req, res) => {
   try {
     const list = await Announcement.find().sort({ createdAt: -1 });
     res.json(list);
@@ -967,7 +1024,7 @@ app.get('/api/admin/announcements', async (req, res) => {
   }
 });
 
-app.put('/api/admin/announcements/:id', async (req, res) => {
+app.put('/api/admin/announcements/:id', auth, admin, async (req, res) => {
   try {
     const { title, message, type, expiresAt } = req.body;
     const updated = await Announcement.findByIdAndUpdate(
@@ -982,7 +1039,7 @@ app.put('/api/admin/announcements/:id', async (req, res) => {
   }
 });
 
-app.delete('/api/admin/announcements/:id', async (req, res) => {
+app.delete('/api/admin/announcements/:id', auth, admin, async (req, res) => {
   try {
     const deleted = await Announcement.findByIdAndDelete(req.params.id);
     if (!deleted) return res.status(404).json({ error: "Announcement not found" });
@@ -1015,9 +1072,12 @@ app.get('/api/announcements', async (req, res) => {
 // ==========================================
 
 // 📥 1. FETCH all collection folders belonging to a specific user
-app.get('/api/collections/:userId', async (req, res) => {
+app.get('/api/collections/:userId', auth, async (req, res) => {
   try {
     const { userId } = req.params;
+    if (req.user._id.toString() !== userId) {
+      return res.status(403).json({ error: "Access denied." });
+    }
     // Find all standalone collection documents matching this user's ID
     const userCollections = await Collection.find({ userId });
     res.status(200).json(userCollections || []);
@@ -1028,12 +1088,15 @@ app.get('/api/collections/:userId', async (req, res) => {
 });
 
 // 🛠️ 2. NEW CREATION ROUTE: Saves a brand new folder document linked to a user
-app.post('/api/collections/create', async (req, res) => {
+app.post('/api/collections/create', auth, async (req, res) => {
   try {
     const { userId, name, icon } = req.body;
 
     if (!userId || !name) {
       return res.status(400).json({ error: "Missing required userId or folder name parameters." });
+    }
+    if (req.user._id.toString() !== userId) {
+      return res.status(403).json({ error: "Access denied." });
     }
 
     const newCollection = new Collection({
@@ -1052,13 +1115,16 @@ app.post('/api/collections/create', async (req, res) => {
 });
 
 // ➕ 3. POST: Add a novel or article item to a specific collection folder
-app.post('/api/collections/:collectionId/add-item', async (req, res) => {
+app.post('/api/collections/:collectionId/add-item', auth, async (req, res) => {
   try {
     const { collectionId } = req.params;
     const { id, title, type, author } = req.body;
 
     const collection = await Collection.findById(collectionId);
     if (!collection) return res.status(404).json({ error: "Collection not found" });
+    if (collection.userId.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: "Access denied." });
+    }
 
     // Check if item already exists to prevent duplicates
     const exists = collection.savedItems.some(i => i._id === id);
@@ -1082,17 +1148,20 @@ app.post('/api/collections/:collectionId/add-item', async (req, res) => {
 
 // 🔥 👇 ADD THIS MISSING ROUTE HERE 👇 🔥
 // 🔍 4. GET: Fetch a single collection folder by its ID for the details page
-app.get('/api/collections/single/:collectionId', async (req, res) => {
+app.get('/api/collections/single/:collectionId', auth, async (req, res) => {
   try {
     const { collectionId } = req.params;
-    
+
     // Find the specific collection folder by its unique MongoDB _id
     const collectionFolder = await Collection.findById(collectionId);
-    
+
     if (!collectionFolder) {
       return res.status(404).json({ error: "Collection folder not found." });
     }
-    
+    if (collectionFolder.userId.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: "Access denied." });
+    }
+
     res.status(200).json(collectionFolder);
   } catch (error) {
     console.error("Error fetching single collection details:", error);
@@ -1105,10 +1174,14 @@ app.get('/api/collections/single/:collectionId', async (req, res) => {
 // ==========================================
 
 // 🗑️ 5. DELETE: Remove an entire collection folder
-app.delete('/api/collections/:id', async (req, res) => {
+app.delete('/api/collections/:id', auth, async (req, res) => {
   try {
-    const deleted = await Collection.findByIdAndDelete(req.params.id);
-    if (!deleted) return res.status(404).json({ error: 'Collection not found.' });
+    const collection = await Collection.findById(req.params.id);
+    if (!collection) return res.status(404).json({ error: 'Collection not found.' });
+    if (collection.userId.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: "Access denied." });
+    }
+    await Collection.findByIdAndDelete(req.params.id);
     res.json({ message: 'Collection deleted successfully.' });
   } catch (error) {
     console.error('Delete collection error:', error);
@@ -1117,11 +1190,14 @@ app.delete('/api/collections/:id', async (req, res) => {
 });
 
 // ✂️ 6. DELETE: Remove a single saved item from inside a collection
-app.delete('/api/collections/:collectionId/items/:itemId', async (req, res) => {
+app.delete('/api/collections/:collectionId/items/:itemId', auth, async (req, res) => {
   try {
     const { collectionId, itemId } = req.params;
     const collection = await Collection.findById(collectionId);
     if (!collection) return res.status(404).json({ error: 'Collection not found.' });
+    if (collection.userId.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: "Access denied." });
+    }
 
     collection.savedItems = collection.savedItems.filter(
       (item) => item._id.toString() !== itemId
@@ -1139,11 +1215,14 @@ app.delete('/api/collections/:collectionId/items/:itemId', async (req, res) => {
 // ==========================================
 
 // GET: Fetch user history
-app.get('/api/users/:userId/history', async (req, res) => {
+app.get('/api/users/:userId/history', auth, async (req, res) => {
   try {
+    if (req.user._id.toString() !== req.params.userId) {
+      return res.status(403).json({ error: "Access denied." });
+    }
     const user = await User.findById(req.params.userId);
     if (!user) return res.status(404).json({ error: "User not found" });
-    
+
     // Sort history by lastRead descending (newest first)
     const history = user.readingHistory.sort((a, b) => b.lastRead - a.lastRead);
     res.json(history);
@@ -1154,8 +1233,11 @@ app.get('/api/users/:userId/history', async (req, res) => {
 });
 
 // GET: Fetch user reading stats (streak, progress, checklist)
-app.get('/api/users/:userId/reading-stats', async (req, res) => {
+app.get('/api/users/:userId/reading-stats', auth, async (req, res) => {
   try {
+    if (req.user._id.toString() !== req.params.userId) {
+      return res.status(403).json({ error: "Access denied." });
+    }
     const user = await User.findById(req.params.userId);
     if (!user) return res.status(404).json({ error: "User not found" });
 
@@ -1230,8 +1312,11 @@ app.get('/api/users/:userId/reading-stats', async (req, res) => {
 });
 
 // POST: Add or update item in history
-app.post('/api/users/:userId/history', async (req, res) => {
+app.post('/api/users/:userId/history', auth, async (req, res) => {
   try {
+    if (req.user._id.toString() !== req.params.userId) {
+      return res.status(403).json({ error: "Access denied." });
+    }
     const { contentId, title, type, coverPhoto } = req.body;
     const user = await User.findById(req.params.userId);
     if (!user) return res.status(404).json({ error: "User not found" });
@@ -1265,9 +1350,12 @@ app.post('/api/users/:userId/history', async (req, res) => {
 });
 
 // DELETE: Remove a single item from history
-app.delete('/api/users/:userId/history/:contentId', async (req, res) => {
+app.delete('/api/users/:userId/history/:contentId', auth, async (req, res) => {
   try {
     const { userId, contentId } = req.params;
+    if (req.user._id.toString() !== userId) {
+      return res.status(403).json({ error: "Access denied." });
+    }
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ error: "User not found" });
 
@@ -1282,8 +1370,11 @@ app.delete('/api/users/:userId/history/:contentId', async (req, res) => {
 });
 
 // DELETE: Clear all history
-app.delete('/api/users/:userId/history', async (req, res) => {
+app.delete('/api/users/:userId/history', auth, async (req, res) => {
   try {
+    if (req.user._id.toString() !== req.params.userId) {
+      return res.status(403).json({ error: "Access denied." });
+    }
     const user = await User.findById(req.params.userId);
     if (!user) return res.status(404).json({ error: "User not found" });
 
@@ -1301,8 +1392,11 @@ app.delete('/api/users/:userId/history', async (req, res) => {
 // 🤖 AI RECOMMENDATION ENGINE
 // ==========================================
 
-app.get('/api/recommendations/:userId', async (req, res) => {
+app.get('/api/recommendations/:userId', auth, async (req, res) => {
   try {
+    if (req.user._id.toString() !== req.params.userId) {
+      return res.status(403).json({ error: "Access denied." });
+    }
     const user = await User.findById(req.params.userId);
     if (!user) return res.status(404).json({ error: "User not found" });
 
@@ -1467,11 +1561,14 @@ app.get('/api/users/search', async (req, res) => {
 });
 
 // Fetch conversation list for a user
-app.get('/api/messages/conversations/:userId', async (req, res) => {
+app.get('/api/messages/conversations/:userId', auth, async (req, res) => {
   try {
     const { userId } = req.params;
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).json({ error: "Invalid user ID" });
+    }
+    if (req.user._id.toString() !== userId) {
+      return res.status(403).json({ error: "Access denied." });
     }
 
     const messages = await Message.find({
@@ -1521,11 +1618,14 @@ app.get('/api/messages/conversations/:userId', async (req, res) => {
 });
 
 // Get messages between two users
-app.get('/api/messages/:userId/:otherUserId', async (req, res) => {
+app.get('/api/messages/:userId/:otherUserId', auth, async (req, res) => {
   try {
     const { userId, otherUserId } = req.params;
     if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(otherUserId)) {
       return res.status(400).json({ error: "Invalid user IDs" });
+    }
+    if (req.user._id.toString() !== userId) {
+      return res.status(403).json({ error: "Access denied." });
     }
 
     const messages = await Message.find({
@@ -1543,10 +1643,11 @@ app.get('/api/messages/:userId/:otherUserId', async (req, res) => {
 });
 
 // Send message
-app.post('/api/messages', async (req, res) => {
+app.post('/api/messages', auth, async (req, res) => {
   try {
-    const { senderId, receiverId, text } = req.body;
-    if (!senderId || !receiverId || !text) {
+    const { receiverId, text } = req.body;
+    const senderId = req.user._id.toString();
+    if (!receiverId || !text) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
@@ -1565,9 +1666,12 @@ app.post('/api/messages', async (req, res) => {
 });
 
 // Mark messages as read
-app.put('/api/messages/read/:senderId/:receiverId', async (req, res) => {
+app.put('/api/messages/read/:senderId/:receiverId', auth, async (req, res) => {
   try {
     const { senderId, receiverId } = req.params;
+    if (req.user._id.toString() !== receiverId) {
+      return res.status(403).json({ error: "Access denied." });
+    }
     await Message.updateMany(
       { sender: senderId, receiver: receiverId, read: false },
       { $set: { read: true } }
@@ -1580,8 +1684,11 @@ app.put('/api/messages/read/:senderId/:receiverId', async (req, res) => {
 });
 
 // Get total unread count for a user (across all conversations)
-app.get('/api/messages/unread-count/:userId', async (req, res) => {
+app.get('/api/messages/unread-count/:userId', auth, async (req, res) => {
   try {
+    if (req.user._id.toString() !== req.params.userId) {
+      return res.status(403).json({ error: "Access denied." });
+    }
     const count = await Message.countDocuments({ receiver: req.params.userId, read: false });
     res.json({ count });
   } catch (error) {

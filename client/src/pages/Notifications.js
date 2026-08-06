@@ -41,10 +41,11 @@ const Notifications = ({ user }) => {
     if (!user?._id) return;
     try {
       setLoading(true);
-      const res = await axios.get(`${API_BASE_URL}/api/notifications/${user._id}`);
+      const authHeaders = { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } };
+      const res = await axios.get(`${API_BASE_URL}/api/notifications/${user._id}`, authHeaders);
       setNotifications(res.data || []);
       // Mark all as read silently
-      await axios.put(`${API_BASE_URL}/api/notifications/read-all/${user._id}`);
+      await axios.put(`${API_BASE_URL}/api/notifications/read-all/${user._id}`, {}, authHeaders);
     } catch (err) {
       console.error('Error fetching notifications', err);
     } finally {
@@ -60,7 +61,9 @@ const Notifications = ({ user }) => {
     e.preventDefault();
     e.stopPropagation();
     try {
-      await axios.delete(`${API_BASE_URL}/api/notifications/${id}`);
+      await axios.delete(`${API_BASE_URL}/api/notifications/${id}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
       setNotifications((prev) => prev.filter((n) => n._id !== id));
     } catch (err) {
       console.error('Error deleting notification', err);
@@ -69,7 +72,8 @@ const Notifications = ({ user }) => {
 
   const handleClearAll = async () => {
     try {
-      await Promise.all(notifications.map((n) => axios.delete(`${API_BASE_URL}/api/notifications/${n._id}`)));
+      const authHeaders = { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } };
+      await Promise.all(notifications.map((n) => axios.delete(`${API_BASE_URL}/api/notifications/${n._id}`, authHeaders)));
       setNotifications([]);
     } catch (err) {
       console.error('Error clearing all notifications', err);

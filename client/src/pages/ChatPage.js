@@ -33,7 +33,9 @@ const ChatPage = () => {
   const fetchConversations = useCallback(async () => {
     if (!userId) return;
     try {
-      const res = await fetch(`${API_BASE_URL}/api/messages/conversations/${userId}`);
+      const res = await fetch(`${API_BASE_URL}/api/messages/conversations/${userId}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
       const data = await res.json();
       if (res.ok) {
         setConversations(data.conversations || []);
@@ -55,13 +57,17 @@ const ChatPage = () => {
   const fetchMessages = useCallback(async () => {
     if (!userId || !activeConversation) return;
     try {
-      const res = await fetch(`${API_BASE_URL}/api/messages/${userId}/${activeConversation._id}`);
+      const authHeaders = { 'Authorization': `Bearer ${localStorage.getItem('token')}` };
+      const res = await fetch(`${API_BASE_URL}/api/messages/${userId}/${activeConversation._id}`, {
+        headers: authHeaders
+      });
       const data = await res.json();
       if (res.ok) {
         setMessages(data.messages || []);
         // Mark as read
         fetch(`${API_BASE_URL}/api/messages/read/${activeConversation._id}/${userId}`, {
-          method: 'PUT'
+          method: 'PUT',
+          headers: authHeaders
         });
         // Clear unread count for this conversation
         setUnreadCounts(prev => {
@@ -142,7 +148,10 @@ const ChatPage = () => {
     try {
       const res = await fetch(`${API_BASE_URL}/api/messages`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
         body: JSON.stringify({
           senderId: userId,
           receiverId: activeConversation._id,

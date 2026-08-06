@@ -136,7 +136,9 @@ const WriterDashboardMain = ({ user, setUser }) => {
   const handleCloseWelcome = async () => {
     setShowWelcome(false);
     try {
-      await axios.put(`${API}/api/users/update-welcome/${user._id || user.id}`);
+      await axios.put(`${API}/api/users/update-welcome/${user._id || user.id}`, {}, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
       const u = { ...user, hasSeenWelcome: true };
       if (setUser) setUser(u);
       localStorage.setItem('user', JSON.stringify(u));
@@ -148,10 +150,11 @@ const WriterDashboardMain = ({ user, setUser }) => {
     if (!user?._id) return;
     try {
       setLoading(true);
+      const authHeaders = { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } };
       const [novelsRes, articlesRes, notifRes] = await Promise.all([
-        axios.get(`${API}/api/novels/author/${user._id}`),
-        axios.get(`${API}/api/articles/author/${user._id}`),
-        axios.get(`${API}/api/notifications/${user._id}`),
+        axios.get(`${API}/api/novels/author/${user._id}`, authHeaders),
+        axios.get(`${API}/api/articles/author/${user._id}`, authHeaders),
+        axios.get(`${API}/api/notifications/${user._id}`, authHeaders),
       ]);
       const allWorks = [
         ...novelsRes.data.map(n => ({ ...n, workType: 'novel' })),

@@ -15,10 +15,11 @@ const WriterSidebar = ({ user, closeSidebar }) => {
     if (!user?._id) return;
     const fetchCount = async () => {
       try {
-        const res = await axios.get(`${API_BASE_URL}/api/notifications/unread/${user._id}`);
+        const authHeaders = { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } };
+        const res = await axios.get(`${API_BASE_URL}/api/notifications/unread/${user._id}`, authHeaders);
         setUnreadCount(res.data.count || 0);
 
-        const msgRes = await axios.get(`${API_BASE_URL}/api/messages/unread-count/${user._id}`);
+        const msgRes = await axios.get(`${API_BASE_URL}/api/messages/unread-count/${user._id}`, authHeaders);
         setUnreadMsgCount(msgRes.data.count || 0);
       } catch (err) {
         // silently fail
