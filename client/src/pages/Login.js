@@ -1,9 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import './Login.css';
 
 import { API_BASE_URL } from '../config';
+
+// Animates a number counting up from 0 to `target` — used on the side-panel stats.
+const useCountUp = (target, duration = 1400) => {
+  const [value, setValue] = useState(0);
+
+  useEffect(() => {
+    let startTime = null;
+    let frameId;
+
+    const step = (timestamp) => {
+      if (startTime === null) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setValue(Math.round(eased * target));
+      if (progress < 1) frameId = requestAnimationFrame(step);
+    };
+
+    frameId = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(frameId);
+  }, [target, duration]);
+
+  return value;
+};
+
 const Login = ({ setUser }) => {
+  const animatedReaders = useCountUp(1200);
+  const animatedWriters = useCountUp(180);
+  const animatedStories = useCountUp(3000);
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -147,6 +174,22 @@ const Login = ({ setUser }) => {
             <li><span className="auth-side-feature-icon">💬</span> Live chats with your favorite writers</li>
             <li><span className="auth-side-feature-icon">🔥</span> Reading streaks &amp; milestones</li>
           </ul>
+          <div className="auth-side-stats">
+            <div className="auth-stat">
+              <span className="auth-stat-num">{animatedReaders.toLocaleString()}+</span>
+              <span className="auth-stat-label">Readers</span>
+            </div>
+            <div className="auth-stat-divider" />
+            <div className="auth-stat">
+              <span className="auth-stat-num">{animatedWriters}+</span>
+              <span className="auth-stat-label">Writers</span>
+            </div>
+            <div className="auth-stat-divider" />
+            <div className="auth-stat">
+              <span className="auth-stat-num">{animatedStories.toLocaleString()}+</span>
+              <span className="auth-stat-label">Stories</span>
+            </div>
+          </div>
         </div>
 
         {/* ── Form panel ── */}

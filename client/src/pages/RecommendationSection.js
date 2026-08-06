@@ -14,7 +14,9 @@ const RecommendationSection = ({ user }) => {
     if (!userId) return;
 
     setLoading(true);
-    fetch(`${API_BASE}/api/recommendations/${userId}`)
+    fetch(`${API_BASE}/api/recommendations/${userId}`, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+    })
       .then(res => res.json())
       .then(data => {
         if (data.recommendations) {
@@ -112,7 +114,7 @@ const RecommendationSection = ({ user }) => {
               <span className="rec-ai-badge">✨ AI Pick</span>
               {/* Type Badge */}
               <span className={`rec-type-badge ${item.type}`}>
-                {item.type === 'novel' ? '📖 Novel' : '📝 Article'}
+                {item.type === 'novel' ? '📖 Story' : '📝 Article'}
               </span>
             </div>
 

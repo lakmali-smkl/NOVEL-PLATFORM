@@ -306,12 +306,28 @@
   justify-content: flex-start;
 }
 
-.chat-bubble {
+.chat-bubble-col {
+  display: flex;
+  flex-direction: column;
   max-width: 65%;
+  position: relative;
+}
+
+.chat-bubble-wrap.sent .chat-bubble-col {
+  align-items: flex-end;
+}
+
+.chat-bubble-wrap.received .chat-bubble-col {
+  align-items: flex-start;
+}
+
+.chat-bubble {
+  max-width: 100%;
   padding: 10px 16px;
   border-radius: 18px;
   position: relative;
   word-wrap: break-word;
+  cursor: pointer;
 }
 
 .chat-bubble.sent {
@@ -339,6 +355,316 @@
   display: block;
   text-align: right;
   margin-top: 4px;
+}
+
+.chat-edited-tag {
+  font-style: italic;
+}
+
+.chat-forwarded-tag {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  opacity: 0.75;
+  margin-bottom: 4px;
+}
+
+.chat-reply-quote {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: rgba(0, 0, 0, 0.15);
+  border-left: 3px solid rgba(255, 255, 255, 0.6);
+  border-radius: 6px;
+  padding: 5px 9px;
+  margin-bottom: 6px;
+  font-size: 0.78rem;
+  opacity: 0.9;
+}
+
+.chat-bubble.received .chat-reply-quote {
+  background: var(--hover-bg);
+  border-left-color: var(--accent);
+}
+
+.chat-reply-quote strong {
+  font-size: 0.72rem;
+}
+
+.chat-reply-quote span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
+}
+
+/* ── Per-message action menu (click to open, WhatsApp-style) ── */
+.chat-msg-menu {
+  position: absolute;
+  top: 100%;
+  margin-top: 4px;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+  min-width: 150px;
+  animation: bubbleIn 0.12s ease both;
+}
+
+.chat-msg-menu.align-right {
+  right: 0;
+}
+
+.chat-msg-menu.align-left {
+  left: 0;
+}
+
+.chat-msg-menu.flip-up {
+  top: auto;
+  bottom: 100%;
+  margin-top: 0;
+  margin-bottom: 4px;
+}
+
+.chat-msg-menu button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 0.85rem;
+  color: var(--text-main);
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.chat-msg-menu button:hover {
+  background: var(--hover-bg);
+}
+
+/* ── Reaction picker popover ── */
+.chat-reaction-picker {
+  position: absolute;
+  top: 100%;
+  margin-top: 4px;
+  z-index: 20;
+  display: flex;
+  gap: 4px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+  padding: 6px 8px;
+  animation: bubbleIn 0.12s ease both;
+}
+
+.chat-reaction-picker.align-right {
+  right: 0;
+}
+
+.chat-reaction-picker.align-left {
+  left: 0;
+}
+
+.chat-reaction-picker.flip-up {
+  top: auto;
+  bottom: 100%;
+  margin-top: 0;
+  margin-bottom: 4px;
+}
+
+.chat-reaction-picker button {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 50%;
+  transition: transform 0.1s ease, background 0.1s ease;
+}
+
+.chat-reaction-picker button:hover {
+  background: var(--hover-bg);
+  transform: scale(1.2);
+}
+
+/* ── Reactions displayed under a bubble ── */
+.chat-reactions-row {
+  display: flex;
+  gap: 4px;
+  margin-top: 3px;
+  flex-wrap: wrap;
+}
+
+.chat-reactions-row.align-right {
+  justify-content: flex-end;
+}
+
+.chat-reactions-row.align-left {
+  justify-content: flex-start;
+}
+
+.chat-reaction-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.72rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  padding: 2px 8px;
+  cursor: pointer;
+  color: var(--text-main);
+}
+
+.chat-reaction-pill.mine {
+  border-color: var(--accent);
+  background: var(--accent-glow, var(--card-bg));
+}
+
+/* ── Reply / Edit composer preview bar ── */
+.chat-compose-preview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 16px;
+  background: var(--hover-bg);
+  border-top: 1px solid var(--border-color);
+  border-left: 3px solid var(--accent);
+}
+
+.chat-compose-preview-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.chat-compose-preview-info strong {
+  font-size: 0.78rem;
+  color: var(--accent);
+}
+
+.chat-compose-preview-info span {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chat-compose-preview button {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.chat-compose-preview button:hover {
+  color: var(--text-main);
+}
+
+/* ── Forward message modal ── */
+.chat-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1000;
+}
+
+.chat-forward-modal {
+  width: 100%;
+  max-width: 420px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3);
+}
+
+.chat-forward-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.chat-forward-header h3 {
+  margin: 0;
+  color: var(--text-main);
+  font-size: 1.05rem;
+}
+
+.chat-forward-header button {
+  background: var(--hover-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  color: var(--text-muted);
+}
+
+.chat-forward-preview-text {
+  background: var(--hover-bg);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin: 0 0 14px 0;
+  max-height: 70px;
+  overflow-y: auto;
+}
+
+.chat-forward-list {
+  margin-top: 12px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.chat-forward-target {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: none;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 10px;
+  cursor: pointer;
+  text-align: left;
+  color: var(--text-main);
+  font-size: 0.9rem;
+  font-family: inherit;
+}
+
+.chat-forward-target:hover {
+  background: var(--hover-bg);
+}
+
+.chat-forward-empty {
+  padding: 20px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.85rem;
 }
 
 /* Start prompt */

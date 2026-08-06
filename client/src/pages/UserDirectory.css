@@ -386,6 +386,20 @@
   box-shadow: 0 0 6px rgba(255, 51, 51, 0.6);
 }
 
+.ud-status-published .ud-status-dot {
+  background-color: #2ea44f;
+  box-shadow: 0 0 6px rgba(46, 164, 79, 0.6);
+}
+
+.ud-status-draft .ud-status-dot {
+  background-color: var(--text-muted);
+}
+
+/* ── Clickable Row (opens the user detail modal) ── */
+.ud-row-clickable {
+  cursor: pointer;
+}
+
 .ud-date-cell {
   color: var(--text-muted);
   font-family: monospace;
@@ -458,5 +472,149 @@
   }
   .ud-role-select {
     width: 100%;
+  }
+}
+
+/* ── User Detail Modal ── */
+.ud-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 60px 20px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.ud-modal {
+  position: relative;
+  width: 100%;
+  max-width: 720px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-top: 3px solid var(--accent);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3);
+}
+
+.ud-modal-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--border-color);
+  background: var(--hover-bg);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ud-modal-close:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.ud-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 6px;
+}
+
+.ud-modal-avatar {
+  width: 54px;
+  height: 54px;
+  font-size: 1.3rem;
+}
+
+.ud-modal-username {
+  margin: 0 0 2px 0;
+  color: var(--text-main);
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.ud-modal-roles {
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.ud-modal-meta {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  margin: 14px 0 22px 0;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.ud-modal-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 26px;
+}
+
+.ud-modal-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 14px 8px;
+  background: var(--hover-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  text-align: center;
+}
+
+.ud-modal-stat-value {
+  color: var(--text-main);
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.ud-modal-stat-label {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ud-modal-section-title {
+  margin: 0 0 14px 0;
+  color: var(--text-main);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.ud-modal-table-wrap {
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  overflow: auto;
+  max-height: 340px;
+}
+
+.ud-modal-table-wrap .ud-table th {
+  position: sticky;
+  top: 0;
+}
+
+.ud-modal-type-cell {
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .ud-modal {
+    padding: 22px 18px;
+  }
+  .ud-modal-stats {
+    grid-template-columns: repeat(2, 1fr);
   }
 }

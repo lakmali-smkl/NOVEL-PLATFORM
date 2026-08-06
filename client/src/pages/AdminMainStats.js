@@ -172,7 +172,7 @@ const AdminMainStats = ({ setActiveTab }) => {
           <div className="dash-split-bars">
             <div className="dash-split-row">
               <span className="dash-split-icon">📖</span>
-              <span className="dash-split-name">Novels</span>
+              <span className="dash-split-name">Stories</span>
               <div className="dash-split-track">
                 <div className="dash-split-fill novel-fill" style={{ width: `${novelPct}%` }} />
               </div>

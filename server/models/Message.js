@@ -19,7 +19,24 @@ const messageSchema = new mongoose.Schema({
   read: {
     type: Boolean,
     default: false
-  }
+  },
+  edited: {
+    type: Boolean,
+    default: false
+  },
+  forwarded: {
+    type: Boolean,
+    default: false
+  },
+  replyTo: {
+    messageId: { type: mongoose.Schema.Types.ObjectId },
+    text: String,
+    senderUsername: String
+  },
+  reactions: [{
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    emoji: String
+  }]
 }, { timestamps: true });
 
 // Index for fast conversation queries

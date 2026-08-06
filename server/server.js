@@ -31,6 +31,7 @@ const Collection = require('./models/Collection');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { auth, admin } = require('./middleware/auth');
+const { encryptText, decryptText } = require('./utils/crypto');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -179,17 +180,18 @@ app.post('/login', async (req, res) => {
     res.status(200).json({ 
       message: "Login successful!", 
       token,
-      user: { 
+      user: {
         _id: user._id,
-        username: user.username, 
+        username: user.username,
         email: user.email,
         isAdmin: user.isAdmin,
         isWriter: user.isWriter,
         writerRequestStatus: user.writerRequestStatus,
         hasSeenWelcome: user.hasSeenWelcome,
         profilePicture: user.profilePicture || "",
-        favorites: user.favorites || []
-      } 
+        favorites: user.favorites || [],
+        createdAt: user.createdAt
+      }
     });
   } catch (error) {
     console.error("Login Error:", error);
@@ -259,8 +261,11 @@ app.get('/api/users/check-status/:id', async (req, res) => {
 });
 
 // User Settings Update
-app.put('/api/users/:id/settings', upload.single('profilePicture'), async (req, res) => {
+app.put('/api/users/:id/settings', auth, upload.single('profilePicture'), async (req, res) => {
   try {
+    if (req.user._id.toString() !== req.params.id) {
+      return res.status(403).json({ error: "Access denied. You can only update your own settings." });
+    }
     const { username, email, currentPassword, newPassword } = req.body;
     const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ error: "User not found" });
@@ -319,7 +324,7 @@ app.put('/api/users/:id/settings', upload.single('profilePicture'), async (req, 
 
 // --- Admin Control Routes (Core Platform) ---
 
-app.get('/api/admin/stats', async (req, res) => {
+app.get('/api/admin/stats', auth, admin, async (req, res) => {
   try {
     const totalUsers = await User.countDocuments();
     const totalWriters = await User.countDocuments({ isWriter: true });
@@ -373,9 +378,11 @@ app.get('/api/platform-stats', async (req, res) => {
   }
 });
 
-app.post('/api/writer-requests', async (req, res) => {
+app.post('/api/writer-requests', auth, async (req, res) => {
     try {
-        const { userId, username, reason } = req.body;
+        const { reason } = req.body;
+        const userId = req.user._id.toString();
+        const username = req.user.username;
         const existingRequest = await WriterRequest.findOne({ userId, status: 'pending' });
         const user = await User.findById(userId);
         
@@ -393,7 +400,7 @@ app.post('/api/writer-requests', async (req, res) => {
     }
 });
 
-app.get('/api/admin/writer-requests', async (req, res) => {
+app.get('/api/admin/writer-requests', auth, admin, async (req, res) => {
   try {
     const writerRequests = await WriterRequest.find().sort({ createdAt: -1 });
     const requestedUserIds = writerRequests.map(wr => wr.userId.toString());
@@ -432,7 +439,7 @@ app.get('/api/admin/writer-requests', async (req, res) => {
   }
 });
 
-app.post('/api/admin/approve-writer/:id', async (req, res) => {
+app.post('/api/admin/approve-writer/:id', auth, admin, async (req, res) => {
   const { action } = req.body; 
   try {
     const update = action === 'approve' 
@@ -451,7 +458,7 @@ app.post('/api/admin/approve-writer/:id', async (req, res) => {
 });
 
 // DELETE history record — only removes the WriterRequest doc, does NOT touch User fields
-app.delete('/api/admin/writer-requests/:id', async (req, res) => {
+app.delete('/api/admin/writer-requests/:id', auth, admin, async (req, res) => {
   try {
     const { id } = req.params;
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -466,8 +473,11 @@ app.delete('/api/admin/writer-requests/:id', async (req, res) => {
   }
 });
 
-app.put('/api/users/update-welcome/:userId', async (req, res) => {
+app.put('/api/users/update-welcome/:userId', auth, async (req, res) => {
   try {
+    if (req.user._id.toString() !== req.params.userId) {
+      return res.status(403).json({ error: "Access denied." });
+    }
     await User.findByIdAndUpdate(req.params.userId, { hasSeenWelcome: true });
     res.status(200).json({ message: "Welcome status updated" });
   } catch (err) {
@@ -478,25 +488,25 @@ app.put('/api/users/update-welcome/:userId', async (req, res) => {
 
 // --- Novel Routes ---
 
-app.post('/api/novels', upload.fields([{ name: 'coverPhoto' }, { name: 'textFile' }]), async (req, res) => {
+app.post('/api/novels', auth, upload.fields([{ name: 'coverPhoto' }, { name: 'textFile' }]), async (req, res) => {
   try {
-    const { title, content, authorName, authorSpeech, authorId, status } = req.body;
+    const { title, content, authorName, authorSpeech, status } = req.body;
     const newNovel = new Novel({
-      title, 
-      content, 
-      author: authorName, 
+      title,
+      content,
+      author: authorName,
       authorSpeech,
-      authorId, 
+      authorId: req.user._id,
       coverPhoto: req.files['coverPhoto'] ? req.files['coverPhoto'][0].path : null,
       textFile: req.files['textFile'] ? req.files['textFile'][0].path : null,
       status: status || 'draft'
     });
     
     await newNovel.save();
-    res.status(201).json({ message: "Novel saved successfully!" });
+    res.status(201).json({ message: "Story saved successfully!" });
   } catch (error) {
     console.error("Save Error:", error);
-    res.status(500).json({ error: "Failed to save novel" });
+    res.status(500).json({ error: "Failed to save story" });
   }
 });
 
@@ -515,25 +525,29 @@ app.get('/api/novels', async (req, res) => {
 
     const novels = await query;
     res.json(novels);
-  } catch (error) { res.status(500).json({ error: "Failed to fetch novels" }); }
+  } catch (error) { res.status(500).json({ error: "Failed to fetch stories" }); }
 });
 
-app.get('/api/novels/author/:authorId', async (req, res) => {
+app.get('/api/novels/author/:authorId', auth, async (req, res) => {
   try {
-    const novels = await Novel.find({ authorId: req.params.authorId }).sort({ createdAt: -1 });
+    const isOwner = req.user._id.toString() === req.params.authorId;
+    const filter = isOwner
+      ? { authorId: req.params.authorId }
+      : { authorId: req.params.authorId, status: 'published' };
+    const novels = await Novel.find(filter).sort({ createdAt: -1 });
     res.json(novels);
-  } catch (error) { res.status(500).json({ error: "Failed to fetch author novels" }); }
+  } catch (error) { res.status(500).json({ error: "Failed to fetch author stories" }); }
 });
 
 app.get('/api/novels/:id', async (req, res) => {
   try {
     const novel = await Novel.findById(req.params.id);
-    if (!novel) return res.status(404).json({ error: "Novel not found" });
+    if (!novel) return res.status(404).json({ error: "Story not found" });
 
     if (novel.status === 'draft') {
       const requesterId = req.query.userId;
       if (!novel.authorId || novel.authorId.toString() !== requesterId) {
-        return res.status(403).json({ error: "This novel is a private draft and cannot be viewed." });
+        return res.status(403).json({ error: "This story is a private draft and cannot be viewed." });
       }
     }
     res.json(novel);
@@ -542,14 +556,14 @@ app.get('/api/novels/:id', async (req, res) => {
 
 // --- Article Routes ---
 
-app.post('/api/articles', upload.fields([{ name: 'coverPhoto' }, { name: 'textFile' }]), async (req, res) => {
+app.post('/api/articles', auth, upload.fields([{ name: 'coverPhoto' }, { name: 'textFile' }]), async (req, res) => {
   try {
-    const { title, content, authorName, authorId, status } = req.body; 
+    const { title, content, authorName, status } = req.body;
     const newArticle = new Article({
-      title, 
-      content, 
+      title,
+      content,
       author: authorName,
-      authorId: authorId,
+      authorId: req.user._id,
       status: status || 'draft',
       coverPhoto: req.files['coverPhoto'] ? req.files['coverPhoto'][0].path : null,
       textFile: req.files['textFile'] ? req.files['textFile'][0].path : null
@@ -581,9 +595,13 @@ app.get('/api/articles', async (req, res) => {
   } catch (error) { res.status(500).json({ error: "Failed to fetch articles" }); }
 });
 
-app.get('/api/articles/author/:authorId', async (req, res) => {
+app.get('/api/articles/author/:authorId', auth, async (req, res) => {
   try {
-    const articles = await Article.find({ authorId: req.params.authorId }).sort({ createdAt: -1 });
+    const isOwner = req.user._id.toString() === req.params.authorId;
+    const filter = isOwner
+      ? { authorId: req.params.authorId }
+      : { authorId: req.params.authorId, status: 'published' };
+    const articles = await Article.find(filter).sort({ createdAt: -1 });
     res.json(articles);
   } catch (error) { res.status(500).json({ error: "Failed to fetch author articles" }); }
 });
@@ -605,8 +623,11 @@ app.get('/api/articles/:id', async (req, res) => {
 
 // --- User & Interaction Routes ---
 
-app.post('/api/favorites', async (req, res) => {
+app.post('/api/favorites', auth, async (req, res) => {
   const { userId, contentId, title, type } = req.body;
+  if (req.user._id.toString() !== userId) {
+    return res.status(403).json({ error: "Access denied." });
+  }
   try {
     const user = await User.findByIdAndUpdate(
       userId,
@@ -620,9 +641,23 @@ app.post('/api/favorites', async (req, res) => {
   }
 });
 
+// Lookup the platform admin to contact (used by the "Contact Admin" sidebar button)
+// Must stay above the generic '/api/users/:email' route below, otherwise
+// "admin-contact" gets swallowed as an :email param and 404s.
+app.get('/api/users/admin-contact', auth, async (req, res) => {
+  try {
+    const admin = await User.findOne({ isAdmin: true }).sort({ createdAt: 1 }).select('_id username profilePicture');
+    if (!admin) return res.status(404).json({ error: "No admin account found" });
+    res.json({ admin });
+  } catch (error) {
+    console.error("Admin contact lookup error:", error);
+    res.status(500).json({ error: "Server error looking up admin contact" });
+  }
+});
+
 app.get('/api/users/:email', async (req, res) => {
   try {
-    const user = await User.findOne({ email: req.params.email });
+    const user = await User.findOne({ email: req.params.email }).select('-password -hintAnswer');
     if (!user) return res.status(404).json({ error: "User not found" });
     res.json(user);
   } catch (error) {
@@ -640,8 +675,11 @@ app.get('/api/users/status/:id', async (req, res) => {
   }
 });
 
-app.patch('/api/users/:id', async (req, res) => {
+app.patch('/api/users/:id', auth, async (req, res) => {
   try {
+    if (req.user._id.toString() !== req.params.id) {
+      return res.status(403).json({ error: "Access denied." });
+    }
     const { username } = req.body;
     const updatedUser = await User.findByIdAndUpdate(
       req.params.id,
@@ -655,28 +693,28 @@ app.patch('/api/users/:id', async (req, res) => {
   }
 });
 
-app.put('/api/novels/:id', async (req, res) => {
+app.put('/api/novels/:id', auth, async (req, res) => {
   try {
     const novel = await Novel.findById(req.params.id);
-    if (!novel) return res.status(404).json({ error: "Novel not found" });
+    if (!novel) return res.status(404).json({ error: "Story not found" });
 
     const { userId, ...updateData } = req.body;
-    if (!novel.authorId || novel.authorId.toString() !== userId) {
-      return res.status(403).json({ error: "Access denied. You are not the author of this novel." });
+    if (!novel.authorId || novel.authorId.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: "Access denied. You are not the author of this story." });
     }
 
     const updatedNovel = await Novel.findByIdAndUpdate(req.params.id, updateData, { returnDocument: 'after' });
-    res.json({ message: "Novel updated!", data: updatedNovel });
+    res.json({ message: "Story updated!", data: updatedNovel });
   } catch (error) { res.status(500).json({ error: "Update failed" }); }
 });
 
-app.put('/api/articles/:id', async (req, res) => {
+app.put('/api/articles/:id', auth, async (req, res) => {
   try {
     const article = await Article.findById(req.params.id);
     if (!article) return res.status(404).json({ error: "Article not found" });
 
     const { userId, ...updateData } = req.body;
-    if (!article.authorId || article.authorId.toString() !== userId) {
+    if (!article.authorId || article.authorId.toString() !== req.user._id.toString()) {
       return res.status(403).json({ error: "Access denied. You are not the author of this article." });
     }
 
@@ -685,9 +723,12 @@ app.put('/api/articles/:id', async (req, res) => {
   } catch (error) { res.status(500).json({ error: "Update failed" }); }
 });
 
-app.delete('/api/users/:userId/favorites/:contentId', async (req, res) => {
+app.delete('/api/users/:userId/favorites/:contentId', auth, async (req, res) => {
   try {
     const { userId, contentId } = req.params;
+    if (req.user._id.toString() !== userId) {
+      return res.status(403).json({ error: "Access denied." });
+    }
     const user = await User.findByIdAndUpdate(
       userId,
       { $pull: { favorites: { contentId: contentId } } },
@@ -700,40 +741,56 @@ app.delete('/api/users/:userId/favorites/:contentId', async (req, res) => {
   }
 });
 
-app.patch('/api/:type/:id/status', async (req, res) => {
-  const { status } = req.body; 
+app.patch('/api/:type/:id/status', auth, async (req, res) => {
+  const { status } = req.body;
   const Model = req.params.type === 'novel' ? Novel : Article;
   try {
-    await Model.findByIdAndUpdate(req.params.id, { status });
+    const item = await Model.findById(req.params.id);
+    if (!item) return res.status(404).json({ error: "Content not found" });
+    if (!item.authorId || item.authorId.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: "Access denied. You are not the author of this content." });
+    }
+    item.status = status;
+    await item.save();
     res.json({ message: "Status updated successfully" });
   } catch (error) {
     res.status(500).json({ error: "Failed to update status" });
   }
 });
 
-app.delete('/api/novels/:id', async (req, res) => {
+app.delete('/api/novels/:id', auth, async (req, res) => {
   try {
+    const novel = await Novel.findById(req.params.id);
+    if (!novel) return res.status(404).json({ error: "Story not found" });
+    if (!novel.authorId || novel.authorId.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: "Access denied. You are not the author of this story." });
+    }
     await Novel.findByIdAndDelete(req.params.id);
-    res.json({ message: "Novel deleted successfully" });
+    res.json({ message: "Story deleted successfully" });
   } catch (error) { res.status(500).json({ error: "Delete failed" }); }
 });
 
-app.delete('/api/articles/:id', async (req, res) => {
+app.delete('/api/articles/:id', auth, async (req, res) => {
   try {
+    const article = await Article.findById(req.params.id);
+    if (!article) return res.status(404).json({ error: "Article not found" });
+    if (!article.authorId || article.authorId.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: "Access denied. You are not the author of this article." });
+    }
     await Article.findByIdAndDelete(req.params.id);
     res.json({ message: "Article deleted successfully" });
   } catch (error) { res.status(500).json({ error: "Delete failed" }); }
 });
 
-app.post('/api/:type/:id/like', async (req, res) => {
-  const { userId } = req.body;
+app.post('/api/:type/:id/like', auth, async (req, res) => {
+  const userId = req.user._id.toString();
   const Model = req.params.type === 'novel' ? Novel : Article;
+  const displayType = req.params.type === 'novel' ? 'story' : req.params.type;
   try {
     const item = await Model.findById(req.params.id);
     if (!item) return res.status(404).json({ error: "Content not found" });
 
-    const likingUser = await User.findById(userId);
-    const likerName = likingUser ? likingUser.username : "A reader";
+    const likerName = req.user.username || "A reader";
     const isLiking = !item.likes.includes(userId);
     
     if (isLiking) {
@@ -745,7 +802,7 @@ app.post('/api/:type/:id/like', async (req, res) => {
           type: 'like',
           contentId: item._id,
           contentType: req.params.type,
-          message: `${likerName} liked your ${req.params.type}: "${item.title}"`
+          message: `${likerName} liked your ${displayType}: "${item.title}"`
         });
         await newNotif.save();
       } 
@@ -758,9 +815,12 @@ app.post('/api/:type/:id/like', async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-app.post('/api/:type/:id/comment', async (req, res) => {
-  const { userId, username, text } = req.body;
+app.post('/api/:type/:id/comment', auth, async (req, res) => {
+  const { text } = req.body;
+  const userId = req.user._id.toString();
+  const username = req.user.username;
   const Model = req.params.type === 'novel' ? Novel : Article;
+  const displayType = req.params.type === 'novel' ? 'story' : req.params.type;
   try {
     const item = await Model.findById(req.params.id);
     if (!item) return res.status(404).json({ error: "Content not found" });
@@ -786,7 +846,7 @@ app.post('/api/:type/:id/comment', async (req, res) => {
         contentId: item._id,
         contentType: req.params.type,
         commentId: savedComment._id,
-        message: `${username} commented on your ${req.params.type}: "${item.title}"`
+        message: `${username} commented on your ${displayType}: "${item.title}"`
       });
       await newNotif.save();
     }
@@ -798,9 +858,12 @@ app.post('/api/:type/:id/comment', async (req, res) => {
   }
 });
 
-app.post('/api/:type/:id/comment/:commentId/reply', async (req, res) => {
-  const { userId, username, text } = req.body;
+app.post('/api/:type/:id/comment/:commentId/reply', auth, async (req, res) => {
+  const { text } = req.body;
+  const userId = req.user._id.toString();
+  const username = req.user.username;
   const Model = req.params.type === 'novel' ? Novel : Article;
+  const displayType = req.params.type === 'novel' ? 'story' : req.params.type;
   try {
     const item = await Model.findById(req.params.id);
     if (!item) return res.status(404).json({ error: "Content not found" });
@@ -847,7 +910,7 @@ app.post('/api/:type/:id/comment/:commentId/reply', async (req, res) => {
         contentType: req.params.type,
         commentId: comment._id,
         replyId: savedReply._id,
-        message: `${username} replied to a comment on your ${req.params.type}: "${item.title}"`
+        message: `${username} replied to a comment on your ${displayType}: "${item.title}"`
       });
       await newNotif.save();
     }
@@ -860,9 +923,9 @@ app.post('/api/:type/:id/comment/:commentId/reply', async (req, res) => {
 });
 
 // Delete a comment (either work author or comment author can delete)
-app.delete('/api/:type/:id/comment/:commentId', async (req, res) => {
+app.delete('/api/:type/:id/comment/:commentId', auth, async (req, res) => {
   const { type, id, commentId } = req.params;
-  const { userId } = req.body;
+  const userId = req.user._id.toString();
   const Model = type === 'novel' ? Novel : Article;
   try {
     const item = await Model.findById(id);
@@ -888,9 +951,9 @@ app.delete('/api/:type/:id/comment/:commentId', async (req, res) => {
 });
 
 // Delete a reply (either work author or reply author can delete)
-app.delete('/api/:type/:id/comment/:commentId/reply/:replyId', async (req, res) => {
+app.delete('/api/:type/:id/comment/:commentId/reply/:replyId', auth, async (req, res) => {
   const { type, id, commentId, replyId } = req.params;
-  const { userId } = req.body;
+  const userId = req.user._id.toString();
   const Model = type === 'novel' ? Novel : Article;
   try {
     const item = await Model.findById(id);
@@ -918,8 +981,11 @@ app.delete('/api/:type/:id/comment/:commentId/reply/:replyId', async (req, res) 
   }
 });
 
-app.get('/api/notifications/:userId', async (req, res) => {
+app.get('/api/notifications/:userId', auth, async (req, res) => {
   try {
+    if (req.user._id.toString() !== req.params.userId) {
+      return res.status(403).json({ error: "Access denied." });
+    }
     const notifications = await Notification.find({ recipient: req.params.userId })
       .sort({ createdAt: -1 })
       .limit(20);
@@ -927,27 +993,50 @@ app.get('/api/notifications/:userId', async (req, res) => {
   } catch (error) { res.status(500).json({ error: "Failed to fetch notifications" }); }
 });
 
-app.delete('/api/notifications/:id', async (req, res) => {
+app.delete('/api/notifications/:id', auth, async (req, res) => {
   try {
-    const deleted = await Notification.findByIdAndDelete(req.params.id);
-    if (!deleted) return res.status(404).json({ error: "Notification not found" });
+    const notif = await Notification.findById(req.params.id);
+    if (!notif) return res.status(404).json({ error: "Notification not found" });
+    if (notif.recipient.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: "Access denied." });
+    }
+    await Notification.findByIdAndDelete(req.params.id);
     res.json({ message: "Notification deleted" });
   } catch (error) { res.status(500).json({ error: "Failed to delete notification" }); }
 });
 
-app.put('/api/notifications/read-all/:userId', async (req, res) => {
+app.put('/api/notifications/:id/read', auth, async (req, res) => {
+  try {
+    const notif = await Notification.findById(req.params.id);
+    if (!notif) return res.status(404).json({ error: "Notification not found" });
+    if (notif.recipient.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: "Access denied." });
+    }
+    notif.isRead = true;
+    await notif.save();
+    res.json({ message: "Notification marked as read", data: notif });
+  } catch (error) { res.status(500).json({ error: "Failed to mark notification as read" }); }
+});
+
+app.put('/api/notifications/read-all/:userId', auth, async (req, res) => {
+  if (req.user._id.toString() !== req.params.userId) {
+    return res.status(403).json({ error: "Access denied." });
+  }
   await Notification.updateMany({ recipient: req.params.userId }, { isRead: true });
   res.status(200).send("Updated");
 });
 
-app.get('/api/notifications/unread/:userId', async (req, res) => {
+app.get('/api/notifications/unread/:userId', auth, async (req, res) => {
   try {
+    if (req.user._id.toString() !== req.params.userId) {
+      return res.status(403).json({ error: "Access denied." });
+    }
     const count = await Notification.countDocuments({ recipient: req.params.userId, isRead: false });
     res.json({ count });
   } catch (error) { res.status(500).json({ error: "Failed to fetch count" }); }
 });
 
-app.post('/api/admin/announcements', async (req, res) => {
+app.post('/api/admin/announcements', auth, admin, async (req, res) => {
   try {
     const { title, message, type, expiresAt} = req.body;
     const newAnnouncement = new Announcement({ title, message, type, expiresAt: expiresAt || undefined });
@@ -958,7 +1047,7 @@ app.post('/api/admin/announcements', async (req, res) => {
 
 // Admin management list — all currently-live announcements (no 3-item cap),
 // used by the "Recent Dispatched Bulletins" panel for editing/deleting.
-app.get('/api/admin/announcements', async (req, res) => {
+app.get('/api/admin/announcements', auth, admin, async (req, res) => {
   try {
     const list = await Announcement.find().sort({ createdAt: -1 });
     res.json(list);
@@ -967,7 +1056,7 @@ app.get('/api/admin/announcements', async (req, res) => {
   }
 });
 
-app.put('/api/admin/announcements/:id', async (req, res) => {
+app.put('/api/admin/announcements/:id', auth, admin, async (req, res) => {
   try {
     const { title, message, type, expiresAt } = req.body;
     const updated = await Announcement.findByIdAndUpdate(
@@ -982,7 +1071,7 @@ app.put('/api/admin/announcements/:id', async (req, res) => {
   }
 });
 
-app.delete('/api/admin/announcements/:id', async (req, res) => {
+app.delete('/api/admin/announcements/:id', auth, admin, async (req, res) => {
   try {
     const deleted = await Announcement.findByIdAndDelete(req.params.id);
     if (!deleted) return res.status(404).json({ error: "Announcement not found" });
@@ -1015,9 +1104,12 @@ app.get('/api/announcements', async (req, res) => {
 // ==========================================
 
 // 📥 1. FETCH all collection folders belonging to a specific user
-app.get('/api/collections/:userId', async (req, res) => {
+app.get('/api/collections/:userId', auth, async (req, res) => {
   try {
     const { userId } = req.params;
+    if (req.user._id.toString() !== userId) {
+      return res.status(403).json({ error: "Access denied." });
+    }
     // Find all standalone collection documents matching this user's ID
     const userCollections = await Collection.find({ userId });
     res.status(200).json(userCollections || []);
@@ -1028,12 +1120,15 @@ app.get('/api/collections/:userId', async (req, res) => {
 });
 
 // 🛠️ 2. NEW CREATION ROUTE: Saves a brand new folder document linked to a user
-app.post('/api/collections/create', async (req, res) => {
+app.post('/api/collections/create', auth, async (req, res) => {
   try {
     const { userId, name, icon } = req.body;
 
     if (!userId || !name) {
       return res.status(400).json({ error: "Missing required userId or folder name parameters." });
+    }
+    if (req.user._id.toString() !== userId) {
+      return res.status(403).json({ error: "Access denied." });
     }
 
     const newCollection = new Collection({
@@ -1052,13 +1147,16 @@ app.post('/api/collections/create', async (req, res) => {
 });
 
 // ➕ 3. POST: Add a novel or article item to a specific collection folder
-app.post('/api/collections/:collectionId/add-item', async (req, res) => {
+app.post('/api/collections/:collectionId/add-item', auth, async (req, res) => {
   try {
     const { collectionId } = req.params;
     const { id, title, type, author } = req.body;
 
     const collection = await Collection.findById(collectionId);
     if (!collection) return res.status(404).json({ error: "Collection not found" });
+    if (collection.userId.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: "Access denied." });
+    }
 
     // Check if item already exists to prevent duplicates
     const exists = collection.savedItems.some(i => i._id === id);
@@ -1082,17 +1180,20 @@ app.post('/api/collections/:collectionId/add-item', async (req, res) => {
 
 // 🔥 👇 ADD THIS MISSING ROUTE HERE 👇 🔥
 // 🔍 4. GET: Fetch a single collection folder by its ID for the details page
-app.get('/api/collections/single/:collectionId', async (req, res) => {
+app.get('/api/collections/single/:collectionId', auth, async (req, res) => {
   try {
     const { collectionId } = req.params;
-    
+
     // Find the specific collection folder by its unique MongoDB _id
     const collectionFolder = await Collection.findById(collectionId);
-    
+
     if (!collectionFolder) {
       return res.status(404).json({ error: "Collection folder not found." });
     }
-    
+    if (collectionFolder.userId.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: "Access denied." });
+    }
+
     res.status(200).json(collectionFolder);
   } catch (error) {
     console.error("Error fetching single collection details:", error);
@@ -1105,10 +1206,14 @@ app.get('/api/collections/single/:collectionId', async (req, res) => {
 // ==========================================
 
 // 🗑️ 5. DELETE: Remove an entire collection folder
-app.delete('/api/collections/:id', async (req, res) => {
+app.delete('/api/collections/:id', auth, async (req, res) => {
   try {
-    const deleted = await Collection.findByIdAndDelete(req.params.id);
-    if (!deleted) return res.status(404).json({ error: 'Collection not found.' });
+    const collection = await Collection.findById(req.params.id);
+    if (!collection) return res.status(404).json({ error: 'Collection not found.' });
+    if (collection.userId.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: "Access denied." });
+    }
+    await Collection.findByIdAndDelete(req.params.id);
     res.json({ message: 'Collection deleted successfully.' });
   } catch (error) {
     console.error('Delete collection error:', error);
@@ -1117,11 +1222,14 @@ app.delete('/api/collections/:id', async (req, res) => {
 });
 
 // ✂️ 6. DELETE: Remove a single saved item from inside a collection
-app.delete('/api/collections/:collectionId/items/:itemId', async (req, res) => {
+app.delete('/api/collections/:collectionId/items/:itemId', auth, async (req, res) => {
   try {
     const { collectionId, itemId } = req.params;
     const collection = await Collection.findById(collectionId);
     if (!collection) return res.status(404).json({ error: 'Collection not found.' });
+    if (collection.userId.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: "Access denied." });
+    }
 
     collection.savedItems = collection.savedItems.filter(
       (item) => item._id.toString() !== itemId
@@ -1139,11 +1247,14 @@ app.delete('/api/collections/:collectionId/items/:itemId', async (req, res) => {
 // ==========================================
 
 // GET: Fetch user history
-app.get('/api/users/:userId/history', async (req, res) => {
+app.get('/api/users/:userId/history', auth, async (req, res) => {
   try {
+    if (req.user._id.toString() !== req.params.userId) {
+      return res.status(403).json({ error: "Access denied." });
+    }
     const user = await User.findById(req.params.userId);
     if (!user) return res.status(404).json({ error: "User not found" });
-    
+
     // Sort history by lastRead descending (newest first)
     const history = user.readingHistory.sort((a, b) => b.lastRead - a.lastRead);
     res.json(history);
@@ -1154,8 +1265,11 @@ app.get('/api/users/:userId/history', async (req, res) => {
 });
 
 // GET: Fetch user reading stats (streak, progress, checklist)
-app.get('/api/users/:userId/reading-stats', async (req, res) => {
+app.get('/api/users/:userId/reading-stats', auth, async (req, res) => {
   try {
+    if (req.user._id.toString() !== req.params.userId) {
+      return res.status(403).json({ error: "Access denied." });
+    }
     const user = await User.findById(req.params.userId);
     if (!user) return res.status(404).json({ error: "User not found" });
 
@@ -1230,8 +1344,11 @@ app.get('/api/users/:userId/reading-stats', async (req, res) => {
 });
 
 // POST: Add or update item in history
-app.post('/api/users/:userId/history', async (req, res) => {
+app.post('/api/users/:userId/history', auth, async (req, res) => {
   try {
+    if (req.user._id.toString() !== req.params.userId) {
+      return res.status(403).json({ error: "Access denied." });
+    }
     const { contentId, title, type, coverPhoto } = req.body;
     const user = await User.findById(req.params.userId);
     if (!user) return res.status(404).json({ error: "User not found" });
@@ -1265,9 +1382,12 @@ app.post('/api/users/:userId/history', async (req, res) => {
 });
 
 // DELETE: Remove a single item from history
-app.delete('/api/users/:userId/history/:contentId', async (req, res) => {
+app.delete('/api/users/:userId/history/:contentId', auth, async (req, res) => {
   try {
     const { userId, contentId } = req.params;
+    if (req.user._id.toString() !== userId) {
+      return res.status(403).json({ error: "Access denied." });
+    }
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ error: "User not found" });
 
@@ -1282,8 +1402,11 @@ app.delete('/api/users/:userId/history/:contentId', async (req, res) => {
 });
 
 // DELETE: Clear all history
-app.delete('/api/users/:userId/history', async (req, res) => {
+app.delete('/api/users/:userId/history', auth, async (req, res) => {
   try {
+    if (req.user._id.toString() !== req.params.userId) {
+      return res.status(403).json({ error: "Access denied." });
+    }
     const user = await User.findById(req.params.userId);
     if (!user) return res.status(404).json({ error: "User not found" });
 
@@ -1301,8 +1424,11 @@ app.delete('/api/users/:userId/history', async (req, res) => {
 // 🤖 AI RECOMMENDATION ENGINE
 // ==========================================
 
-app.get('/api/recommendations/:userId', async (req, res) => {
+app.get('/api/recommendations/:userId', auth, async (req, res) => {
   try {
+    if (req.user._id.toString() !== req.params.userId) {
+      return res.status(403).json({ error: "Access denied." });
+    }
     const user = await User.findById(req.params.userId);
     if (!user) return res.status(404).json({ error: "User not found" });
 
@@ -1467,11 +1593,14 @@ app.get('/api/users/search', async (req, res) => {
 });
 
 // Fetch conversation list for a user
-app.get('/api/messages/conversations/:userId', async (req, res) => {
+app.get('/api/messages/conversations/:userId', auth, async (req, res) => {
   try {
     const { userId } = req.params;
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).json({ error: "Invalid user ID" });
+    }
+    if (req.user._id.toString() !== userId) {
+      return res.status(403).json({ error: "Access denied." });
     }
 
     const messages = await Message.find({
@@ -1483,7 +1612,7 @@ app.get('/api/messages/conversations/:userId', async (req, res) => {
       const otherUserId = msg.sender.toString() === userId ? msg.receiver.toString() : msg.sender.toString();
       if (!convMap[otherUserId]) {
         convMap[otherUserId] = {
-          lastMessage: msg.text,
+          lastMessage: decryptText(msg.text),
           lastMessageAt: msg.createdAt,
           unreadCount: 0
         };
@@ -1521,11 +1650,14 @@ app.get('/api/messages/conversations/:userId', async (req, res) => {
 });
 
 // Get messages between two users
-app.get('/api/messages/:userId/:otherUserId', async (req, res) => {
+app.get('/api/messages/:userId/:otherUserId', auth, async (req, res) => {
   try {
     const { userId, otherUserId } = req.params;
     if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(otherUserId)) {
       return res.status(400).json({ error: "Invalid user IDs" });
+    }
+    if (req.user._id.toString() !== userId) {
+      return res.status(403).json({ error: "Access denied." });
     }
 
     const messages = await Message.find({
@@ -1535,7 +1667,16 @@ app.get('/api/messages/:userId/:otherUserId', async (req, res) => {
       ]
     }).sort({ createdAt: 1 });
 
-    res.json({ messages });
+    const decrypted = messages.map((m) => {
+      const obj = m.toObject();
+      obj.text = decryptText(obj.text);
+      if (obj.replyTo && obj.replyTo.text) {
+        obj.replyTo.text = decryptText(obj.replyTo.text);
+      }
+      return obj;
+    });
+
+    res.json({ messages: decrypted });
   } catch (error) {
     console.error("Get messages error:", error);
     res.status(500).json({ error: "Server error fetching messages" });
@@ -1543,31 +1684,150 @@ app.get('/api/messages/:userId/:otherUserId', async (req, res) => {
 });
 
 // Send message
-app.post('/api/messages', async (req, res) => {
+app.post('/api/messages', auth, async (req, res) => {
   try {
-    const { senderId, receiverId, text } = req.body;
-    if (!senderId || !receiverId || !text) {
+    const { receiverId, text, replyTo, forwarded } = req.body;
+    const senderId = req.user._id.toString();
+    if (!receiverId || !text) {
       return res.status(400).json({ error: "Missing required fields" });
     }
+
+    const plainText = text.trim();
+    const plainReplyText = replyTo && replyTo.messageId ? replyTo.text : undefined;
 
     const newMsg = new Message({
       sender: senderId,
       receiver: receiverId,
-      text: text.trim()
+      text: encryptText(plainText),
+      forwarded: !!forwarded,
+      replyTo: replyTo && replyTo.messageId ? {
+        messageId: replyTo.messageId,
+        text: encryptText(plainReplyText),
+        senderUsername: replyTo.senderUsername
+      } : undefined
     });
 
     await newMsg.save();
-    res.status(201).json({ message: "Message sent!", data: newMsg });
+
+    const senderName = req.user.username || 'Someone';
+    const preview = plainText.length > 80 ? `${plainText.slice(0, 80)}…` : plainText;
+    const newNotif = new Notification({
+      recipient: receiverId,
+      sender: senderId,
+      senderName,
+      type: 'message',
+      message: preview
+    });
+    await newNotif.save();
+
+    // Respond with the plaintext version — the client already has it, no need to decrypt a round-trip
+    const responseMsg = newMsg.toObject();
+    responseMsg.text = plainText;
+    if (responseMsg.replyTo) {
+      responseMsg.replyTo.text = plainReplyText;
+    }
+
+    res.status(201).json({ message: "Message sent!", data: responseMsg });
   } catch (error) {
     console.error("Send message error:", error);
     res.status(500).json({ error: "Server error sending message" });
   }
 });
 
+// Delete a message (sender only — removes it for both sides, like Telegram's "delete for everyone")
+app.delete('/api/messages/:id', auth, async (req, res) => {
+  try {
+    const msg = await Message.findById(req.params.id);
+    if (!msg) return res.status(404).json({ error: "Message not found" });
+    if (msg.sender.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: "You can only delete messages you sent." });
+    }
+    await Message.findByIdAndDelete(req.params.id);
+    res.json({ message: "Message deleted" });
+  } catch (error) {
+    console.error("Delete message error:", error);
+    res.status(500).json({ error: "Server error deleting message" });
+  }
+});
+
+// Edit a message (sender only)
+app.put('/api/messages/:id', auth, async (req, res) => {
+  try {
+    const { text } = req.body;
+    if (!text || !text.trim()) {
+      return res.status(400).json({ error: "Message text is required" });
+    }
+    const msg = await Message.findById(req.params.id);
+    if (!msg) return res.status(404).json({ error: "Message not found" });
+    if (msg.sender.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: "You can only edit messages you sent." });
+    }
+    const plainText = text.trim();
+    msg.text = encryptText(plainText);
+    msg.edited = true;
+    await msg.save();
+
+    const responseMsg = msg.toObject();
+    responseMsg.text = plainText;
+    if (responseMsg.replyTo && responseMsg.replyTo.text) {
+      responseMsg.replyTo.text = decryptText(responseMsg.replyTo.text);
+    }
+
+    res.json({ message: "Message updated", data: responseMsg });
+  } catch (error) {
+    console.error("Edit message error:", error);
+    res.status(500).json({ error: "Server error editing message" });
+  }
+});
+
+// Toggle a reaction on a message (either participant in the conversation)
+app.put('/api/messages/:id/react', auth, async (req, res) => {
+  try {
+    const { emoji } = req.body;
+    if (!emoji) return res.status(400).json({ error: "Emoji is required" });
+
+    const msg = await Message.findById(req.params.id);
+    if (!msg) return res.status(404).json({ error: "Message not found" });
+
+    const userId = req.user._id.toString();
+    const isParticipant = msg.sender.toString() === userId || msg.receiver.toString() === userId;
+    if (!isParticipant) {
+      return res.status(403).json({ error: "Access denied." });
+    }
+
+    const existingIndex = msg.reactions.findIndex(r => r.userId.toString() === userId);
+    if (existingIndex !== -1 && msg.reactions[existingIndex].emoji === emoji) {
+      // Same emoji tapped again → remove reaction
+      msg.reactions.splice(existingIndex, 1);
+    } else if (existingIndex !== -1) {
+      // Different emoji → replace
+      msg.reactions[existingIndex].emoji = emoji;
+    } else {
+      msg.reactions.push({ userId, emoji });
+    }
+
+    await msg.save();
+
+    const responseMsg = msg.toObject();
+    responseMsg.text = decryptText(responseMsg.text);
+    if (responseMsg.replyTo && responseMsg.replyTo.text) {
+      responseMsg.replyTo.text = decryptText(responseMsg.replyTo.text);
+    }
+
+    res.json({ message: "Reaction updated", data: responseMsg });
+  } catch (error) {
+    console.error("React to message error:", error);
+    res.status(500).json({ error: "Server error updating reaction" });
+  }
+});
+
 // Mark messages as read
-app.put('/api/messages/read/:senderId/:receiverId', async (req, res) => {
+app.put('/api/messages/read/:senderId/:receiverId', auth, async (req, res) => {
   try {
     const { senderId, receiverId } = req.params;
+    if (req.user._id.toString() !== receiverId) {
+      return res.status(403).json({ error: "Access denied." });
+    }
     await Message.updateMany(
       { sender: senderId, receiver: receiverId, read: false },
       { $set: { read: true } }
@@ -1580,8 +1840,11 @@ app.put('/api/messages/read/:senderId/:receiverId', async (req, res) => {
 });
 
 // Get total unread count for a user (across all conversations)
-app.get('/api/messages/unread-count/:userId', async (req, res) => {
+app.get('/api/messages/unread-count/:userId', auth, async (req, res) => {
   try {
+    if (req.user._id.toString() !== req.params.userId) {
+      return res.status(403).json({ error: "Access denied." });
+    }
     const count = await Message.countDocuments({ receiver: req.params.userId, read: false });
     res.json({ count });
   } catch (error) {
@@ -1626,7 +1889,7 @@ app.post('/api/bot/message', async (req, res) => {
     // ── Browse / Explore Library ──
     else if (has('browse', 'explore', 'library', 'find book', 'find novel', 'search book', 'search story', 'discover', 'what is available', 'what can i read', 'catalog')) {
       const count = await Novel.countDocuments({ status: 'published' }) + await Article.countDocuments({ status: 'published' });
-      reply = `Our library currently has ${count} published works! 🏛️\n\nTo browse:\n1. Use the 'Library' link in the sidebar\n2. Filter by genre, type (novel/article), or author\n3. Use the search bar at the top to find specific titles\n4. Check the '🔥 Trending Now' section on the home page`;
+      reply = `Our library currently has ${count} published works! 🏛️\n\nTo browse:\n1. Use the 'Library' link in the sidebar\n2. Filter by genre, type (story/article), or author\n3. Use the search bar at the top to find specific titles\n4. Check the '🔥 Trending Now' section on the home page`;
     }
 
     // ── Genres ──
@@ -1638,22 +1901,22 @@ app.post('/api/bot/message', async (req, res) => {
 
     // ── Become a Writer ──
     else if (has('become a writer', 'how to write', 'how do i write', 'want to write', 'start writing', 'apply writer', 'writer application', 'can i publish', 'how to publish', 'create story', 'write a novel', 'write a story')) {
-      reply = "Becoming a writer is easy! ✍️\n\nSteps:\n1. Go to your Reader Portal (home page)\n2. Open the sidebar and click '✍️ Become a Writer'\n3. Submit your application\n4. Wait for Admin approval (usually quick!)\n5. Once approved, you'll see the 'Writer Portal' in the sidebar\n\nIn the Writer Portal you can:\n📖 Publish novels with chapters\n📝 Publish articles\n📊 Track views, likes & comments\n📢 Create announcements";
+      reply = "Becoming a writer is easy! ✍️\n\nSteps:\n1. Go to your Reader Portal (home page)\n2. Open the sidebar and click '✍️ Become a Writer'\n3. Submit your application\n4. Wait for Admin approval (usually quick!)\n5. Once approved, you'll see the 'Writer Portal' in the sidebar\n\nIn the Writer Portal you can:\n📖 Publish stories with chapters\n📝 Publish articles\n📊 Track views, likes & comments\n📢 Create announcements";
     }
 
     // ── Writer Dashboard / Portal ──
     else if (has('writer dashboard', 'writer portal', 'writer panel', 'manage story', 'manage novel', 'edit story', 'edit novel', 'update chapter', 'add chapter', 'upload chapter')) {
-      reply = "The Writer Portal is your creative hub! 🖊️\n\nFrom the Writer Portal sidebar you can:\n📖 Create & manage Novels (add chapters, cover art)\n📝 Write & publish Articles\n📊 View your story analytics (views, likes, comments)\n💬 Read & reply to reader comments\n📢 Post Announcements to your readers\n\nAccess it from the left sidebar after becoming an approved writer.";
+      reply = "The Writer Portal is your creative hub! 🖊️\n\nFrom the Writer Portal sidebar you can:\n📖 Create & manage Stories (add chapters, cover art)\n📝 Write & publish Articles\n📊 View your story analytics (views, likes, comments)\n💬 Read & reply to reader comments\n📢 Post Announcements to your readers\n\nAccess it from the left sidebar after becoming an approved writer.";
     }
 
     // ── Comments & Reviews ──
     else if (has('comment', 'review', 'leave a review', 'rate', 'rating', 'feedback', 'opinion', 'reply to comment')) {
-      reply = "Interacting with stories is easy! 💬\n\nTo leave a comment:\n1. Open any novel chapter or article\n2. Scroll to the bottom\n3. Type in the comment box and hit 'Post'\n\nYou can also:\n↩️ Reply to other readers' comments\n❤️ Like a story by clicking the heart button\n🗑️ Delete your own comments anytime\n\nWriters can also delete any comments on their own stories.";
+      reply = "Interacting with stories is easy! 💬\n\nTo leave a comment:\n1. Open any story chapter or article\n2. Scroll to the bottom\n3. Type in the comment box and hit 'Post'\n\nYou can also:\n↩️ Reply to other readers' comments\n❤️ Like a story by clicking the heart button\n🗑️ Delete your own comments anytime\n\nWriters can also delete any comments on their own stories.";
     }
 
     // ── Likes & Favorites ──
     else if (has('like', 'unlike', 'heart', 'favorite', 'favourit', 'save story', 'save novel', 'bookmark', 'save for later', 'wish list', 'saved')) {
-      reply = "Saving stories is super easy! ❤️\n\nTo Favorite a story:\n• Click the ❤️ heart button on any story page\n\nTo view your Favorites:\n• Sidebar → 'Favorites' section\n• Filter by All / Novels / Articles using the tabs\n\nTo organize into Collections:\n• Click '+ Add to Collection' on any story\n• Create custom named shelves\n• Find them under sidebar → 'My Library'";
+      reply = "Saving stories is super easy! ❤️\n\nTo Favorite a story:\n• Click the ❤️ heart button on any story page\n\nTo view your Favorites:\n• Sidebar → 'Favorites' section\n• Filter by All / Stories / Articles using the tabs\n\nTo organize into Collections:\n• Click '+ Add to Collection' on any story\n• Create custom named shelves\n• Find them under sidebar → 'My Library'";
     }
 
     // ── Collections / Shelves ──
@@ -1703,22 +1966,22 @@ app.post('/api/bot/message', async (req, res) => {
 
     // ── Search ──
     else if (has('search', 'how to search', 'find', 'look for', 'look up', 'query')) {
-      reply = "Finding stories is easy! 🔍\n\nWays to discover content:\n1. Use the Search bar at the top of the Library page\n2. Filter by genre, type (novel/article), or date\n3. Browse the '🔥 Trending Now' section on home\n4. Check '✨ AI Recommendations' on your dashboard\n5. Ask me: 'Suggest a story' and I'll pull from the database!";
+      reply = "Finding stories is easy! 🔍\n\nWays to discover content:\n1. Use the Search bar at the top of the Library page\n2. Filter by genre, type (story/article), or date\n3. Browse the '🔥 Trending Now' section on home\n4. Check '✨ AI Recommendations' on your dashboard\n5. Ask me: 'Suggest a story' and I'll pull from the database!";
     }
 
     // ── Reading Progress / Chapters ──
     else if (has('chapter', 'next chapter', 'previous chapter', 'chapter list', 'table of content', 'toc', 'progress', 'continue', 'page')) {
-      reply = "Navigating chapters is intuitive! 📑\n\nInside a novel:\n• Use 'Next Chapter' / 'Previous Chapter' buttons at the bottom\n• Click the chapter name in the header to see the full chapter list\n• Your progress is auto-saved so you can continue anytime\n\nTo resume reading:\n• Sidebar → 'Reading History' → click the story to jump back in";
+      reply = "Navigating chapters is intuitive! 📑\n\nInside a story:\n• Use 'Next Chapter' / 'Previous Chapter' buttons at the bottom\n• Click the chapter name in the header to see the full chapter list\n• Your progress is auto-saved so you can continue anytime\n\nTo resume reading:\n• Sidebar → 'Reading History' → click the story to jump back in";
     }
 
     // ── What is this site / About ──
     else if (has('what is this', 'about', 'what can i do', 'platform', 'site', 'website', 'this app', 'how does this work', 'features')) {
-      reply = "Welcome to Lumiverse! 📖✨\n\nThis is a site for publishing creative works, where:\n\n👀 Readers can:\n• Browse and read novels & articles\n• Save favorites and organize collections\n• Comment, like and interact with writers\n• Get AI-powered personalized recommendations\n\n✍️ Writers can:\n• Publish novels (with chapters) & articles\n• Track views, likes and reader engagement\n• Chat directly with readers\n• Post announcements\n\nEverything is themed, personalized, and designed for book lovers!";
+      reply = "Welcome to Lumiverse! 📖✨\n\nThis is a site for publishing creative works, where:\n\n👀 Readers can:\n• Browse and read stories & articles\n• Save favorites and organize collections\n• Comment, like and interact with writers\n• Get AI-powered personalized recommendations\n\n✍️ Writers can:\n• Publish stories (with chapters) & articles\n• Track views, likes and reader engagement\n• Chat directly with readers\n• Post announcements\n\nEverything is themed, personalized, and designed for book lovers!";
     }
 
     // ── Help / General ──
     else if (has('help', 'support', 'how do i', 'how to', 'guide', 'tutorial', 'instructions', 'explain', 'what', 'show me')) {
-      reply = "I'm here to help! 🤖 Here's what I can assist with:\n\n📚 Stories — 'Suggest a novel' or 'Browse library'\n✍️ Writing — 'How to become a writer'\n🎨 Themes — 'Change my theme'\n❤️ Saving — 'How to favorite a story'\n💬 Messaging — 'How to chat with writers'\n🔑 Account — 'Login help' or 'Change password'\n📖 Reading — 'View my reading history'\n🏷️ Genres — 'Show me fantasy novels'\n\nJust ask naturally — I understand plain language!";
+      reply = "I'm here to help! 🤖 Here's what I can assist with:\n\n📚 Stories — 'Suggest a story' or 'Browse library'\n✍️ Writing — 'How to become a writer'\n🎨 Themes — 'Change my theme'\n❤️ Saving — 'How to favorite a story'\n💬 Messaging — 'How to chat with writers'\n🔑 Account — 'Login help' or 'Change password'\n📖 Reading — 'View my reading history'\n🏷️ Genres — 'Show me fantasy stories'\n\nJust ask naturally — I understand plain language!";
     }
 
     // ── Thank you ──

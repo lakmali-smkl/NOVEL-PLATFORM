@@ -36,6 +36,8 @@ const RequestWriter = ({ user, setUser }) => {
         userId: user._id,
         username: user.username,
         reason: reason
+      }, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
 
       // 2. Update local UI state
@@ -65,11 +67,11 @@ const RequestWriter = ({ user, setUser }) => {
               <div className="request-icon-badge">✍️</div>
               <span className="writer-tag">JOIN THE TEAM</span>
               <h2>Become a Writer</h2>
-              <p>Apply to get publishing rights and manage your own novels.</p>
+              <p>Apply to get publishing rights and manage your own stories.</p>
             </div>
 
             <ul className="writer-perks-list">
-              <li><span className="perk-icon">📚</span> Publish unlimited novels &amp; articles</li>
+              <li><span className="perk-icon">📚</span> Publish unlimited stories &amp; articles</li>
               <li><span className="perk-icon">📊</span> Track live readership &amp; engagement metrics</li>
               <li><span className="perk-icon">💬</span> Chat directly with your readers</li>
             </ul>

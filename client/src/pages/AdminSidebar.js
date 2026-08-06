@@ -8,11 +8,15 @@ import { API_BASE_URL } from '../config';
 const AdminSidebar = ({ user, closeSidebar }) => {
   const location = useLocation();
   const [pendingCount, setPendingCount] = useState(0);
+  const [unreadMsgCount, setUnreadMsgCount] = useState(0);
+  const [unreadNotifCount, setUnreadNotifCount] = useState(0);
 
   useEffect(() => {
     const fetchPendingCount = async () => {
       try {
-        const res = await axios.get(`${API_BASE_URL}/api/admin/writer-requests`);
+        const res = await axios.get(`${API_BASE_URL}/api/admin/writer-requests`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        });
         const pending = Array.isArray(res.data)
           ? res.data.filter((r) => r.status === 'pending').length
           : 0;
@@ -27,37 +31,90 @@ const AdminSidebar = ({ user, closeSidebar }) => {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    if (!user?._id) return;
+    const fetchUnreadCounts = async () => {
+      try {
+        const authHeaders = { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } };
+        const [msgRes, notifRes] = await Promise.all([
+          axios.get(`${API_BASE_URL}/api/messages/unread-count/${user._id}`, authHeaders),
+          axios.get(`${API_BASE_URL}/api/notifications/unread/${user._id}`, authHeaders)
+        ]);
+        setUnreadMsgCount(msgRes.data.count || 0);
+        setUnreadNotifCount(notifRes.data.count || 0);
+      } catch (err) {
+        console.error('Error fetching unread counts', err);
+      }
+    };
+
+    fetchUnreadCounts();
+    const interval = setInterval(fetchUnreadCounts, 30000);
+    window.addEventListener('notifications-updated', fetchUnreadCounts);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('notifications-updated', fetchUnreadCounts);
+    };
+  }, [user]);
+
   const menuItems = [
     { path: '/admin/dashboard',      label: 'Dashboard',        icon: '📊' },
     { path: '/admin/writer-requests', label: 'Writer Requests', icon: '🔔', badge: pendingCount },
     { path: '/admin/manage-users',   label: 'User Directory',   icon: '👥' },
     { path: '/admin/global-content', label: 'Content Oversight', icon: '📚' },
+    { path: '/admin/announcements',  label: 'Announcements',    icon: '📢' },
     { path: '/admin/analytics',      label: 'Site Growth',      icon: '📈' },
+    { path: '/chat',                 label: 'Messages',         icon: '💬', badge: unreadMsgCount },
+    { path: '/notifications',        label: 'Notifications',    icon: '🔔', badge: unreadNotifCount },
   ];
+
+  // Admins also get full writer capabilities, reusing the same routes/pages as the Writer Portal
+  const writerMenuItems = [
+    { path: '/writer-dashboard',       label: 'Writer Dashboard', icon: '🖋️' },
+    { path: '/add-novel',              label: 'Create Story',     icon: '📖' },
+    { path: '/add-article',            label: 'Create Article',   icon: '📝' },
+    { path: '/writer-dashboard/works', label: 'My Works',         icon: '🗂️' },
+  ];
+
+  const renderNavItem = (item) => (
+    <Link
+      key={item.path}
+      to={item.path}
+      className={`admin-nav-item ${location.pathname === item.path ? 'active' : ''}`}
+      onClick={closeSidebar}
+    >
+      <span className="admin-icon">{item.icon}</span>
+      <span className="admin-nav-label">{item.label}</span>
+      {!!item.badge && <span className="admin-nav-badge">{item.badge}</span>}
+    </Link>
+  );
 
   return (
     <div className="admin-sidebar">
-      {/* ── Pinned header with profile card ── */}
+      {/* ── Sticky header — always visible, never requires scrolling ── */}
       <div className="admin-sidebar-header">
         <div className="admin-badge">ADMIN</div>
         <h4>Control Panel</h4>
         {user && <SidebarProfile user={user} />}
+        <div className="admin-header-quicklinks">
+          <Link to="/dashboard/profile" className="admin-quicklink" onClick={closeSidebar}>
+            👤 Profile
+          </Link>
+          <Link to="/dashboard/settings" className="admin-quicklink" onClick={closeSidebar}>
+            ⚙️ Settings
+          </Link>
+        </div>
       </div>
 
       {/* ── Scrollable nav ── */}
       <nav className="admin-sidebar-nav">
-        {menuItems.map((item) => (
-          <Link
-            key={item.path}
-            to={item.path}
-            className={`admin-nav-item ${location.pathname === item.path ? 'active' : ''}`}
-            onClick={closeSidebar}
-          >
-            <span className="admin-icon">{item.icon}</span>
-            <span className="admin-nav-label">{item.label}</span>
-            {!!item.badge && <span className="admin-nav-badge">{item.badge}</span>}
-          </Link>
-        ))}
+        {menuItems.map(renderNavItem)}
+
+        <div className="admin-nav-divider">
+          <span>Writer Tools</span>
+        </div>
+        <div className="admin-writer-tools-grid">
+          {writerMenuItems.map(renderNavItem)}
+        </div>
       </nav>
     </div>
   );

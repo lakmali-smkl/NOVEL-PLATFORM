@@ -31,8 +31,9 @@ const Favorites = () => {
   const handleDelete = async (contentId) => {
     if (window.confirm("Remove from favorites?")) {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/users/${user._id}/favorites/${contentId}`, { 
-          method: 'DELETE' 
+        const response = await fetch(`${API_BASE_URL}/api/users/${user._id}/favorites/${contentId}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         });
         
         if (response.ok) {
@@ -61,7 +62,7 @@ const Favorites = () => {
     <div className="fav-content">
       <div className="fav-header-section">
         <h2>My Saved Favorites</h2>
-        <p className="fav-subtitle">Access your favorite novels and articles in one place.</p>
+        <p className="fav-subtitle">Access your favorite stories and articles in one place.</p>
       </div>
 
       {/* Premium Tab Switcher */}
@@ -76,7 +77,7 @@ const Favorites = () => {
           className={`fav-tab ${activeTab === 'novel' ? 'active' : ''}`}
           onClick={() => setActiveTab('novel')}
         >
-          📖 Novels <span className="tab-count">{countByType('novel')}</span>
+          📖 Stories <span className="tab-count">{countByType('novel')}</span>
         </button>
         <button 
           className={`fav-tab ${activeTab === 'article' ? 'active' : ''}`}
@@ -91,7 +92,7 @@ const Favorites = () => {
           filteredFavs.map(item => (
             <div key={item.contentId} className="fav-card">
               <div className="fav-card-type-tag">
-                {item.type === 'novel' ? '📖 Novel' : '📝 Article'}
+                {item.type === 'novel' ? '📖 Story' : '📝 Article'}
               </div>
               <h3>{item.title}</h3>
               <div className="fav-actions">

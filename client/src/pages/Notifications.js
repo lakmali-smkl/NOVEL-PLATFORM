@@ -18,6 +18,7 @@ const getIcon = (type) => {
     case 'like': return '❤️';
     case 'comment': return '💬';
     case 'reply': return '↩️';
+    case 'message': return '✉️';
     default: return '🔔';
   }
 };
@@ -28,6 +29,7 @@ const getBadgeColor = (type) => {
     case 'comment':
     case 'reply':
       return 'badge-comment';
+    case 'message': return 'badge-message';
     default: return 'badge-default';
   }
 };
@@ -37,14 +39,19 @@ const Notifications = ({ user }) => {
   const [filter, setFilter] = useState('all');
   const [loading, setLoading] = useState(true);
 
+  // Sidebars poll their own unread badge — this tells them to refresh right away
+  // instead of waiting for the next polling tick.
+  const notifyUnreadCountChanged = () => {
+    window.dispatchEvent(new Event('notifications-updated'));
+  };
+
   const fetchNotifications = useCallback(async () => {
     if (!user?._id) return;
     try {
       setLoading(true);
-      const res = await axios.get(`${API_BASE_URL}/api/notifications/${user._id}`);
+      const authHeaders = { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } };
+      const res = await axios.get(`${API_BASE_URL}/api/notifications/${user._id}`, authHeaders);
       setNotifications(res.data || []);
-      // Mark all as read silently
-      await axios.put(`${API_BASE_URL}/api/notifications/read-all/${user._id}`);
     } catch (err) {
       console.error('Error fetching notifications', err);
     } finally {
@@ -56,21 +63,41 @@ const Notifications = ({ user }) => {
     fetchNotifications();
   }, [fetchNotifications]);
 
+  // Mark a single notification as read (called when the user actually opens it)
+  const handleMarkRead = async (id) => {
+    try {
+      await axios.put(`${API_BASE_URL}/api/notifications/${id}/read`, {}, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
+      setNotifications((prev) => prev.map((n) => n._id === id ? { ...n, isRead: true } : n));
+      notifyUnreadCountChanged();
+    } catch (err) {
+      console.error('Error marking notification as read', err);
+    }
+  };
+
   const handleDelete = async (id, e) => {
     e.preventDefault();
     e.stopPropagation();
+    const wasUnread = notifications.find((n) => n._id === id)?.isRead === false;
     try {
-      await axios.delete(`${API_BASE_URL}/api/notifications/${id}`);
+      await axios.delete(`${API_BASE_URL}/api/notifications/${id}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
       setNotifications((prev) => prev.filter((n) => n._id !== id));
+      if (wasUnread) notifyUnreadCountChanged();
     } catch (err) {
       console.error('Error deleting notification', err);
     }
   };
 
   const handleClearAll = async () => {
+    const hadUnread = notifications.some((n) => !n.isRead);
     try {
-      await Promise.all(notifications.map((n) => axios.delete(`${API_BASE_URL}/api/notifications/${n._id}`)));
+      const authHeaders = { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } };
+      await Promise.all(notifications.map((n) => axios.delete(`${API_BASE_URL}/api/notifications/${n._id}`, authHeaders)));
       setNotifications([]);
+      if (hadUnread) notifyUnreadCountChanged();
     } catch (err) {
       console.error('Error clearing all notifications', err);
     }
@@ -86,10 +113,15 @@ const Notifications = ({ user }) => {
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
   const resolveLink = (n) => {
+    if (n.type === 'message') {
+      return n.senderName ? `/chat/${n.senderName}` : null;
+    }
+
     let type = n.contentType;
     if (!type && n.message) {
-      if (n.message.toLowerCase().includes('novel')) type = 'novel';
-      else if (n.message.toLowerCase().includes('article')) type = 'article';
+      const msg = n.message.toLowerCase();
+      if (msg.includes('novel') || msg.includes('story')) type = 'novel';
+      else if (msg.includes('article')) type = 'article';
     }
     if (!n.contentId || !type) return null;
 
@@ -168,17 +200,34 @@ const Notifications = ({ user }) => {
               const link = resolveLink(n);
               const isUnread = !n.isRead;
 
+              const isMessage = n.type === 'message';
+
               const inner = (
-                <div className={`notif-item ${isUnread ? 'unread' : 'read'}`}>
-                  <div className={`notif-icon-wrap ${getBadgeColor(n.type)}`}>
-                    <span className="notif-icon">{getIcon(n.type)}</span>
-                  </div>
+                <div className={`notif-item ${isUnread ? 'unread' : 'read'} ${isMessage ? 'notif-item-message' : ''}`}>
+                  {isMessage ? (
+                    <div className="notif-avatar">
+                      {(n.senderName || '?').charAt(0).toUpperCase()}
+                    </div>
+                  ) : (
+                    <div className={`notif-icon-wrap ${getBadgeColor(n.type)}`}>
+                      <span className="notif-icon">{getIcon(n.type)}</span>
+                    </div>
+                  )}
                   <div className="notif-content">
-                    <p className="notif-message">{n.message}</p>
+                    {isMessage ? (
+                      <>
+                        <p className="notif-sender-name">{n.senderName || 'Someone'}</p>
+                        <p className="notif-message notif-message-preview">{n.message || 'Sent you a message'}</p>
+                      </>
+                    ) : (
+                      <p className="notif-message">{n.message}</p>
+                    )}
                     <span className="notif-meta">
                       <span className="notif-time">{timeAgo(n.createdAt)}</span>
                       {link && (
-                        <span className="notif-go-label">Click to view →</span>
+                        <span className="notif-go-label">
+                          {isMessage ? 'Open chat →' : 'Click to view →'}
+                        </span>
                       )}
                     </span>
                   </div>
@@ -193,12 +242,16 @@ const Notifications = ({ user }) => {
                 </div>
               );
 
+              const handleOpen = () => {
+                if (isUnread) handleMarkRead(n._id);
+              };
+
               return link ? (
-                <Link key={n._id} to={link} className="notif-link-row">
+                <Link key={n._id} to={link} className="notif-link-row" onClick={handleOpen}>
                   {inner}
                 </Link>
               ) : (
-                <div key={n._id} className="notif-link-row">
+                <div key={n._id} className="notif-link-row" onClick={handleOpen}>
                   {inner}
                 </div>
               );

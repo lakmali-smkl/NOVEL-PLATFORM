@@ -46,9 +46,10 @@ const Home = ({ user }) => {
 
     if (user) {
       const userId = user._id || user.id;
+      const authHeaders = { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } };
 
       // Fetch Reading Stats
-      fetch(`${API_BASE_URL}/api/users/${userId}/reading-stats`)
+      fetch(`${API_BASE_URL}/api/users/${userId}/reading-stats`, authHeaders)
         .then(res => res.json())
         .then(data => {
           if (data && !data.error) {
@@ -71,7 +72,7 @@ const Home = ({ user }) => {
       }
 
       // Collections Count
-      fetch(`${API_BASE_URL}/api/collections/${userId}`)
+      fetch(`${API_BASE_URL}/api/collections/${userId}`, authHeaders)
         .then(res => res.json())
         .then(data => {
           if (Array.isArray(data)) {
@@ -81,7 +82,7 @@ const Home = ({ user }) => {
         .catch(() => {});
 
       // History
-      fetch(`${API_BASE_URL}/api/users/${userId}/history`)
+      fetch(`${API_BASE_URL}/api/users/${userId}/history`, authHeaders)
         .then(res => res.json())
         .then(data => {
           if (Array.isArray(data)) {

@@ -75,6 +75,29 @@
   transform: translateX(5px);
 }
 
+.writer-sidebar-content ul li button.nav-item-button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 15px;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  font-size: 0.9rem;
+  font-family: inherit;
+  text-align: left;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.writer-sidebar-content ul li button.nav-item-button:hover {
+  background: rgba(255, 51, 51, 0.05);
+  color: var(--text-main);
+  transform: translateX(5px);
+}
+
 /* Active Page State */
 .writer-sidebar-content ul li a.active {
   background: rgba(255, 51, 51, 0.1);

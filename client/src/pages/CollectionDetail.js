@@ -9,7 +9,9 @@ const CollectionDetail = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/api/collections/single/${collectionId}`)
+    fetch(`${API_BASE_URL}/api/collections/single/${collectionId}`, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+    })
       .then((res) => {
         if (!res.ok) throw new Error("Failed to load collection details.");
         return res.json();
@@ -30,7 +32,10 @@ const CollectionDetail = () => {
     try {
       const res = await fetch(
         `${API_BASE_URL}/api/collections/${collectionId}/items/${itemId}`,
-        { method: 'DELETE' }
+        {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        }
       );
       if (!res.ok) throw new Error('Failed');
       setCollection(prev => ({
@@ -67,7 +72,7 @@ const CollectionDetail = () => {
       <div className="saved-items-list" style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
         {!collection.savedItems || collection.savedItems.length === 0 ? (
           <div className="empty-collection-state" style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
-            <p>This collection is empty. Go to a novel or article page to add items here!</p>
+            <p>This collection is empty. Go to a story or article page to add items here!</p>
           </div>
         ) : (
           collection.savedItems.map((item) => (

@@ -55,7 +55,7 @@ const ManageWorks = ({ user }) => {
             {works.map((work) => (
               <tr key={work._id}>
                 <td>{work.title}</td>
-                <td>{work.type ? work.type.charAt(0).toUpperCase() + work.type.slice(1) : 'Unknown'}</td>
+                <td>{work.type === 'novel' ? 'Story' : work.type ? work.type.charAt(0).toUpperCase() + work.type.slice(1) : 'Unknown'}</td>
                 <td>{new Date(work.createdAt).toLocaleDateString()}</td>
                 <td className="action-buttons">
                 </td>

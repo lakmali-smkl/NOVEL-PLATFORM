@@ -13,9 +13,10 @@ const WriterWorks = ({ user }) => {
     if (!user?._id) return;
     try {
       setLoading(true);
+      const authHeaders = { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } };
       const [novelsRes, articlesRes] = await Promise.all([
-        axios.get(`${API}/api/novels/author/${user._id}`),
-        axios.get(`${API}/api/articles/author/${user._id}`),
+        axios.get(`${API}/api/novels/author/${user._id}`, authHeaders),
+        axios.get(`${API}/api/articles/author/${user._id}`, authHeaders),
       ]);
       const allWorks = [
         ...novelsRes.data.map((n) => ({ ...n, workType: 'novel' })),
@@ -34,7 +35,9 @@ const WriterWorks = ({ user }) => {
   const handleDelete = async (work) => {
     if (!window.confirm(`Delete "${work.title}"? This cannot be undone.`)) return;
     try {
-      await axios.delete(`${API}/api/${work.workType}s/${work._id}`);
+      await axios.delete(`${API}/api/${work.workType}s/${work._id}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
       setWorks((prev) => prev.filter((w) => w._id !== work._id));
     } catch (err) {
       console.error(err);
@@ -54,11 +57,11 @@ const WriterWorks = ({ user }) => {
         <div className="wd-header-text">
           <p className="wd-greeting">Writer Portal</p>
           <h1 className="wd-username">My Works</h1>
-          <p className="wd-subtitle">All your novels and articles, organized by draft and published status.</p>
+          <p className="wd-subtitle">All your stories and articles, organized by draft and published status.</p>
         </div>
         <div className="wd-header-actions">
           <button className="wd-create-btn primary" onClick={() => window.location.assign('/add-novel')}>
-            <span className="wd-btn-icon">📖</span> New Novel
+            <span className="wd-btn-icon">📖</span> New Story
           </button>
           <button className="wd-create-btn secondary" onClick={() => window.location.assign('/add-article')}>
             <span className="wd-btn-icon">📝</span> New Article
@@ -95,11 +98,16 @@ const WriterWorks = ({ user }) => {
             <p>
               {activeTab === 'draft'
                 ? "No drafts saved right now. Start writing and save as a draft to see it here."
-                : "Nothing published yet. Publish a novel or article to see it here."}
+                : "Nothing published yet. Publish a story or article to see it here."}
             </p>
-            <button className="wd-create-btn primary" onClick={() => window.location.assign('/add-novel')}>
-              Create a New Work
-            </button>
+            <div className="wd-header-actions">
+              <button className="wd-create-btn primary" onClick={() => window.location.assign('/add-novel')}>
+                <span className="wd-btn-icon">📖</span> New Story
+              </button>
+              <button className="wd-create-btn secondary" onClick={() => window.location.assign('/add-article')}>
+                <span className="wd-btn-icon">📝</span> New Article
+              </button>
+            </div>
           </div>
         ) : (
           <div className="wd-table-wrap">
@@ -127,7 +135,7 @@ const WriterWorks = ({ user }) => {
                     </td>
                     <td>
                       <span className={`wd-type-tag ${work.workType}`}>
-                        {work.workType === 'novel' ? '📖' : '📝'} {work.workType}
+                        {work.workType === 'novel' ? '📖 story' : '📝 article'}
                       </span>
                     </td>
                     <td className="wd-td-num">{work.likes?.length || 0}</td>

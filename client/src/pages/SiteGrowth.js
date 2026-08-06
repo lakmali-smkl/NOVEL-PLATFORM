@@ -31,7 +31,7 @@ const CHART_HEIGHT = 280;
 const CHART_PAD = { top: 16, right: 16, bottom: 32, left: 40 };
 const CHART_SERIES = [
   { key: 'users', label: 'Users', colorVar: '--neon-blue' },
-  { key: 'novels', label: 'Novels', colorVar: '--neon-gold' },
+  { key: 'novels', label: 'Stories', colorVar: '--neon-gold' },
   { key: 'articles', label: 'Articles', colorVar: '--neon-green' },
 ];
 
@@ -89,12 +89,6 @@ const buildChartGeometry = (dataset) => {
 
 const SiteGrowth = () => {
   const [growth, setGrowth] = useState({ users: [], novels: [], articles: [] });
-  const [announcements, setAnnouncements] = useState([]);
-  
-  // Announcement Form State
-  const [newAnnouncement, setNewAnnouncement] = useState({ title: '', message: '', type: 'info', expiresAt: '' });
-  const [announcementMsg, setAnnouncementMsg] = useState('');
-  const [editingId, setEditingId] = useState(null);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -102,35 +96,26 @@ const SiteGrowth = () => {
   const BASE_URL = `${API_BASE_URL}/api/admin`;
 
   useEffect(() => {
-    // Fetch all administrative metrics and records concurrently
+    // Fetch growth metrics
     const loadDashboardData = async () => {
       try {
-        const [growthRes, announcementsRes] = await Promise.all([
-          fetch(`${BASE_URL}/growth`, {
-            headers: {
-              'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
-          }),
-          fetch(`${BASE_URL}/announcements`, {
-            headers: {
-              'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
-          })
-        ]);
+        const growthRes = await fetch(`${BASE_URL}/growth`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
 
-        if (!growthRes.ok || !announcementsRes.ok) {
-          throw new Error('One or more systemic endpoints failed to respond properly.');
+        if (!growthRes.ok) {
+          throw new Error('The growth analytics endpoint failed to respond properly.');
         }
 
         const growthData = await growthRes.json();
-        const announcementsData = await announcementsRes.json();
 
         setGrowth({
           users: growthData.users || [],
           novels: growthData.novels || [],
           articles: growthData.articles || []
         });
-        setAnnouncements(announcementsData || []);
       } catch (err) {
         console.error('Admin panel loading issue:', err);
         setError(err.message || 'Failed to assemble administrative views.');
@@ -141,79 +126,6 @@ const SiteGrowth = () => {
 
     loadDashboardData();
   }, [BASE_URL]);
-
-  // Refetch the admin bulletin list (used after create/update/delete)
-  const refreshAnnouncements = async () => {
-    const res = await fetch(`${BASE_URL}/announcements`, {
-      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-    });
-    if (res.ok) setAnnouncements(await res.json());
-  };
-
-  // Handler: Publish (or update, when editing) an Announcement asset
-  const handlePublishAnnouncement = async (e) => {
-    e.preventDefault();
-    if (!newAnnouncement.title || !newAnnouncement.message) return;
-
-    const isEditing = !!editingId;
-    const url = isEditing ? `${BASE_URL}/announcements/${editingId}` : `${BASE_URL}/announcements`;
-
-    try {
-      const response = await fetch(url, {
-        method: isEditing ? 'PUT' : 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify(newAnnouncement)
-      });
-
-      if (!response.ok) throw new Error(isEditing ? 'Failed to update target announcement node.' : 'Failed to broadcast target announcement node.');
-
-      setAnnouncementMsg(isEditing ? '✅ Announcement updated successfully!' : '🎉 Announcement dispatched live successfully!');
-      setNewAnnouncement({ title: '', message: '', type: 'info', expiresAt: '' });
-      setEditingId(null);
-
-      await refreshAnnouncements();
-
-      setTimeout(() => setAnnouncementMsg(''), 4000);
-    } catch (err) {
-      setAnnouncementMsg(`⚠️ Error: ${err.message}`);
-    }
-  };
-
-  // Populate the form with an existing bulletin's data for editing
-  const handleEditClick = (bulletin) => {
-    setEditingId(bulletin._id);
-    setNewAnnouncement({
-      title: bulletin.title,
-      message: bulletin.message,
-      type: bulletin.type,
-      expiresAt: bulletin.expiresAt ? new Date(bulletin.expiresAt).toISOString().slice(0, 10) : ''
-    });
-    setAnnouncementMsg('');
-  };
-
-  const handleCancelEdit = () => {
-    setEditingId(null);
-    setNewAnnouncement({ title: '', message: '', type: 'info', expiresAt: '' });
-  };
-
-  const handleDeleteAnnouncement = async (id) => {
-    if (!window.confirm('Permanently delete this announcement?')) return;
-    try {
-      const res = await fetch(`${BASE_URL}/announcements/${id}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-      });
-      if (!res.ok) throw new Error('Failed to delete announcement');
-      setAnnouncements(prev => prev.filter(a => a._id !== id));
-      if (editingId === id) handleCancelEdit();
-    } catch (err) {
-      console.error('Delete announcement error:', err);
-      alert('Failed to delete announcement. Please try again.');
-    }
-  };
 
   const buildDataset = () => {
     const allKeys = new Set();
@@ -290,7 +202,7 @@ const SiteGrowth = () => {
     <div className="growth-workspace">
       <div className="growth-header growth-card-anim">
         <h2>Administrative Hub & Growth Control</h2>
-        <p>Monitor trends, approve authors, and broadcast system announcements platform-wide.</p>
+        <p>Monitor trends and approve authors platform-wide.</p>
       </div>
 
       {/* 📊 SECTION 1: GROWTH METRIC SUMMARY CARDS */}
@@ -300,7 +212,7 @@ const SiteGrowth = () => {
           <strong>{animatedUsers}</strong>
         </div>
         <div className="growth-card gold growth-card-anim" style={{ animationDelay: '0.08s' }}>
-          <span>Novels Authored (30d)</span>
+          <span>Stories Authored (30d)</span>
           <strong>{animatedNovels}</strong>
         </div>
         <div className="growth-card green growth-card-anim" style={{ animationDelay: '0.16s' }}>
@@ -314,7 +226,7 @@ const SiteGrowth = () => {
         <div className="growth-chart-header">
           <div>
             <h3>Platform Growth Trend</h3>
-            <p className="growth-chart-subtitle">Daily new users, novels, and articles over the tracked period.</p>
+            <p className="growth-chart-subtitle">Daily new users, stories, and articles over the tracked period.</p>
           </div>
           <div className="growth-chart-legend">
             {CHART_SERIES.map((s) => (
@@ -419,117 +331,14 @@ const SiteGrowth = () => {
         )}
       </section>
 
-      {/* 📢 SECTION 2: SYSTEM ANNOUNCEMENT BROADCASTER */}
-      <section className="dashboard-section grid-two-columns growth-card-anim" style={{ animationDelay: '0.28s' }}>
-        <div className="announcement-form-box">
-          <h3>{editingId ? 'Edit System Announcement' : 'Broadcast New System Announcement'}</h3>
-          <form onSubmit={handlePublishAnnouncement} className="admin-form">
-            <div className="form-group">
-              <label>Header Title</label>
-              <input 
-                type="text" 
-                placeholder="Maintenance update, writing contests, etc..."
-                value={newAnnouncement.title}
-                onChange={e => setNewAnnouncement({...newAnnouncement, title: e.target.value})}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Classification Type</label>
-              <select 
-                value={newAnnouncement.type} 
-                onChange={e => setNewAnnouncement({...newAnnouncement, type: e.target.value})}
-              >
-                <option value="info">💡 Information (Blue)</option>
-                <option value="warning">⚠️ Warning Alert (Yellow)</option>
-                <option value="important">🚨 Critical/Urgent (Red)</option>
-              </select>
-            </div>
-            <div className="form-group">
-              <label>Message Content</label>
-              <textarea 
-                rows="4"
-                placeholder="Write message copy here..."
-                value={newAnnouncement.message}
-                onChange={e => setNewAnnouncement({...newAnnouncement, message: e.target.value})}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Expires On</label>
-              <input
-                type="date"
-                value={newAnnouncement.expiresAt}
-                onChange={e => setNewAnnouncement({...newAnnouncement, expiresAt: e.target.value})}
-              />
-              <small style={{ color: '#94a3b8' }}>
-                Leave blank for default 7-day expiration, or choose a custom date.
-              </small>
-            </div>
-            <div className="form-submit-row">
-              <button type="submit" className="btn-submit-broadcast">
-                {editingId ? 'Update Broadcast' : 'Publish System Broadcast'}
-              </button>
-              {editingId && (
-                <button type="button" className="btn-cancel-edit" onClick={handleCancelEdit}>
-                  Cancel
-                </button>
-              )}
-            </div>
-            {announcementMsg && <p className="form-feedback">{announcementMsg}</p>}
-          </form>
-        </div>
-
-        <div className="announcement-preview-box">
-          <h3>Recent Dispatched Bulletins</h3>
-          <div className="announcements-history">
-            {announcements.length === 0 ? (
-              <p className="empty-notice">No system announcements have been recorded.</p>
-            ) : (
-              announcements.map((bulletin) => (
-                <div key={bulletin._id} className={`bulletin-item border-${bulletin.type} ${editingId === bulletin._id ? 'bulletin-editing' : ''}`}>
-                  <div className="bulletin-header">
-                    <h5>{bulletin.title}</h5>
-                    <span className={`tag-${bulletin.type}`}>{bulletin.type}</span>
-                  </div>
-                  <p>{bulletin.message}</p>
-                  <div className="bulletin-footer">
-                    <small>
-                      Posted: {new Date(bulletin.createdAt).toLocaleString()}
-                      {bulletin.expiresAt ? ` · Expires: ${new Date(bulletin.expiresAt).toLocaleDateString()}` : ''}
-                    </small>
-                    <div className="bulletin-actions">
-                      <button
-                        type="button"
-                        className="bulletin-edit-btn"
-                        onClick={() => handleEditClick(bulletin)}
-                      >
-                        ✏️ Edit
-                      </button>
-                      <button
-                        type="button"
-                        className="bulletin-delete-btn"
-                        onClick={() => handleDeleteAnnouncement(bulletin._id)}
-                      >
-                        🗑️ Delete
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* 📊 SECTION 4: TIME MATRIX OVERVIEW INDEX */}
+      {/* 📊 SECTION 3: TIME MATRIX OVERVIEW INDEX */}
       <section className="growth-table-section growth-card-anim" style={{ animationDelay: '0.34s' }}>
         <h3>Daily Growth Timeline Data Matrix</h3>
         <div className="growth-table-wrapper">
           <div className="growth-table-row growth-table-header">
             <span>Date String</span>
             <span>Users Signed</span>
-            <span>Novels Logged</span>
+            <span>Stories Logged</span>
             <span>Articles Stamped</span>
           </div>
           {dataset.length === 0 ? (

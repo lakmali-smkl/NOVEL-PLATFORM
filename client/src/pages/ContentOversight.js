@@ -90,7 +90,7 @@ const ContentOversight = () => {
       {/* HEADER TITLE SUMMARY block */}
       <div className="co-header">
         <h2><span className="co-header-icon">📚</span> Content Oversight Portal</h2>
-        <p className="co-subtitle">Audit, filter, and moderate global database asset uploads for novels and articles.</p>
+        <p className="co-subtitle">Audit, filter, and moderate global database asset uploads for stories and articles.</p>
       </div>
 
       {/* REFRESHING METRIC MATRIX PANELS */}
@@ -105,7 +105,7 @@ const ContentOversight = () => {
         <div className="co-metric-card">
           <div className="co-metric-icon co-metric-icon-novels">📖</div>
           <div>
-            <span className="co-metric-label">Indexed Novels</span>
+            <span className="co-metric-label">Indexed Stories</span>
             <span className="co-metric-value co-metric-value-novels">{metrics.novels}</span>
           </div>
         </div>
@@ -149,7 +149,7 @@ const ContentOversight = () => {
           onChange={(e) => setTypeFilter(e.target.value)}
         >
           <option value="all">All Content Collections</option>
-          <option value="novel">Novels Only</option>
+          <option value="novel">Stories Only</option>
           <option value="article">Articles Only</option>
         </select>
       </div>

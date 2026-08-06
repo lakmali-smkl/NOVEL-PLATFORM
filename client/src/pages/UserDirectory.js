@@ -9,6 +9,12 @@ const UserDirectory = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Detail modal state
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [userDetail, setUserDetail] = useState(null);
+  const [detailLoading, setDetailLoading] = useState(false);
+  const [detailError, setDetailError] = useState(null);
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -86,6 +92,33 @@ const UserDirectory = () => {
       setUsers(prev => prev.map(u => u._id === userId ? { ...u, status: newStatus === 'suspended' ? 'active' : 'suspended' } : u));
       alert('Network error: could not update account status.');
     }
+  };
+
+  // Row click → open detail modal for that user
+  const openUserDetail = async (user) => {
+    setSelectedUser(user);
+    setUserDetail(null);
+    setDetailError(null);
+    setDetailLoading(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/admin/users/${user._id}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
+      if (!res.ok) throw new Error(`Server responded with status: ${res.status}`);
+      const data = await res.json();
+      setUserDetail(data);
+    } catch (err) {
+      console.error('Failed to load user detail:', err);
+      setDetailError(err.message);
+    } finally {
+      setDetailLoading(false);
+    }
+  };
+
+  const closeUserDetail = () => {
+    setSelectedUser(null);
+    setUserDetail(null);
+    setDetailError(null);
   };
 
   // Filter Pipeline
@@ -201,7 +234,11 @@ const UserDirectory = () => {
           </thead>
           <tbody>
             {filteredUsers.map((user) => (
-              <tr key={user._id} className={user.status === 'suspended' ? 'ud-row-suspended' : ''}>
+              <tr
+                key={user._id}
+                className={`ud-row-clickable ${user.status === 'suspended' ? 'ud-row-suspended' : ''}`}
+                onClick={() => openUserDetail(user)}
+              >
                 <td>
                   <div className="ud-user-cell">
                     <div className="ud-user-avatar">{(user.username || '?').charAt(0).toUpperCase()}</div>
@@ -231,7 +268,7 @@ const UserDirectory = () => {
                   }
                 </td>
                 <td>
-                  <div className="ud-action-group">
+                  <div className="ud-action-group" onClick={(e) => e.stopPropagation()}>
                     {!user.isAdmin && (
                       <>
                         <button
@@ -269,6 +306,103 @@ const UserDirectory = () => {
           <div className="ud-table-empty">No workspace nodes found matching your database records.</div>
         )}
       </div>
+
+      {/* USER DETAIL MODAL */}
+      {selectedUser && (
+        <div className="ud-modal-overlay" onClick={closeUserDetail}>
+          <div className="ud-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="ud-modal-close" onClick={closeUserDetail} aria-label="Close">✕</button>
+
+            {detailLoading && <div className="ud-loading">Loading user details...</div>}
+
+            {detailError && (
+              <div className="ud-error">⚠️ Failed to load user details. ({detailError})</div>
+            )}
+
+            {!detailLoading && !detailError && userDetail && (
+              <>
+                <div className="ud-modal-header">
+                  <div className="ud-user-avatar ud-modal-avatar">
+                    {(userDetail.user.username || '?').charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <h3 className="ud-modal-username">{userDetail.user.username}</h3>
+                    <span className="ud-email">{userDetail.user.email}</span>
+                    <div className="ud-roles-group ud-modal-roles">
+                      {userDetail.user.isAdmin && <span className="ud-pill ud-badge-admin">Admin</span>}
+                      {userDetail.user.isWriter && <span className="ud-pill ud-badge-writer">Writer</span>}
+                      {!userDetail.user.isAdmin && !userDetail.user.isWriter && <span className="ud-pill ud-badge-reader">Reader</span>}
+                      <span className={`ud-status-tag ud-status-${userDetail.user.status || 'active'}`}>
+                        <span className="ud-status-dot"></span>
+                        {userDetail.user.status || 'active'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="ud-modal-meta">
+                  <span>Joined: {userDetail.user.createdAt ? new Date(userDetail.user.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A'}</span>
+                </div>
+
+                <div className="ud-modal-stats">
+                  <div className="ud-modal-stat">
+                    <span className="ud-modal-stat-value">{userDetail.totals.totalWorks}</span>
+                    <span className="ud-modal-stat-label">Works</span>
+                  </div>
+                  <div className="ud-modal-stat">
+                    <span className="ud-modal-stat-value">❤️ {userDetail.totals.totalLikes}</span>
+                    <span className="ud-modal-stat-label">Total Likes</span>
+                  </div>
+                  <div className="ud-modal-stat">
+                    <span className="ud-modal-stat-value">💬 {userDetail.totals.totalComments}</span>
+                    <span className="ud-modal-stat-label">Total Comments</span>
+                  </div>
+                  <div className="ud-modal-stat">
+                    <span className="ud-modal-stat-value">👁️ {userDetail.totals.totalViews}</span>
+                    <span className="ud-modal-stat-label">Total Views</span>
+                  </div>
+                </div>
+
+                {userDetail.works.length === 0 ? (
+                  <div className="ud-table-empty">This user hasn't created any stories or articles yet.</div>
+                ) : (
+                  <div className="ud-modal-table-wrap">
+                    <table className="ud-table">
+                      <thead>
+                        <tr>
+                          <th>Title</th>
+                          <th>Type</th>
+                          <th>Status</th>
+                          <th>Likes</th>
+                          <th>Comments</th>
+                          <th>Views</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {userDetail.works.map((work) => (
+                          <tr key={work._id}>
+                            <td>{work.title}</td>
+                            <td className="ud-modal-type-cell">{work.workType === 'novel' ? '📖 Story' : '📝 Article'}</td>
+                            <td>
+                              <span className={`ud-status-tag ud-status-${work.status}`}>
+                                <span className="ud-status-dot"></span>
+                                {work.status}
+                              </span>
+                            </td>
+                            <td>❤️ {work.likeCount}</td>
+                            <td>💬 {work.commentCount}</td>
+                            <td>👁️ {work.views}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      )}
 
     </div>
   );

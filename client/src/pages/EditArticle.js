@@ -38,7 +38,10 @@ const EditArticle = () => {
     try {
       const response = await fetch(`${API_BASE_URL}/api/articles/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
         body: JSON.stringify({ ...formData, userId: user._id })
       });
 

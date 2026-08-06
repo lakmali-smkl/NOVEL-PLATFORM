@@ -18,7 +18,9 @@ const ReadingHistory = () => {
       return;
     }
     
-    fetch(`${API_BASE_URL}/api/users/${userId}/history`)
+    fetch(`${API_BASE_URL}/api/users/${userId}/history`, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+    })
       .then(res => res.json())
       .then(data => {
         setHistory(data);
@@ -34,7 +36,8 @@ const ReadingHistory = () => {
   const handleRemove = async (contentId) => {
     try {
       const res = await fetch(`${API_BASE_URL}/api/users/${userId}/history/${contentId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
       if (res.ok) {
         setHistory(prev => prev.filter(item => item.contentId !== contentId));
@@ -49,7 +52,8 @@ const ReadingHistory = () => {
     if (!window.confirm("Are you sure you want to clear your entire reading history?")) return;
     try {
       const res = await fetch(`${API_BASE_URL}/api/users/${userId}/history`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
       if (res.ok) {
         setHistory([]);
@@ -117,7 +121,7 @@ const ReadingHistory = () => {
                   <div className="history-cover-placeholder">📚</div>
                 )}
                 <span className={`history-type-badge ${item.type === 'article' ? 'article-badge' : 'novel-badge'}`}>
-                  {item.type}
+                  {item.type === 'novel' ? 'story' : item.type}
                 </span>
               </div>
 

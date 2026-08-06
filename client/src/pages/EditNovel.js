@@ -44,15 +44,18 @@ const EditNovel = () => {
     try {
       const response = await fetch(`${API_BASE_URL}/api/novels/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
         body: JSON.stringify({ ...formData, userId: user._id })
       });
 
       if (response.ok) {
-        alert("Novel updated successfully!");
+        alert("Story updated successfully!");
         navigate('/writer-dashboard');
       } else {
-        alert("Failed to update novel.");
+        alert("Failed to update story.");
       }
     } catch (error) {
       console.error("Update error:", error);
@@ -65,7 +68,7 @@ const EditNovel = () => {
       <button type="button" className="form-back-link" onClick={() => navigate('/writer-dashboard')}>
         ← Back to Dashboard
       </button>
-      <h1>Edit Novel</h1>
+      <h1>Edit Story</h1>
       <form onSubmit={handleUpdate}>
         
         <div className="edit-form-group">
@@ -80,7 +83,7 @@ const EditNovel = () => {
         </div>
 
         <div className="edit-form-group">
-          <label>Novel Content</label>
+          <label>Story Content</label>
           <textarea 
             className="edit-textarea" 
             value={formData.content} 

@@ -6,7 +6,9 @@ const AddToCollectionModal = ({ item, userId, onClose }) => {
 
   // Fetch user's collections to display in the list
   useEffect(() => {
-    fetch(`${API_BASE_URL}/api/collections/${userId}`)
+    fetch(`${API_BASE_URL}/api/collections/${userId}`, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+    })
       .then(res => res.json())
       .then(data => setCollections(data))
       .catch(err => console.error(err));
@@ -15,7 +17,10 @@ const AddToCollectionModal = ({ item, userId, onClose }) => {
   const handleSave = (collectionId) => {
     fetch(`${API_BASE_URL}/api/collections/${collectionId}/add-item`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      },
       body: JSON.stringify({
         id: item._id, // The ID of the current novel/article
         title: item.title,

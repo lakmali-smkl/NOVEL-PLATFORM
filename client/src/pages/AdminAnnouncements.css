@@ -1,0 +1,325 @@
+/* ============================================================
+   ADMIN ANNOUNCEMENTS
+   All classes are prefixed "admann-" to avoid colliding with the
+   public announcement card classes ("ann-*") already used on the
+   Home page.
+   ============================================================ */
+
+.admann-page {
+  padding: 36px 30px 60px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.admann-header {
+  margin-bottom: 30px;
+}
+
+.admann-header h1 {
+  margin: 0 0 8px 0;
+  font-size: clamp(2rem, 1.9vw, 2.4rem);
+  line-height: 1.1;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.admann-subtitle {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 1rem;
+}
+
+/* ── Section Shell ── */
+.admann-section {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  padding: 32px;
+  margin-bottom: 28px;
+  box-shadow: 0 20px 44px rgba(15, 23, 42, 0.06);
+}
+
+.admann-section-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.admann-section-title-row h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.admann-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent-glow);
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 2px 11px;
+  min-width: 26px;
+}
+
+/* ── Form ── */
+.admann-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.admann-form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admann-form-row label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.admann-form-row input,
+.admann-form-row textarea,
+.admann-form-row select {
+  background: var(--input-bg, var(--card-bg));
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 11px 14px;
+  font-size: 0.92rem;
+  color: var(--text-main);
+  font-family: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admann-form-row input:focus,
+.admann-form-row textarea:focus,
+.admann-form-row select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.admann-form-row textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+.admann-hint {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+}
+
+.admann-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.admann-error {
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #dc2626;
+  font-size: 0.85rem;
+}
+
+.admann-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.admann-btn-primary,
+.admann-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 22px;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.9rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease, background 0.2s ease;
+  font-family: inherit;
+}
+
+.admann-btn-primary {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 10px 24px var(--accent-glow);
+}
+
+.admann-btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.08);
+}
+
+.admann-btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.admann-btn-secondary {
+  background: var(--hover-bg);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+}
+
+.admann-btn-secondary:hover {
+  background: var(--card-bg);
+  border-color: var(--accent);
+}
+
+/* ── Empty State ── */
+.admann-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 40px 20px;
+  border-radius: 18px;
+  background: var(--hover-bg);
+  border: 1px dashed var(--border-color);
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.admann-empty-icon {
+  font-size: 2rem;
+  opacity: 0.8;
+}
+
+.admann-empty p {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+/* ── Announcement List ── */
+.admann-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.admann-item {
+  border-radius: 18px;
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+  padding: 18px 20px;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admann-item:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+}
+
+.admann-item-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.admann-type-pill {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--pill-color) 14%, transparent);
+  color: var(--pill-color);
+}
+
+.admann-item-title {
+  font-weight: 700;
+  color: var(--text-main);
+  font-size: 1rem;
+}
+
+.admann-expired-pill {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: var(--hover-bg);
+  border: 1px solid var(--border-color);
+  padding: 2px 9px;
+  border-radius: 999px;
+  margin-left: auto;
+}
+
+.admann-item-message {
+  margin: 0 0 14px 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.admann-item-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.admann-item-time {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.admann-item-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.admann-edit-btn,
+.admann-delete-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.admann-edit-btn:hover {
+  background: var(--accent-glow);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.admann-delete-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #ef4444;
+}
+
+@media (max-width: 700px) {
+  .admann-page { padding: 24px 20px 50px; }
+  .admann-form-grid { grid-template-columns: 1fr; }
+}

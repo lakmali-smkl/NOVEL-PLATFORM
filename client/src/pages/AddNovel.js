@@ -112,14 +112,15 @@ const AddNovel = ({ user }) => {
     try {
       const response = await fetch(`${API_BASE_URL}/api/novels`, {
         method: 'POST',
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
         body: data
       });
 
       if (response.ok) {
-        alert("Novel published successfully!");
+        alert("Story published successfully!");
         navigate('/writer-dashboard');
       } else {
-        alert("Error saving novel.");
+        alert("Error saving story.");
       }
     } catch (error) {
       console.error("Upload error:", error);
@@ -132,7 +133,7 @@ const AddNovel = ({ user }) => {
       <button type="button" className="form-back-link" onClick={() => navigate('/writer-dashboard')}>
         ← Back to Dashboard
       </button>
-      <h2>Add New Novel</h2>
+      <h2>Add New Story</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>Title</label>
@@ -225,7 +226,7 @@ const AddNovel = ({ user }) => {
           </select>
         </div>
 
-        <button type="submit" className="submit-btn">Publish Novel</button>
+        <button type="submit" className="submit-btn">Publish Story</button>
       </form>
     </div>
   );

@@ -16,7 +16,7 @@ const Library = () => {
           className={activeTab === 'novels' ? 'active' : ''} 
           onClick={() => setActiveTab('novels')}
         >
-          Novels
+          Stories
         </button>
         <button 
           className={activeTab === 'articles' ? 'active' : ''} 

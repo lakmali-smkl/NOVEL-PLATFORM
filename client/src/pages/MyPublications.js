@@ -16,9 +16,10 @@ const MyPublications = () => {
       }
 
       try {
+        const authHeaders = { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } };
         const [novelsRes, articlesRes] = await Promise.all([
-          fetch(`${API_BASE_URL}/api/novels/author/${user._id}`),
-          fetch(`${API_BASE_URL}/api/articles/author/${user._id}`)
+          fetch(`${API_BASE_URL}/api/novels/author/${user._id}`, authHeaders),
+          fetch(`${API_BASE_URL}/api/articles/author/${user._id}`, authHeaders)
         ]);
 
         const novels = await novelsRes.json();
@@ -46,7 +47,10 @@ const MyPublications = () => {
     if (window.confirm(`Are you sure you want to delete "${work.title}"?`)) {
       try {
         const endpoint = `${API_BASE_URL}/api/${work.workType}s/${work._id}`;
-        const response = await fetch(endpoint, { method: 'DELETE' });
+        const response = await fetch(endpoint, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        });
 
         if (response.ok) {
           setWorks(works.filter(w => w._id !== work._id));
@@ -80,7 +84,7 @@ const MyPublications = () => {
         <div className="publications-grid">
           {works.map(work => (
             <div key={work._id} className="publication-card">
-              <div className="card-tag">{work.workType}</div>
+              <div className="card-tag">{work.workType === 'novel' ? 'story' : work.workType}</div>
               
               <div className="card-info">
                 <h3>{work.title}</h3>

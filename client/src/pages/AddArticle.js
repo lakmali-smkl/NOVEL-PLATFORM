@@ -112,6 +112,7 @@ const AddArticle = ({ user }) => {
         try {
             const response = await fetch(`${API_BASE_URL}/api/articles`, {
                 method: 'POST',
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
                 body: data,
             });
 
