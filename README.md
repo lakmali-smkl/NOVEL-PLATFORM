@@ -52,7 +52,7 @@ The whole app is themeable (7 built-in themes), and every account type shares a 
 
 ### 📖 Reader
 - Browse and read published stories/articles, with reading history and per-genre recommendations
-- Like, comment, and reply (with deep-linkable comment/reply URLs from notifications)
+- Like, comment, and reply (with deep-linkable comment/reply URLs from notifications); commenter/replier names are clickable to message them directly
 - Favorites, custom collections ("Read Later" style folders), and reading stats
 - Request to become a writer
 - Direct-message any other user, including a one-click **Contact Admin** shortcut
@@ -98,6 +98,7 @@ novel-platform/
 │   │                              #   Message, Notification, Announcement,
 │   │                              #   Collection, WriterRequest
 │   ├── middleware/auth.js        # `auth` (JWT verify) and `admin` (role check)
+│   ├── utils/crypto.js           # AES-256-GCM encrypt/decrypt for message text
 │   └── uploads/                  # User-uploaded cover photos / text files
 │
 ├── .github/workflows/ci.yml     # CI: client build+test, server syntax+test
@@ -180,7 +181,7 @@ A user's role is stored on their `User` document (`isWriter`, `isAdmin` booleans
 |---|---|
 | `User` | Account, role flags, favorites, reading history, writer-request status |
 | `Novel` / `Article` | Content items — title, body, author, status (`draft`/`published`), genre, likes, nested comments/replies, views |
-| `Message` | Direct messages between two users — text, read state, edited/forwarded flags, reply-quote, per-user emoji reactions |
+| `Message` | Direct messages between two users — text (encrypted at rest), read state, edited/forwarded flags, reply-quote, per-user emoji reactions |
 | `Notification` | Like/comment/reply/message alerts per recipient, with read tracking |
 | `Announcement` | Platform-wide banners, with optional TTL-based auto-expiry |
 | `Collection` | User-created folders for saving stories/articles |
@@ -191,7 +192,7 @@ A user's role is stored on their `User` document (`isWriter`, `isAdmin` booleans
 All routes are prefixed implicitly by the server root (`http://localhost:5000`). Full detail lives in `server/server.js` and `server/routes/admin.js`; the high-level surface:
 
 - **Auth** — `POST /register`, `POST /login`, password-reset flow (rate-limited)
-- **Content** — `GET/POST /api/novels`, `GET/POST /api/articles`, plus `/:id`, `/author/:authorId`, like/comment/reply sub-routes
+- **Content** — `GET/POST /api/novels`, `GET/POST /api/articles` (creation requires auth; `authorId` is taken from the verified JWT, never the request body), plus `/:id`, `/author/:authorId`, like/comment/reply sub-routes
 - **Users** — profile lookup, settings, favorites, reading history/stats, admin-contact lookup
 - **Messaging** — `/api/messages*` (conversations, send, edit, delete, react, read receipts, unread count)
 - **Notifications** — `/api/notifications*` (list, mark-read, delete, unread count)
@@ -201,7 +202,8 @@ All routes are prefixed implicitly by the server root (`http://localhost:5000`).
 ## Security
 
 - **JWT auth** on every state-changing or user-specific route via the shared `auth` middleware; admin-only routes additionally require the `admin` middleware.
-- **Ownership checks**: mutating routes compare the resource's owner against the authenticated `req.user._id` rather than trusting client-supplied IDs (applies to content edits/deletes, likes/comments, messages, favorites, collections, history, etc.).
+- **Ownership checks**: mutating routes — including content *creation*, not just edits/deletes — derive the owner from the authenticated `req.user._id` rather than trusting any client-supplied ID (applies to content, likes/comments, messages, favorites, collections, history, etc.).
+- **Messages encrypted at rest**: direct-message text (and quoted reply snippets) are encrypted with AES-256-GCM before being saved (`server/utils/crypto.js`), so a raw database dump doesn't expose conversation content. The key is derived from `JWT_SECRET`, so no extra secret needs configuring. Decryption happens server-side, only for the sender/receiver, right before a response is sent.
 - **Rate limiting** on `/login`, `/register`, and `/api/forgot-password` (20 requests / 15 min per IP).
 - **Helmet** for standard secure headers; CORS restricted to `CLIENT_URL`.
 - Sensitive fields (`password`, `hintAnswer`) are excluded from any route that returns a user document.
