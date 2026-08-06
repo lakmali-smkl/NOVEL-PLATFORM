@@ -255,7 +255,7 @@ const WriterDashboardMain = ({ user, setUser }) => {
         </div>
         <div className="wd-header-actions">
           <button className="wd-create-btn primary" onClick={() => navigate('/add-novel')}>
-            <span className="wd-btn-icon">📖</span> New Novel
+            <span className="wd-btn-icon">📖</span> New Story
           </button>
           <button className="wd-create-btn secondary" onClick={() => navigate('/add-article')}>
             <span className="wd-btn-icon">📝</span> New Article
@@ -390,6 +390,58 @@ const WriterDashboardMain = ({ user, setUser }) => {
                 ))}
               </div>
             )}
+          </div>
+        )}
+      </section>
+
+      {/* ── Works Performance (per-work likes/comments breakdown) ── */}
+      <section className="wd-card wd-full-width">
+        <div className="wd-card-header">
+          <h2>Works Performance</h2>
+          <Link to="/writer-dashboard/works" className="wd-see-all">View All →</Link>
+        </div>
+
+        {works.length === 0 ? (
+          <div className="wd-empty small">
+            <p>Publish a work to see its likes and comments here.</p>
+          </div>
+        ) : (
+          <div className="wd-table-wrap">
+            <table className="wd-table">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Type</th>
+                  <th>Likes</th>
+                  <th>Comments</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[...works]
+                  .sort((a, b) => ((b.likes?.length || 0) + (b.comments?.length || 0)) - ((a.likes?.length || 0) + (a.comments?.length || 0)))
+                  .slice(0, 6)
+                  .map((work) => (
+                    <tr key={work._id}>
+                      <td className="wd-td-title">
+                        {work.status === 'published' ? (
+                          <Link to={`/read/${work.workType}/${work._id}`} className="wd-title-link">
+                            {work.title}
+                          </Link>
+                        ) : (
+                          <span className="wd-title-link">{work.title}</span>
+                        )}
+                      </td>
+                      <td>
+                        <span className={`wd-type-tag ${work.workType}`}>
+                          {work.workType === 'novel' ? '📖 story' : '📝 article'}
+                        </span>
+                      </td>
+                      <td className="wd-td-num">❤️ {work.likes?.length || 0}</td>
+                      <td className="wd-td-num">💬 {work.comments?.length || 0}</td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
           </div>
         )}
       </section>

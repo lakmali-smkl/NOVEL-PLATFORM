@@ -132,7 +132,7 @@ const AddNovel = ({ user }) => {
       <button type="button" className="form-back-link" onClick={() => navigate('/writer-dashboard')}>
         ← Back to Dashboard
       </button>
-      <h2>Add New Novel</h2>
+      <h2>Add New Story</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>Title</label>

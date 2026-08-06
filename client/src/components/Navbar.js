@@ -100,46 +100,48 @@ const Navbar = ({ user, setUser, toggleSidebar, closeSidebar, isSidebarOpen }) =
       </div>
 
       <ul className="nav-right">
-        {/* THEME INDICATOR */}
-        <li className="nav-item theme-menu-wrapper" ref={themeMenuRef}>
-          <button
-            type="button"
-            className="theme-indicator-btn"
-            title={`Theme: ${currentTheme.name}`}
-            onClick={() => setThemeMenuOpen((open) => !open)}
-            style={{
-              borderColor: hexToRgba(currentTheme.accent, 0.3),
-              background: hexToRgba(currentTheme.accent, 0.08)
-            }}
-          >
-            <span
-              className="theme-dot"
-              style={{ background: currentTheme.accent }}
-            />
-            <span className="theme-indicator-label">{currentTheme.emoji}</span>
-          </button>
+        {/* THEME INDICATOR — only shown once logged in */}
+        {user && (
+          <li className="nav-item theme-menu-wrapper" ref={themeMenuRef}>
+            <button
+              type="button"
+              className="theme-indicator-btn"
+              title={`Theme: ${currentTheme.name}`}
+              onClick={() => setThemeMenuOpen((open) => !open)}
+              style={{
+                borderColor: hexToRgba(currentTheme.accent, 0.3),
+                background: hexToRgba(currentTheme.accent, 0.08)
+              }}
+            >
+              <span
+                className="theme-dot"
+                style={{ background: currentTheme.accent }}
+              />
+              <span className="theme-indicator-label">{currentTheme.emoji}</span>
+            </button>
 
-          {themeMenuOpen && (
-            <div className="theme-menu-dropdown">
-              {THEMES.map((t) => (
-                <button
-                  key={t.id}
-                  type="button"
-                  className={`theme-menu-option ${theme === t.id ? 'active' : ''}`}
-                  onClick={() => {
-                    setTheme(t.id);
-                    setThemeMenuOpen(false);
-                  }}
-                >
-                  <span className="theme-menu-dot" style={{ background: t.accent }} />
-                  <span className="theme-menu-emoji">{t.emoji}</span>
-                  <span className="theme-menu-name">{t.name}</span>
-                  {theme === t.id && <span className="theme-menu-check">✓</span>}
-                </button>
-              ))}
-            </div>
-          )}
-        </li>
+            {themeMenuOpen && (
+              <div className="theme-menu-dropdown">
+                {THEMES.map((t) => (
+                  <button
+                    key={t.id}
+                    type="button"
+                    className={`theme-menu-option ${theme === t.id ? 'active' : ''}`}
+                    onClick={() => {
+                      setTheme(t.id);
+                      setThemeMenuOpen(false);
+                    }}
+                  >
+                    <span className="theme-menu-dot" style={{ background: t.accent }} />
+                    <span className="theme-menu-emoji">{t.emoji}</span>
+                    <span className="theme-menu-name">{t.name}</span>
+                    {theme === t.id && <span className="theme-menu-check">✓</span>}
+                  </button>
+                ))}
+              </div>
+            )}
+          </li>
+        )}
 
         {user ? (
           <>

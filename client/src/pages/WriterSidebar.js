@@ -52,7 +52,7 @@ const WriterSidebar = ({ user, closeSidebar }) => {
           </li>
           <li>
             <Link to="/add-novel" className={`nav-item ${isActive('/add-novel')}`} onClick={closeSidebar}>
-              <span className="nav-icon">📖</span> Create Novel
+              <span className="nav-icon">📖</span> Create Story
             </Link>
           </li>
           <li>

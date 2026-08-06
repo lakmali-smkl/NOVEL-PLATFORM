@@ -61,7 +61,7 @@ const WriterWorks = ({ user }) => {
         </div>
         <div className="wd-header-actions">
           <button className="wd-create-btn primary" onClick={() => window.location.assign('/add-novel')}>
-            <span className="wd-btn-icon">📖</span> New Novel
+            <span className="wd-btn-icon">📖</span> New Story
           </button>
           <button className="wd-create-btn secondary" onClick={() => window.location.assign('/add-article')}>
             <span className="wd-btn-icon">📝</span> New Article
@@ -100,9 +100,14 @@ const WriterWorks = ({ user }) => {
                 ? "No drafts saved right now. Start writing and save as a draft to see it here."
                 : "Nothing published yet. Publish a novel or article to see it here."}
             </p>
-            <button className="wd-create-btn primary" onClick={() => window.location.assign('/add-novel')}>
-              Create a New Work
-            </button>
+            <div className="wd-header-actions">
+              <button className="wd-create-btn primary" onClick={() => window.location.assign('/add-novel')}>
+                <span className="wd-btn-icon">📖</span> New Story
+              </button>
+              <button className="wd-create-btn secondary" onClick={() => window.location.assign('/add-article')}>
+                <span className="wd-btn-icon">📝</span> New Article
+              </button>
+            </div>
           </div>
         ) : (
           <div className="wd-table-wrap">
