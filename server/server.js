@@ -501,10 +501,10 @@ app.post('/api/novels', upload.fields([{ name: 'coverPhoto' }, { name: 'textFile
     });
     
     await newNovel.save();
-    res.status(201).json({ message: "Novel saved successfully!" });
+    res.status(201).json({ message: "Story saved successfully!" });
   } catch (error) {
     console.error("Save Error:", error);
-    res.status(500).json({ error: "Failed to save novel" });
+    res.status(500).json({ error: "Failed to save story" });
   }
 });
 
@@ -523,7 +523,7 @@ app.get('/api/novels', async (req, res) => {
 
     const novels = await query;
     res.json(novels);
-  } catch (error) { res.status(500).json({ error: "Failed to fetch novels" }); }
+  } catch (error) { res.status(500).json({ error: "Failed to fetch stories" }); }
 });
 
 app.get('/api/novels/author/:authorId', auth, async (req, res) => {
@@ -534,18 +534,18 @@ app.get('/api/novels/author/:authorId', auth, async (req, res) => {
       : { authorId: req.params.authorId, status: 'published' };
     const novels = await Novel.find(filter).sort({ createdAt: -1 });
     res.json(novels);
-  } catch (error) { res.status(500).json({ error: "Failed to fetch author novels" }); }
+  } catch (error) { res.status(500).json({ error: "Failed to fetch author stories" }); }
 });
 
 app.get('/api/novels/:id', async (req, res) => {
   try {
     const novel = await Novel.findById(req.params.id);
-    if (!novel) return res.status(404).json({ error: "Novel not found" });
+    if (!novel) return res.status(404).json({ error: "Story not found" });
 
     if (novel.status === 'draft') {
       const requesterId = req.query.userId;
       if (!novel.authorId || novel.authorId.toString() !== requesterId) {
-        return res.status(403).json({ error: "This novel is a private draft and cannot be viewed." });
+        return res.status(403).json({ error: "This story is a private draft and cannot be viewed." });
       }
     }
     res.json(novel);
@@ -680,15 +680,15 @@ app.patch('/api/users/:id', auth, async (req, res) => {
 app.put('/api/novels/:id', auth, async (req, res) => {
   try {
     const novel = await Novel.findById(req.params.id);
-    if (!novel) return res.status(404).json({ error: "Novel not found" });
+    if (!novel) return res.status(404).json({ error: "Story not found" });
 
     const { userId, ...updateData } = req.body;
     if (!novel.authorId || novel.authorId.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ error: "Access denied. You are not the author of this novel." });
+      return res.status(403).json({ error: "Access denied. You are not the author of this story." });
     }
 
     const updatedNovel = await Novel.findByIdAndUpdate(req.params.id, updateData, { returnDocument: 'after' });
-    res.json({ message: "Novel updated!", data: updatedNovel });
+    res.json({ message: "Story updated!", data: updatedNovel });
   } catch (error) { res.status(500).json({ error: "Update failed" }); }
 });
 
@@ -745,12 +745,12 @@ app.patch('/api/:type/:id/status', auth, async (req, res) => {
 app.delete('/api/novels/:id', auth, async (req, res) => {
   try {
     const novel = await Novel.findById(req.params.id);
-    if (!novel) return res.status(404).json({ error: "Novel not found" });
+    if (!novel) return res.status(404).json({ error: "Story not found" });
     if (!novel.authorId || novel.authorId.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ error: "Access denied. You are not the author of this novel." });
+      return res.status(403).json({ error: "Access denied. You are not the author of this story." });
     }
     await Novel.findByIdAndDelete(req.params.id);
-    res.json({ message: "Novel deleted successfully" });
+    res.json({ message: "Story deleted successfully" });
   } catch (error) { res.status(500).json({ error: "Delete failed" }); }
 });
 
@@ -769,6 +769,7 @@ app.delete('/api/articles/:id', auth, async (req, res) => {
 app.post('/api/:type/:id/like', auth, async (req, res) => {
   const userId = req.user._id.toString();
   const Model = req.params.type === 'novel' ? Novel : Article;
+  const displayType = req.params.type === 'novel' ? 'story' : req.params.type;
   try {
     const item = await Model.findById(req.params.id);
     if (!item) return res.status(404).json({ error: "Content not found" });
@@ -785,7 +786,7 @@ app.post('/api/:type/:id/like', auth, async (req, res) => {
           type: 'like',
           contentId: item._id,
           contentType: req.params.type,
-          message: `${likerName} liked your ${req.params.type}: "${item.title}"`
+          message: `${likerName} liked your ${displayType}: "${item.title}"`
         });
         await newNotif.save();
       } 
@@ -803,6 +804,7 @@ app.post('/api/:type/:id/comment', auth, async (req, res) => {
   const userId = req.user._id.toString();
   const username = req.user.username;
   const Model = req.params.type === 'novel' ? Novel : Article;
+  const displayType = req.params.type === 'novel' ? 'story' : req.params.type;
   try {
     const item = await Model.findById(req.params.id);
     if (!item) return res.status(404).json({ error: "Content not found" });
@@ -828,7 +830,7 @@ app.post('/api/:type/:id/comment', auth, async (req, res) => {
         contentId: item._id,
         contentType: req.params.type,
         commentId: savedComment._id,
-        message: `${username} commented on your ${req.params.type}: "${item.title}"`
+        message: `${username} commented on your ${displayType}: "${item.title}"`
       });
       await newNotif.save();
     }
@@ -845,6 +847,7 @@ app.post('/api/:type/:id/comment/:commentId/reply', auth, async (req, res) => {
   const userId = req.user._id.toString();
   const username = req.user.username;
   const Model = req.params.type === 'novel' ? Novel : Article;
+  const displayType = req.params.type === 'novel' ? 'story' : req.params.type;
   try {
     const item = await Model.findById(req.params.id);
     if (!item) return res.status(404).json({ error: "Content not found" });
@@ -891,7 +894,7 @@ app.post('/api/:type/:id/comment/:commentId/reply', auth, async (req, res) => {
         contentType: req.params.type,
         commentId: comment._id,
         replyId: savedReply._id,
-        message: `${username} replied to a comment on your ${req.params.type}: "${item.title}"`
+        message: `${username} replied to a comment on your ${displayType}: "${item.title}"`
       });
       await newNotif.save();
     }
@@ -1733,7 +1736,7 @@ app.post('/api/bot/message', async (req, res) => {
     // ── Browse / Explore Library ──
     else if (has('browse', 'explore', 'library', 'find book', 'find novel', 'search book', 'search story', 'discover', 'what is available', 'what can i read', 'catalog')) {
       const count = await Novel.countDocuments({ status: 'published' }) + await Article.countDocuments({ status: 'published' });
-      reply = `Our library currently has ${count} published works! 🏛️\n\nTo browse:\n1. Use the 'Library' link in the sidebar\n2. Filter by genre, type (novel/article), or author\n3. Use the search bar at the top to find specific titles\n4. Check the '🔥 Trending Now' section on the home page`;
+      reply = `Our library currently has ${count} published works! 🏛️\n\nTo browse:\n1. Use the 'Library' link in the sidebar\n2. Filter by genre, type (story/article), or author\n3. Use the search bar at the top to find specific titles\n4. Check the '🔥 Trending Now' section on the home page`;
     }
 
     // ── Genres ──
@@ -1745,22 +1748,22 @@ app.post('/api/bot/message', async (req, res) => {
 
     // ── Become a Writer ──
     else if (has('become a writer', 'how to write', 'how do i write', 'want to write', 'start writing', 'apply writer', 'writer application', 'can i publish', 'how to publish', 'create story', 'write a novel', 'write a story')) {
-      reply = "Becoming a writer is easy! ✍️\n\nSteps:\n1. Go to your Reader Portal (home page)\n2. Open the sidebar and click '✍️ Become a Writer'\n3. Submit your application\n4. Wait for Admin approval (usually quick!)\n5. Once approved, you'll see the 'Writer Portal' in the sidebar\n\nIn the Writer Portal you can:\n📖 Publish novels with chapters\n📝 Publish articles\n📊 Track views, likes & comments\n📢 Create announcements";
+      reply = "Becoming a writer is easy! ✍️\n\nSteps:\n1. Go to your Reader Portal (home page)\n2. Open the sidebar and click '✍️ Become a Writer'\n3. Submit your application\n4. Wait for Admin approval (usually quick!)\n5. Once approved, you'll see the 'Writer Portal' in the sidebar\n\nIn the Writer Portal you can:\n📖 Publish stories with chapters\n📝 Publish articles\n📊 Track views, likes & comments\n📢 Create announcements";
     }
 
     // ── Writer Dashboard / Portal ──
     else if (has('writer dashboard', 'writer portal', 'writer panel', 'manage story', 'manage novel', 'edit story', 'edit novel', 'update chapter', 'add chapter', 'upload chapter')) {
-      reply = "The Writer Portal is your creative hub! 🖊️\n\nFrom the Writer Portal sidebar you can:\n📖 Create & manage Novels (add chapters, cover art)\n📝 Write & publish Articles\n📊 View your story analytics (views, likes, comments)\n💬 Read & reply to reader comments\n📢 Post Announcements to your readers\n\nAccess it from the left sidebar after becoming an approved writer.";
+      reply = "The Writer Portal is your creative hub! 🖊️\n\nFrom the Writer Portal sidebar you can:\n📖 Create & manage Stories (add chapters, cover art)\n📝 Write & publish Articles\n📊 View your story analytics (views, likes, comments)\n💬 Read & reply to reader comments\n📢 Post Announcements to your readers\n\nAccess it from the left sidebar after becoming an approved writer.";
     }
 
     // ── Comments & Reviews ──
     else if (has('comment', 'review', 'leave a review', 'rate', 'rating', 'feedback', 'opinion', 'reply to comment')) {
-      reply = "Interacting with stories is easy! 💬\n\nTo leave a comment:\n1. Open any novel chapter or article\n2. Scroll to the bottom\n3. Type in the comment box and hit 'Post'\n\nYou can also:\n↩️ Reply to other readers' comments\n❤️ Like a story by clicking the heart button\n🗑️ Delete your own comments anytime\n\nWriters can also delete any comments on their own stories.";
+      reply = "Interacting with stories is easy! 💬\n\nTo leave a comment:\n1. Open any story chapter or article\n2. Scroll to the bottom\n3. Type in the comment box and hit 'Post'\n\nYou can also:\n↩️ Reply to other readers' comments\n❤️ Like a story by clicking the heart button\n🗑️ Delete your own comments anytime\n\nWriters can also delete any comments on their own stories.";
     }
 
     // ── Likes & Favorites ──
     else if (has('like', 'unlike', 'heart', 'favorite', 'favourit', 'save story', 'save novel', 'bookmark', 'save for later', 'wish list', 'saved')) {
-      reply = "Saving stories is super easy! ❤️\n\nTo Favorite a story:\n• Click the ❤️ heart button on any story page\n\nTo view your Favorites:\n• Sidebar → 'Favorites' section\n• Filter by All / Novels / Articles using the tabs\n\nTo organize into Collections:\n• Click '+ Add to Collection' on any story\n• Create custom named shelves\n• Find them under sidebar → 'My Library'";
+      reply = "Saving stories is super easy! ❤️\n\nTo Favorite a story:\n• Click the ❤️ heart button on any story page\n\nTo view your Favorites:\n• Sidebar → 'Favorites' section\n• Filter by All / Stories / Articles using the tabs\n\nTo organize into Collections:\n• Click '+ Add to Collection' on any story\n• Create custom named shelves\n• Find them under sidebar → 'My Library'";
     }
 
     // ── Collections / Shelves ──
@@ -1810,22 +1813,22 @@ app.post('/api/bot/message', async (req, res) => {
 
     // ── Search ──
     else if (has('search', 'how to search', 'find', 'look for', 'look up', 'query')) {
-      reply = "Finding stories is easy! 🔍\n\nWays to discover content:\n1. Use the Search bar at the top of the Library page\n2. Filter by genre, type (novel/article), or date\n3. Browse the '🔥 Trending Now' section on home\n4. Check '✨ AI Recommendations' on your dashboard\n5. Ask me: 'Suggest a story' and I'll pull from the database!";
+      reply = "Finding stories is easy! 🔍\n\nWays to discover content:\n1. Use the Search bar at the top of the Library page\n2. Filter by genre, type (story/article), or date\n3. Browse the '🔥 Trending Now' section on home\n4. Check '✨ AI Recommendations' on your dashboard\n5. Ask me: 'Suggest a story' and I'll pull from the database!";
     }
 
     // ── Reading Progress / Chapters ──
     else if (has('chapter', 'next chapter', 'previous chapter', 'chapter list', 'table of content', 'toc', 'progress', 'continue', 'page')) {
-      reply = "Navigating chapters is intuitive! 📑\n\nInside a novel:\n• Use 'Next Chapter' / 'Previous Chapter' buttons at the bottom\n• Click the chapter name in the header to see the full chapter list\n• Your progress is auto-saved so you can continue anytime\n\nTo resume reading:\n• Sidebar → 'Reading History' → click the story to jump back in";
+      reply = "Navigating chapters is intuitive! 📑\n\nInside a story:\n• Use 'Next Chapter' / 'Previous Chapter' buttons at the bottom\n• Click the chapter name in the header to see the full chapter list\n• Your progress is auto-saved so you can continue anytime\n\nTo resume reading:\n• Sidebar → 'Reading History' → click the story to jump back in";
     }
 
     // ── What is this site / About ──
     else if (has('what is this', 'about', 'what can i do', 'platform', 'site', 'website', 'this app', 'how does this work', 'features')) {
-      reply = "Welcome to Lumiverse! 📖✨\n\nThis is a site for publishing creative works, where:\n\n👀 Readers can:\n• Browse and read novels & articles\n• Save favorites and organize collections\n• Comment, like and interact with writers\n• Get AI-powered personalized recommendations\n\n✍️ Writers can:\n• Publish novels (with chapters) & articles\n• Track views, likes and reader engagement\n• Chat directly with readers\n• Post announcements\n\nEverything is themed, personalized, and designed for book lovers!";
+      reply = "Welcome to Lumiverse! 📖✨\n\nThis is a site for publishing creative works, where:\n\n👀 Readers can:\n• Browse and read stories & articles\n• Save favorites and organize collections\n• Comment, like and interact with writers\n• Get AI-powered personalized recommendations\n\n✍️ Writers can:\n• Publish stories (with chapters) & articles\n• Track views, likes and reader engagement\n• Chat directly with readers\n• Post announcements\n\nEverything is themed, personalized, and designed for book lovers!";
     }
 
     // ── Help / General ──
     else if (has('help', 'support', 'how do i', 'how to', 'guide', 'tutorial', 'instructions', 'explain', 'what', 'show me')) {
-      reply = "I'm here to help! 🤖 Here's what I can assist with:\n\n📚 Stories — 'Suggest a novel' or 'Browse library'\n✍️ Writing — 'How to become a writer'\n🎨 Themes — 'Change my theme'\n❤️ Saving — 'How to favorite a story'\n💬 Messaging — 'How to chat with writers'\n🔑 Account — 'Login help' or 'Change password'\n📖 Reading — 'View my reading history'\n🏷️ Genres — 'Show me fantasy novels'\n\nJust ask naturally — I understand plain language!";
+      reply = "I'm here to help! 🤖 Here's what I can assist with:\n\n📚 Stories — 'Suggest a story' or 'Browse library'\n✍️ Writing — 'How to become a writer'\n🎨 Themes — 'Change my theme'\n❤️ Saving — 'How to favorite a story'\n💬 Messaging — 'How to chat with writers'\n🔑 Account — 'Login help' or 'Change password'\n📖 Reading — 'View my reading history'\n🏷️ Genres — 'Show me fantasy stories'\n\nJust ask naturally — I understand plain language!";
     }
 
     // ── Thank you ──

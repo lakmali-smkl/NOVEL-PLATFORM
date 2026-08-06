@@ -79,17 +79,17 @@ const ChatbotWidget = () => {
       } else if (has('suggest', 'recommend', 'what should i read', 'good book', 'good novel', 'popular', 'best novel', 'best story')) {
         fallbackReply = "Great choice! 📚\n\nTo find the best stories:\n1. Check '🔥 Trending Now' on the home page\n2. See '✨ AI Recommendations' on your dashboard\n3. Browse the Library in the sidebar\n4. Ask me 'show me library' for live picks!";
       } else if (has('browse', 'explore', 'library', 'discover', 'catalog', 'what can i read')) {
-        fallbackReply = "Explore our growing library! 🏛️\n\nWays to find stories:\n1. Sidebar → 'Library' to browse all content\n2. Filter by genre, type (novel/article) or author\n3. Use the search bar for specific titles\n4. '🔥 Trending Now' shows the most-viewed stories";
+        fallbackReply = "Explore our growing library! 🏛️\n\nWays to find stories:\n1. Sidebar → 'Library' to browse all content\n2. Filter by genre, type (story/article) or author\n3. Use the search bar for specific titles\n4. '🔥 Trending Now' shows the most-viewed stories";
       } else if (has('genre', 'fantasy', 'romance', 'thriller', 'mystery', 'sci-fi', 'horror', 'adventure', 'comedy', 'drama')) {
         fallbackReply = "We support many genres! 🎭\n\nAvailable genres:\n📖 Fantasy  •  💕 Romance  •  🔍 Mystery\n🚀 Sci-Fi  •  😱 Horror  •  ⚔️ Adventure\n😂 Comedy  •  🎭 Drama  •  🏛️ Historical\n\nFilter by genre in the Library section of the sidebar!";
       } else if (has('become a writer', 'how to write', 'want to write', 'start writing', 'apply writer', 'can i publish', 'write a novel')) {
-        fallbackReply = "Becoming a writer is easy! ✍️\n\nSteps:\n1. Go to your Reader Portal (home page)\n2. Open sidebar → click '✍️ Become a Writer'\n3. Submit your application\n4. Wait for Admin approval\n5. Access the 'Writer Portal' once approved\n\nIn Writer Portal you can publish novels, articles & more!";
+        fallbackReply = "Becoming a writer is easy! ✍️\n\nSteps:\n1. Go to your Reader Portal (home page)\n2. Open sidebar → click '✍️ Become a Writer'\n3. Submit your application\n4. Wait for Admin approval\n5. Access the 'Writer Portal' once approved\n\nIn Writer Portal you can publish stories, articles & more!";
       } else if (has('writer', 'publish', 'write', 'chapter', 'upload')) {
-        fallbackReply = "The Writer Portal is your creative hub! 🖊️\n\nFrom Writer Portal you can:\n📖 Create novels with multiple chapters\n📝 Write & publish articles\n📊 View analytics (views, likes, comments)\n💬 Engage with reader comments\n📢 Post announcements\n\nApply from the Reader sidebar to get started!";
+        fallbackReply = "The Writer Portal is your creative hub! 🖊️\n\nFrom Writer Portal you can:\n📖 Create stories with multiple chapters\n📝 Write & publish articles\n📊 View analytics (views, likes, comments)\n💬 Engage with reader comments\n📢 Post announcements\n\nApply from the Reader sidebar to get started!";
       } else if (has('comment', 'review', 'rate', 'rating', 'feedback', 'reply to comment')) {
         fallbackReply = "Interacting with stories is easy! 💬\n\nTo leave a comment:\n1. Open any chapter or article\n2. Scroll to the bottom\n3. Type and click 'Post'\n\nYou can also:\n↩️ Reply to other readers\n❤️ Like stories\n🗑️ Delete your own comments anytime";
       } else if (has('like', 'favorite', 'favourit', 'save story', 'bookmark', 'saved', 'heart')) {
-        fallbackReply = "Saving stories is simple! ❤️\n\nTo Favorite:\n• Click the ❤️ heart button on any story page\n\nTo view Favorites:\n• Sidebar → 'Favorites'\n• Filter by All / Novels / Articles\n\nTo organize:\n• Click '+ Add to Collection' on any story\n• Create custom named reading shelves";
+        fallbackReply = "Saving stories is simple! ❤️\n\nTo Favorite:\n• Click the ❤️ heart button on any story page\n\nTo view Favorites:\n• Sidebar → 'Favorites'\n• Filter by All / Stories / Articles\n\nTo organize:\n• Click '+ Add to Collection' on any story\n• Create custom named reading shelves";
       } else if (has('collection', 'shelf', 'organize', 'folder', 'reading list', 'read later')) {
         fallbackReply = "Collections keep you organized! 📁\n\nHow to use:\n1. Open any story page\n2. Click 'Add to Collection'\n3. Create a new shelf or add to existing\n\nFind your collections:\n• Sidebar → 'Library' → 'Collections'";
       } else if (has('history', 'reading history', 'continue reading', 'last read', 'resume')) {
@@ -111,7 +111,7 @@ const ChatbotWidget = () => {
       } else if (has('search', 'find', 'look for', 'look up', 'query')) {
         fallbackReply = "Finding stories is easy! 🔍\n\nWays to search:\n1. Search bar at the top of the Library\n2. Filter by genre, type, or date\n3. '🔥 Trending Now' on home page\n4. '✨ AI Recommendations' on dashboard\n5. Ask me: 'Suggest a story'!";
       } else if (has('what is this', 'about', 'platform', 'this site', 'features', 'how does this work')) {
-        fallbackReply = "Welcome to Lumiverse! 📖✨\n\nA community reading & writing platform where:\n\n👀 Readers can:\n• Read novels & articles\n• Save favorites & collections\n• Comment & like stories\n• Get AI recommendations\n\n✍️ Writers can:\n• Publish novels & articles\n• Track engagement analytics\n• Chat with readers\n• Post announcements";
+        fallbackReply = "Welcome to Lumiverse! 📖✨\n\nA community reading & writing platform where:\n\n👀 Readers can:\n• Read stories & articles\n• Save favorites & collections\n• Comment & like stories\n• Get AI recommendations\n\n✍️ Writers can:\n• Publish stories & articles\n• Track engagement analytics\n• Chat with readers\n• Post announcements";
       } else if (has('thank', 'thanks', 'great', 'awesome', 'perfect', 'nice', 'helpful')) {
         fallbackReply = "You're very welcome! 😊\n\nHappy reading! I'm always here if you need help. Enjoy exploring the library! 📚✨";
       } else if (has('bye', 'goodbye', 'see you', 'later', 'cya')) {

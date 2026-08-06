@@ -116,10 +116,10 @@ const AddNovel = ({ user }) => {
       });
 
       if (response.ok) {
-        alert("Novel published successfully!");
+        alert("Story published successfully!");
         navigate('/writer-dashboard');
       } else {
-        alert("Error saving novel.");
+        alert("Error saving story.");
       }
     } catch (error) {
       console.error("Upload error:", error);
@@ -225,7 +225,7 @@ const AddNovel = ({ user }) => {
           </select>
         </div>
 
-        <button type="submit" className="submit-btn">Publish Novel</button>
+        <button type="submit" className="submit-btn">Publish Story</button>
       </form>
     </div>
   );

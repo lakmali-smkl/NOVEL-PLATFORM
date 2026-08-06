@@ -121,7 +121,7 @@ const ReadingHistory = () => {
                   <div className="history-cover-placeholder">📚</div>
                 )}
                 <span className={`history-type-badge ${item.type === 'article' ? 'article-badge' : 'novel-badge'}`}>
-                  {item.type}
+                  {item.type === 'novel' ? 'story' : item.type}
                 </span>
               </div>
 

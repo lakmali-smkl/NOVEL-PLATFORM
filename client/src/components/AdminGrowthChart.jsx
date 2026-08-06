@@ -93,7 +93,7 @@ const AdminGrowthChart = () => {
             <Legend verticalAlign="top" height={36} />
             
             <Line type="monotone" dataKey="Users" stroke="#3b82f6" strokeWidth={2.5} activeDot={{ r: 6 }} />
-            <Line type="monotone" dataKey="Novels" stroke="#10b981" strokeWidth={2.5} />
+            <Line type="monotone" dataKey="Novels" name="Stories" stroke="#10b981" strokeWidth={2.5} />
             <Line type="monotone" dataKey="Articles" stroke="#f59e0b" strokeWidth={2.5} />
           </LineChart>
         </ResponsiveContainer>

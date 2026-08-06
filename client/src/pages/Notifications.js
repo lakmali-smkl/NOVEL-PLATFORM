@@ -92,8 +92,9 @@ const Notifications = ({ user }) => {
   const resolveLink = (n) => {
     let type = n.contentType;
     if (!type && n.message) {
-      if (n.message.toLowerCase().includes('novel')) type = 'novel';
-      else if (n.message.toLowerCase().includes('article')) type = 'article';
+      const msg = n.message.toLowerCase();
+      if (msg.includes('novel') || msg.includes('story')) type = 'novel';
+      else if (msg.includes('article')) type = 'article';
     }
     if (!n.contentId || !type) return null;
 

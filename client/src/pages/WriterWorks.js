@@ -57,7 +57,7 @@ const WriterWorks = ({ user }) => {
         <div className="wd-header-text">
           <p className="wd-greeting">Writer Portal</p>
           <h1 className="wd-username">My Works</h1>
-          <p className="wd-subtitle">All your novels and articles, organized by draft and published status.</p>
+          <p className="wd-subtitle">All your stories and articles, organized by draft and published status.</p>
         </div>
         <div className="wd-header-actions">
           <button className="wd-create-btn primary" onClick={() => window.location.assign('/add-novel')}>
@@ -98,7 +98,7 @@ const WriterWorks = ({ user }) => {
             <p>
               {activeTab === 'draft'
                 ? "No drafts saved right now. Start writing and save as a draft to see it here."
-                : "Nothing published yet. Publish a novel or article to see it here."}
+                : "Nothing published yet. Publish a story or article to see it here."}
             </p>
             <div className="wd-header-actions">
               <button className="wd-create-btn primary" onClick={() => window.location.assign('/add-novel')}>
@@ -135,7 +135,7 @@ const WriterWorks = ({ user }) => {
                     </td>
                     <td>
                       <span className={`wd-type-tag ${work.workType}`}>
-                        {work.workType === 'novel' ? '📖' : '📝'} {work.workType}
+                        {work.workType === 'novel' ? '📖 story' : '📝 article'}
                       </span>
                     </td>
                     <td className="wd-td-num">{work.likes?.length || 0}</td>

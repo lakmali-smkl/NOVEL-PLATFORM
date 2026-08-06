@@ -8,7 +8,7 @@ const WriterWelcome = ({ onConfirm }) => {
                 <div className="welcome-icon">✍️</div>
                 <span className="welcome-tag">OFFICIAL WRITER</span>
                 <h2>Welcome to the Creator Studio</h2>
-                <p>Your application was approved! You now have the power to publish novels, manage articles, and build your own audience.</p>
+                <p>Your application was approved! You now have the power to publish stories, manage articles, and build your own audience.</p>
                 
                 <button className="welcome-btn" onClick={onConfirm}>
                     Let's Start Writing

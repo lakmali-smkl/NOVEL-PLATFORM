@@ -114,7 +114,7 @@ const RecommendationSection = ({ user }) => {
               <span className="rec-ai-badge">✨ AI Pick</span>
               {/* Type Badge */}
               <span className={`rec-type-badge ${item.type}`}>
-                {item.type === 'novel' ? '📖 Novel' : '📝 Article'}
+                {item.type === 'novel' ? '📖 Story' : '📝 Article'}
               </span>
             </div>
 

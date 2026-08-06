@@ -146,7 +146,7 @@ const ReadLater = ({ user }) => {
             <h3>Name your collection</h3>
             <input 
               type="text" 
-              placeholder="e.g. Favorite Novels" 
+              placeholder="e.g. Favorite Stories" 
               value={newColName} 
               onChange={(e) => setNewColName(e.target.value)}
               autoFocus

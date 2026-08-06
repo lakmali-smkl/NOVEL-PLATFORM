@@ -31,7 +31,7 @@ const CHART_HEIGHT = 280;
 const CHART_PAD = { top: 16, right: 16, bottom: 32, left: 40 };
 const CHART_SERIES = [
   { key: 'users', label: 'Users', colorVar: '--neon-blue' },
-  { key: 'novels', label: 'Novels', colorVar: '--neon-gold' },
+  { key: 'novels', label: 'Stories', colorVar: '--neon-gold' },
   { key: 'articles', label: 'Articles', colorVar: '--neon-green' },
 ];
 
@@ -300,7 +300,7 @@ const SiteGrowth = () => {
           <strong>{animatedUsers}</strong>
         </div>
         <div className="growth-card gold growth-card-anim" style={{ animationDelay: '0.08s' }}>
-          <span>Novels Authored (30d)</span>
+          <span>Stories Authored (30d)</span>
           <strong>{animatedNovels}</strong>
         </div>
         <div className="growth-card green growth-card-anim" style={{ animationDelay: '0.16s' }}>
@@ -314,7 +314,7 @@ const SiteGrowth = () => {
         <div className="growth-chart-header">
           <div>
             <h3>Platform Growth Trend</h3>
-            <p className="growth-chart-subtitle">Daily new users, novels, and articles over the tracked period.</p>
+            <p className="growth-chart-subtitle">Daily new users, stories, and articles over the tracked period.</p>
           </div>
           <div className="growth-chart-legend">
             {CHART_SERIES.map((s) => (
@@ -529,7 +529,7 @@ const SiteGrowth = () => {
           <div className="growth-table-row growth-table-header">
             <span>Date String</span>
             <span>Users Signed</span>
-            <span>Novels Logged</span>
+            <span>Stories Logged</span>
             <span>Articles Stamped</span>
           </div>
           {dataset.length === 0 ? (

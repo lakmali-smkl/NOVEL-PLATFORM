@@ -54,7 +54,7 @@ const Footer = ({ user }) => {
           <div className="footer-column">
             <h4>Publish</h4>
             <ul className="footer-links">
-              <li><Link to="/add-novel">Publish Novel</Link></li>
+              <li><Link to="/add-novel">Publish Story</Link></li>
               <li><Link to="/add-article">Write Article</Link></li>
               <li><Link to="/writer-dashboard">Writer Hub</Link></li>
             </ul>
