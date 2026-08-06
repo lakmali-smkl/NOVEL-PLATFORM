@@ -34,6 +34,7 @@ const AdminSidebar = ({ user, closeSidebar }) => {
     { path: '/admin/writer-requests', label: 'Writer Requests', icon: '🔔', badge: pendingCount },
     { path: '/admin/manage-users',   label: 'User Directory',   icon: '👥' },
     { path: '/admin/global-content', label: 'Content Oversight', icon: '📚' },
+    { path: '/admin/announcements',  label: 'Announcements',    icon: '📢' },
     { path: '/admin/analytics',      label: 'Site Growth',      icon: '📈' },
   ];
 

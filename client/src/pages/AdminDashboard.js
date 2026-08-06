@@ -4,8 +4,9 @@ import './AdminDashboard.css';
 import UserDirectory from './UserDirectory'; 
 import AdminMainStats from './AdminMainStats'; 
 import WriterRequests from './WriterRequests';
-import ContentOversight from './ContentOversight'; 
+import ContentOversight from './ContentOversight';
 import SiteGrowth from './SiteGrowth';
+import AdminAnnouncements from './AdminAnnouncements';
 
 
 const AdminDashboard = () => {
@@ -22,6 +23,8 @@ const AdminDashboard = () => {
             setActiveTab('user-directory');
         } else if (path.startsWith('/admin/global-content')) {
             setActiveTab('content-oversight');
+        } else if (path.startsWith('/admin/announcements')) {
+            setActiveTab('announcements');
         } else if (path.startsWith('/admin/analytics')) {
             setActiveTab('site-growth');
         } else {
@@ -39,6 +42,8 @@ const AdminDashboard = () => {
                 return <WriterRequests />;
             case 'content-oversight':
                 return <ContentOversight />;
+            case 'announcements':
+                return <AdminAnnouncements />;
             case 'site-growth':
                 return <SiteGrowth />;
             default:
