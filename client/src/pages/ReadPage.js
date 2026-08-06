@@ -214,6 +214,17 @@ const ReadPage = () => {
         }
     };
 
+    const handleMessageUser = (username) => {
+        if (!username) return;
+        if (!user) {
+            alert("Please login first to send a message!");
+            navigate('/login');
+            return;
+        }
+        if (username === user.username) return;
+        navigate(`/chat/${username}`);
+    };
+
     const [activeReplyCommentId, setActiveReplyCommentId] = useState(null);
     const [replyText, setReplyText] = useState("");
     const [visibleReplies, setVisibleReplies] = useState({});
@@ -423,10 +434,22 @@ const ReadPage = () => {
                                         </div>
                                         <div className="comment-details">
                                             <div className="comment-header">
-                                                <span className="comment-username">
-                                                    {c.username}
-                                                    {isCommentAuthor && <span className="author-badge">Author</span>}
-                                                </span>
+                                                {user && c.username !== user.username ? (
+                                                    <button
+                                                        type="button"
+                                                        className="comment-username comment-username-link"
+                                                        onClick={() => handleMessageUser(c.username)}
+                                                        title={`Message ${c.username}`}
+                                                    >
+                                                        {c.username}
+                                                        {isCommentAuthor && <span className="author-badge">Author</span>}
+                                                    </button>
+                                                ) : (
+                                                    <span className="comment-username">
+                                                        {c.username}
+                                                        {isCommentAuthor && <span className="author-badge">Author</span>}
+                                                    </span>
+                                                )}
                                                 <span className="comment-time">
                                                     {c.createdAt ? (
                                                         <>
@@ -521,10 +544,22 @@ const ReadPage = () => {
                                                         </div>
                                                         <div className="reply-details">
                                                             <div className="reply-header" style={{ display: 'flex', alignItems: 'center' }}>
-                                                                <span className="reply-username">
-                                                                    {reply.username}
-                                                                    {isReplyAuthor && <span className="author-badge">Author</span>}
-                                                                </span>
+                                                                {user && reply.username !== user.username ? (
+                                                                    <button
+                                                                        type="button"
+                                                                        className="reply-username reply-username-link"
+                                                                        onClick={() => handleMessageUser(reply.username)}
+                                                                        title={`Message ${reply.username}`}
+                                                                    >
+                                                                        {reply.username}
+                                                                        {isReplyAuthor && <span className="author-badge">Author</span>}
+                                                                    </button>
+                                                                ) : (
+                                                                    <span className="reply-username">
+                                                                        {reply.username}
+                                                                        {isReplyAuthor && <span className="author-badge">Author</span>}
+                                                                    </span>
+                                                                )}
                                                                 <span className="reply-time" style={{ marginLeft: '8px' }}>
                                                                     {reply.createdAt ? new Date(reply.createdAt).toLocaleDateString() : 'Just now'}
                                                                 </span>
