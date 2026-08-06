@@ -8,6 +8,8 @@ import { API_BASE_URL } from '../config';
 const AdminSidebar = ({ user, closeSidebar }) => {
   const location = useLocation();
   const [pendingCount, setPendingCount] = useState(0);
+  const [unreadMsgCount, setUnreadMsgCount] = useState(0);
+  const [unreadNotifCount, setUnreadNotifCount] = useState(0);
 
   useEffect(() => {
     const fetchPendingCount = async () => {
@@ -29,6 +31,27 @@ const AdminSidebar = ({ user, closeSidebar }) => {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    if (!user?._id) return;
+    const fetchUnreadCounts = async () => {
+      try {
+        const authHeaders = { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } };
+        const [msgRes, notifRes] = await Promise.all([
+          axios.get(`${API_BASE_URL}/api/messages/unread-count/${user._id}`, authHeaders),
+          axios.get(`${API_BASE_URL}/api/notifications/unread/${user._id}`, authHeaders)
+        ]);
+        setUnreadMsgCount(msgRes.data.count || 0);
+        setUnreadNotifCount(notifRes.data.count || 0);
+      } catch (err) {
+        console.error('Error fetching unread counts', err);
+      }
+    };
+
+    fetchUnreadCounts();
+    const interval = setInterval(fetchUnreadCounts, 30000);
+    return () => clearInterval(interval);
+  }, [user]);
+
   const menuItems = [
     { path: '/admin/dashboard',      label: 'Dashboard',        icon: '📊' },
     { path: '/admin/writer-requests', label: 'Writer Requests', icon: '🔔', badge: pendingCount },
@@ -36,6 +59,8 @@ const AdminSidebar = ({ user, closeSidebar }) => {
     { path: '/admin/global-content', label: 'Content Oversight', icon: '📚' },
     { path: '/admin/announcements',  label: 'Announcements',    icon: '📢' },
     { path: '/admin/analytics',      label: 'Site Growth',      icon: '📈' },
+    { path: '/chat',                 label: 'Messages',         icon: '💬', badge: unreadMsgCount },
+    { path: '/notifications',        label: 'Notifications',    icon: '🔔', badge: unreadNotifCount },
   ];
 
   return (

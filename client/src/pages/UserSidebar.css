@@ -107,6 +107,15 @@
   box-shadow: 0 6px 16px rgba(153, 27, 27, 0.4);
 }
 
+.user-sidebar-content .nav-item-button {
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+}
+
 .nav-icon {
   font-size: 1.1rem;
   transition: transform 0.3s ease;

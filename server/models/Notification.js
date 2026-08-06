@@ -4,7 +4,7 @@ const NotificationSchema = new mongoose.Schema({
     recipient: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     sender: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, 
     senderName: String, // Store the name here separately for easy access
-    type: { type: String, enum: ['like', 'comment', 'reply', 'system'], required: true },
+    type: { type: String, enum: ['like', 'comment', 'reply', 'message', 'system'], required: true },
     contentId: { type: mongoose.Schema.Types.ObjectId },
     contentType: { type: String, enum: ['novel', 'article'] },
     commentId: { type: mongoose.Schema.Types.ObjectId },

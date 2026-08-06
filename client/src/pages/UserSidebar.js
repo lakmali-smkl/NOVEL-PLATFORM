@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import SidebarProfile from './SidebarProfile';
 import './UserSidebar.css';
@@ -7,9 +7,25 @@ import './UserSidebar.css';
 import { API_BASE_URL } from '../config';
 const UserSidebar = ({ user, closeSidebar }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [unreadCount, setUnreadCount] = useState(0);
   const [unreadMsgCount, setUnreadMsgCount] = useState(0);
   const isActive = (path) => location.pathname === path ? 'active' : '';
+
+  const handleContactAdmin = async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/api/users/admin-contact`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
+      if (res.data?.admin?.username) {
+        navigate(`/chat/${res.data.admin.username}`);
+        closeSidebar && closeSidebar();
+      }
+    } catch (err) {
+      console.error('Failed to reach admin contact', err);
+      alert('Could not reach admin support right now. Please try again later.');
+    }
+  };
 
   useEffect(() => {
     if (!user?._id) return;
@@ -74,7 +90,12 @@ const UserSidebar = ({ user, closeSidebar }) => {
                     )}
                     </Link>
                 </li>
-                
+                <li>
+                    <button type="button" className="nav-item nav-item-button" onClick={handleContactAdmin}>
+                    <span className="nav-icon">🛎️</span> Contact Admin
+                    </button>
+                </li>
+
                 <div className="sidebar-divider"></div>
                 
                 <li>

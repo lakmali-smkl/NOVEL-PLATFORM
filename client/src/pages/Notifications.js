@@ -18,6 +18,7 @@ const getIcon = (type) => {
     case 'like': return '❤️';
     case 'comment': return '💬';
     case 'reply': return '↩️';
+    case 'message': return '✉️';
     default: return '🔔';
   }
 };
@@ -28,6 +29,7 @@ const getBadgeColor = (type) => {
     case 'comment':
     case 'reply':
       return 'badge-comment';
+    case 'message': return 'badge-message';
     default: return 'badge-default';
   }
 };
@@ -90,6 +92,10 @@ const Notifications = ({ user }) => {
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
   const resolveLink = (n) => {
+    if (n.type === 'message') {
+      return n.senderName ? `/chat/${n.senderName}` : null;
+    }
+
     let type = n.contentType;
     if (!type && n.message) {
       const msg = n.message.toLowerCase();

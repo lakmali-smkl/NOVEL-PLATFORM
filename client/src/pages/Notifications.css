@@ -262,6 +262,11 @@
   border: 1px solid rgba(59, 130, 246, 0.25);
 }
 
+.badge-message {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(52, 211, 153, 0.1));
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
 .badge-default {
   background: var(--hover-bg);
   border: 1px solid var(--border-color);

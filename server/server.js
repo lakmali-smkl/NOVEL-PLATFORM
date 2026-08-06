@@ -639,6 +639,20 @@ app.post('/api/favorites', auth, async (req, res) => {
   }
 });
 
+// Lookup the platform admin to contact (used by the "Contact Admin" sidebar button)
+// Must stay above the generic '/api/users/:email' route below, otherwise
+// "admin-contact" gets swallowed as an :email param and 404s.
+app.get('/api/users/admin-contact', auth, async (req, res) => {
+  try {
+    const admin = await User.findOne({ isAdmin: true }).sort({ createdAt: 1 }).select('_id username profilePicture');
+    if (!admin) return res.status(404).json({ error: "No admin account found" });
+    res.json({ admin });
+  } catch (error) {
+    console.error("Admin contact lookup error:", error);
+    res.status(500).json({ error: "Server error looking up admin contact" });
+  }
+});
+
 app.get('/api/users/:email', async (req, res) => {
   try {
     const user = await User.findOne({ email: req.params.email }).select('-password -hintAnswer');
@@ -1661,6 +1675,17 @@ app.post('/api/messages', auth, async (req, res) => {
     });
 
     await newMsg.save();
+
+    const senderName = req.user.username || 'Someone';
+    const newNotif = new Notification({
+      recipient: receiverId,
+      sender: senderId,
+      senderName,
+      type: 'message',
+      message: `${senderName} sent you a message`
+    });
+    await newNotif.save();
+
     res.status(201).json({ message: "Message sent!", data: newMsg });
   } catch (error) {
     console.error("Send message error:", error);
