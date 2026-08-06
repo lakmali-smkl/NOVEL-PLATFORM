@@ -67,6 +67,27 @@ const AdminSidebar = ({ user, closeSidebar }) => {
     { path: '/notifications',        label: 'Notifications',    icon: '🔔', badge: unreadNotifCount },
   ];
 
+  // Admins also get full writer capabilities, reusing the same routes/pages as the Writer Portal
+  const writerMenuItems = [
+    { path: '/writer-dashboard',       label: 'Writer Dashboard', icon: '🖋️' },
+    { path: '/add-novel',              label: 'Create Story',     icon: '📖' },
+    { path: '/add-article',            label: 'Create Article',   icon: '📝' },
+    { path: '/writer-dashboard/works', label: 'My Works',         icon: '🗂️' },
+  ];
+
+  const renderNavItem = (item) => (
+    <Link
+      key={item.path}
+      to={item.path}
+      className={`admin-nav-item ${location.pathname === item.path ? 'active' : ''}`}
+      onClick={closeSidebar}
+    >
+      <span className="admin-icon">{item.icon}</span>
+      <span className="admin-nav-label">{item.label}</span>
+      {!!item.badge && <span className="admin-nav-badge">{item.badge}</span>}
+    </Link>
+  );
+
   return (
     <div className="admin-sidebar">
       {/* ── Pinned header with profile card ── */}
@@ -78,18 +99,12 @@ const AdminSidebar = ({ user, closeSidebar }) => {
 
       {/* ── Scrollable nav ── */}
       <nav className="admin-sidebar-nav">
-        {menuItems.map((item) => (
-          <Link
-            key={item.path}
-            to={item.path}
-            className={`admin-nav-item ${location.pathname === item.path ? 'active' : ''}`}
-            onClick={closeSidebar}
-          >
-            <span className="admin-icon">{item.icon}</span>
-            <span className="admin-nav-label">{item.label}</span>
-            {!!item.badge && <span className="admin-nav-badge">{item.badge}</span>}
-          </Link>
-        ))}
+        {menuItems.map(renderNavItem)}
+
+        <div className="admin-nav-divider">
+          <span>Writer Tools</span>
+        </div>
+        {writerMenuItems.map(renderNavItem)}
       </nav>
     </div>
   );

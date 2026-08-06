@@ -3,7 +3,7 @@ import { Navigate, Outlet } from 'react-router-dom';
 import './WriterDashboard.css';
 
 const WriterDashboard = ({ user }) => {
-  if (!user || user.isWriter !== true) {
+  if (!user || (user.isWriter !== true && !user.isAdmin)) {
     return <Navigate to="/" />;
   }
 

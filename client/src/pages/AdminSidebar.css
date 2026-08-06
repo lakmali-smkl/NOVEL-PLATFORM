@@ -150,6 +150,30 @@
   opacity: 1;
 }
 
+.admin-nav-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 4px 6px;
+}
+
+.admin-nav-divider::before,
+.admin-nav-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border-color);
+}
+
+.admin-nav-divider span {
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
 .admin-sidebar-footer {
   margin-top: auto;
   padding: 20px 12px 0;
