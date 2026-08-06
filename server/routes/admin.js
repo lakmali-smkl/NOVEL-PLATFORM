@@ -27,6 +27,54 @@ router.get('/users', async (req, res) => {
     }
 });
 
+// 🔍 GET SINGLE USER DETAIL (profile + all their stories/articles + engagement totals)
+// Full Route: GET /api/admin/users/:id
+router.get('/users/:id', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id).select('-password -hintAnswer');
+        if (!user) return res.status(404).json({ error: "User not found" });
+
+        const [novels, articles] = await Promise.all([
+            Novel.find({ authorId: req.params.id })
+                .select('title status genre views likes comments createdAt')
+                .sort({ createdAt: -1 })
+                .lean(),
+            Article.find({ authorId: req.params.id })
+                .select('title status category views likes comments createdAt')
+                .sort({ createdAt: -1 })
+                .lean()
+        ]);
+
+        const mapWork = (w, workType) => ({
+            _id: w._id,
+            title: w.title,
+            workType,
+            status: w.status,
+            views: w.views || 0,
+            likeCount: (w.likes || []).length,
+            commentCount: (w.comments || []).length,
+            createdAt: w.createdAt
+        });
+
+        const works = [
+            ...novels.map(n => mapWork(n, 'novel')),
+            ...articles.map(a => mapWork(a, 'article'))
+        ].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+
+        const totals = works.reduce((acc, w) => {
+            acc.totalLikes += w.likeCount;
+            acc.totalComments += w.commentCount;
+            acc.totalViews += w.views;
+            return acc;
+        }, { totalLikes: 0, totalComments: 0, totalViews: 0 });
+
+        res.json({ user, works, totals: { ...totals, totalWorks: works.length } });
+    } catch (err) {
+        console.error("Error fetching user detail:", err);
+        res.status(500).json({ error: "Failed to fetch user details" });
+    }
+});
+
 // 🔄 TOGGLE WRITER ROLE
 // Full Route: PATCH /api/admin/users/:id/toggle-writer
 router.patch('/users/:id/toggle-writer', async (req, res) => {
