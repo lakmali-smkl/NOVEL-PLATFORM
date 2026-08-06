@@ -1003,6 +1003,19 @@ app.delete('/api/notifications/:id', auth, async (req, res) => {
   } catch (error) { res.status(500).json({ error: "Failed to delete notification" }); }
 });
 
+app.put('/api/notifications/:id/read', auth, async (req, res) => {
+  try {
+    const notif = await Notification.findById(req.params.id);
+    if (!notif) return res.status(404).json({ error: "Notification not found" });
+    if (notif.recipient.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: "Access denied." });
+    }
+    notif.isRead = true;
+    await notif.save();
+    res.json({ message: "Notification marked as read", data: notif });
+  } catch (error) { res.status(500).json({ error: "Failed to mark notification as read" }); }
+});
+
 app.put('/api/notifications/read-all/:userId', auth, async (req, res) => {
   if (req.user._id.toString() !== req.params.userId) {
     return res.status(403).json({ error: "Access denied." });
@@ -1683,12 +1696,14 @@ app.post('/api/messages', auth, async (req, res) => {
     await newMsg.save();
 
     const senderName = req.user.username || 'Someone';
+    const trimmedText = text.trim();
+    const preview = trimmedText.length > 80 ? `${trimmedText.slice(0, 80)}…` : trimmedText;
     const newNotif = new Notification({
       recipient: receiverId,
       sender: senderId,
       senderName,
       type: 'message',
-      message: `${senderName} sent you a message`
+      message: preview
     });
     await newNotif.save();
 

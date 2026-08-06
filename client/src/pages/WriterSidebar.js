@@ -43,7 +43,11 @@ const WriterSidebar = ({ user, closeSidebar }) => {
     };
     fetchCount();
     const interval = setInterval(fetchCount, 30000);
-    return () => clearInterval(interval);
+    window.addEventListener('notifications-updated', fetchCount);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('notifications-updated', fetchCount);
+    };
   }, [user]);
 
   if (!user || !user.isWriter) return null;

@@ -49,7 +49,11 @@ const AdminSidebar = ({ user, closeSidebar }) => {
 
     fetchUnreadCounts();
     const interval = setInterval(fetchUnreadCounts, 30000);
-    return () => clearInterval(interval);
+    window.addEventListener('notifications-updated', fetchUnreadCounts);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('notifications-updated', fetchUnreadCounts);
+    };
   }, [user]);
 
   const menuItems = [
