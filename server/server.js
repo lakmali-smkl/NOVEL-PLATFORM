@@ -179,17 +179,18 @@ app.post('/login', async (req, res) => {
     res.status(200).json({ 
       message: "Login successful!", 
       token,
-      user: { 
+      user: {
         _id: user._id,
-        username: user.username, 
+        username: user.username,
         email: user.email,
         isAdmin: user.isAdmin,
         isWriter: user.isWriter,
         writerRequestStatus: user.writerRequestStatus,
         hasSeenWelcome: user.hasSeenWelcome,
         profilePicture: user.profilePicture || "",
-        favorites: user.favorites || []
-      } 
+        favorites: user.favorites || [],
+        createdAt: user.createdAt
+      }
     });
   } catch (error) {
     console.error("Login Error:", error);

@@ -90,11 +90,19 @@ const AdminSidebar = ({ user, closeSidebar }) => {
 
   return (
     <div className="admin-sidebar">
-      {/* ── Pinned header with profile card ── */}
+      {/* ── Sticky header — always visible, never requires scrolling ── */}
       <div className="admin-sidebar-header">
         <div className="admin-badge">ADMIN</div>
         <h4>Control Panel</h4>
         {user && <SidebarProfile user={user} />}
+        <div className="admin-header-quicklinks">
+          <Link to="/dashboard/profile" className="admin-quicklink" onClick={closeSidebar}>
+            👤 Profile
+          </Link>
+          <Link to="/dashboard/settings" className="admin-quicklink" onClick={closeSidebar}>
+            ⚙️ Settings
+          </Link>
+        </div>
       </div>
 
       {/* ── Scrollable nav ── */}
@@ -104,7 +112,9 @@ const AdminSidebar = ({ user, closeSidebar }) => {
         <div className="admin-nav-divider">
           <span>Writer Tools</span>
         </div>
-        {writerMenuItems.map(renderNavItem)}
+        <div className="admin-writer-tools-grid">
+          {writerMenuItems.map(renderNavItem)}
+        </div>
       </nav>
     </div>
   );

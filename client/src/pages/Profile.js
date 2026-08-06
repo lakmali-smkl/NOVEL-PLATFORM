@@ -13,6 +13,20 @@ const Profile = () => {
     // Sync latest user details from local storage
     const localUser = JSON.parse(localStorage.getItem('user'));
     if (localUser) setUser(localUser);
+
+    // Sessions that logged in before createdAt was added to the login response
+    // won't have it cached — backfill it from the server so "Joined Date" is accurate.
+    if (localUser && !localUser.createdAt && localUser.email) {
+      fetch(`${API}/api/users/${encodeURIComponent(localUser.email)}`)
+        .then((res) => (res.ok ? res.json() : null))
+        .then((fresh) => {
+          if (!fresh || !fresh.createdAt) return;
+          const updatedUser = { ...localUser, createdAt: fresh.createdAt };
+          localStorage.setItem('user', JSON.stringify(updatedUser));
+          setUser(updatedUser);
+        })
+        .catch(() => {});
+    }
   }, [userId]);
 
   if (!user) {
