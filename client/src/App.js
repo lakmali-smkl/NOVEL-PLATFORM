@@ -27,6 +27,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import UserSidebar from './pages/UserSidebar';
 import RequestWriter from './pages/RequestWriter';
 import Notifications from './pages/Notifications';
+import NotFound from './pages/NotFound';
 import CollectionDetail from './pages/CollectionDetail';
 import ChatPage from './pages/ChatPage';
 
@@ -105,8 +106,6 @@ function App() {
             setUser(updatedUser);
             localStorage.setItem('user', JSON.stringify(updatedUser));
             localStorage.removeItem('writerRequestStatus');
-
-            console.log("Role updated: User is now a Writer.");
           } else {
             const updatedUser = { ...user };
             let changed = false;
@@ -131,9 +130,6 @@ function App() {
               localStorage.removeItem('writerRequestStatus');
             }
 
-            if (roleData.writerRequestStatus === 'rejected') {
-              console.log("Request rejected: Cleared pending status.");
-            }
           }
         }
       } catch (err) {
@@ -172,6 +168,10 @@ function App() {
         {isWriter && <WriterSidebar user={user} closeSidebar={closeSidebar} />}
         {isRegularUser && <UserSidebar user={user} closeSidebar={closeSidebar} />}
       </aside>
+
+      {user && isSidebarOpen && (
+        <div className="sidebar-backdrop" onClick={closeSidebar} />
+      )}
 
       <div className={`main-layout ${user && isSidebarOpen ? "main-content-shifted" : ""}`}>
         <div className="content-area">
@@ -216,6 +216,7 @@ function App() {
             <Route path="/edit-article/:id" element={<EditArticle />} />
             <Route path="/notifications" element={<Notifications user={user} />} />
             <Route path="favorites" element={<Favorites />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
         {showFooter && <Footer user={user} />}

@@ -51,11 +51,7 @@ const ReadPage = () => {
 
     // Load main content data (Novels / Articles)
     useEffect(() => {
-        const url = userId
-            ? `${API_BASE_URL}/api/${type}s/${id}?userId=${userId}`
-            : `${API_BASE_URL}/api/${type}s/${id}`;
-
-        fetch(url)
+        fetch(`${API_BASE_URL}/api/${type}s/${id}`, userId ? { headers: authHeaders() } : {})
             .then((res) => res.json())
             .then((responseData) => {
                 setData(responseData);

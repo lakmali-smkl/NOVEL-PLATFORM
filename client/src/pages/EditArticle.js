@@ -9,9 +9,10 @@ const EditArticle = () => {
   const [formData, setFormData] = useState({ title: '', content: '', authorName: '', status: 'draft' });
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    const url = user ? `${API_BASE_URL}/api/articles/${id}?userId=${user._id}` : `${API_BASE_URL}/api/articles/${id}`;
-    fetch(url)
+    const token = localStorage.getItem('token');
+    fetch(`${API_BASE_URL}/api/articles/${id}`, {
+      headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+    })
       .then(res => res.json())
       .then(data => {
         if (data) {

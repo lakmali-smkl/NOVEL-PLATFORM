@@ -9,9 +9,10 @@ const EditNovel = () => {
   const [formData, setFormData] = useState({ title: '', content: '', authorSpeech: '', status: 'draft' });
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    const url = user ? `${API_BASE_URL}/api/novels/${id}?userId=${user._id}` : `${API_BASE_URL}/api/novels/${id}`;
-    fetch(url)
+    const token = localStorage.getItem('token');
+    fetch(`${API_BASE_URL}/api/novels/${id}`, {
+      headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+    })
       .then(res => res.json())
       .then(data => {
         // Only update state if data exists to avoid controlled/uncontrolled input errors

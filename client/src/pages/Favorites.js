@@ -5,16 +5,22 @@ import './Favorites.css';
 import { API_BASE_URL } from '../config';
 const Favorites = () => {
   const [favs, setFavs] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('all'); // 'all', 'novel', 'article'
   const userStr = localStorage.getItem('user');
   const user = userStr ? JSON.parse(userStr) : null;
 
   useEffect(() => {
     if (user && user.email) {
-      fetch(`${API_BASE_URL}/api/users/${user.email}`)
+      fetch(`${API_BASE_URL}/api/users/${user.email}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      })
         .then(res => res.json())
         .then(data => setFavs(data.favorites || []))
-        .catch(err => console.error("Error fetching favorites:", err));
+        .catch(err => console.error("Error fetching favorites:", err))
+        .finally(() => setLoading(false));
+    } else {
+      setLoading(false);
     }
   }, [user]);
 
@@ -23,6 +29,16 @@ const Favorites = () => {
       <div className="fav-content">
         <div className="fav-empty-state">
           <h2>Please login to see your favorites.</h2>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="fav-content">
+        <div className="fav-empty-state">
+          <h2>Loading your favorites...</h2>
         </div>
       </div>
     );

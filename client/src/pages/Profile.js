@@ -17,7 +17,9 @@ const Profile = () => {
     // Sessions that logged in before createdAt was added to the login response
     // won't have it cached — backfill it from the server so "Joined Date" is accurate.
     if (localUser && !localUser.createdAt && localUser.email) {
-      fetch(`${API}/api/users/${encodeURIComponent(localUser.email)}`)
+      fetch(`${API}/api/users/${encodeURIComponent(localUser.email)}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      })
         .then((res) => (res.ok ? res.json() : null))
         .then((fresh) => {
           if (!fresh || !fresh.createdAt) return;

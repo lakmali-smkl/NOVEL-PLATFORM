@@ -89,7 +89,7 @@ const ReadLater = ({ user }) => {
   if (loading) {
     return (
       <div className="writer-container">
-        <p style={{ color: '#fff' }}>Loading custom collections...</p>
+        <p>Loading custom collections...</p>
       </div>
     );
   }
