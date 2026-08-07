@@ -376,3 +376,43 @@
     font-size: 0.85rem;
   }
 }
+
+/* ── Small Phone Layout ──
+   Everything above still fits comfortably on tablets, but a hamburger +
+   logo + Home/Library + theme switcher + bell + Logout in one 70px row
+   overflows a 320–414px phone. Nothing here is removed — every control
+   keeps its full tap target and function, just tighter spacing/sizing. */
+@media (max-width: 480px) {
+  .navbar {
+    padding: 0 0.6rem;
+  }
+  .nav-left {
+    gap: 8px;
+  }
+  .nav-links-group {
+    gap: 0;
+  }
+  .nav-link {
+    padding: 6px 8px;
+    font-size: 0.78rem;
+  }
+  .nav-right {
+    gap: 6px;
+  }
+  .menu-btn,
+  .notif-wrapper {
+    width: 32px;
+    height: 32px;
+  }
+  .theme-indicator-btn {
+    padding: 5px 8px;
+    gap: 5px;
+  }
+  .theme-indicator-label {
+    display: none;
+  }
+  .logout-btn-nav {
+    padding: 6px 10px;
+    font-size: 0.78rem;
+  }
+}

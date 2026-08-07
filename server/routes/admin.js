@@ -23,7 +23,8 @@ router.get('/users', async (req, res) => {
         const users = await User.find({}, 'username email isAdmin isWriter status createdAt');
         res.json(users);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error("Fetch users error:", err);
+        res.status(500).json({ error: "Failed to fetch users." });
     }
 });
 
@@ -79,7 +80,7 @@ router.get('/users/:id', async (req, res) => {
 // Full Route: PATCH /api/admin/users/:id/toggle-writer
 router.patch('/users/:id/toggle-writer', async (req, res) => {
     try {
-        const user = await User.findById(req.params.id);
+        const user = await User.findById(req.params.id).select('-password -hintAnswer');
         if (!user) return res.status(404).json({ error: "User not found" });
 
         const updatedIsWriter = !user.isWriter;
@@ -107,7 +108,7 @@ router.patch('/users/:id/status', async (req, res) => {
             req.params.id,
             { status: status },
             { new: true }
-        );
+        ).select('-password -hintAnswer');
         if (!user) return res.status(404).json({ error: "User not found" });
 
         res.json({ message: `Account status updated to ${status} successfully`, user });

@@ -188,6 +188,31 @@ body.theme-sunset {
   transition: margin-left 0.3s ease;
 }
 
+.sidebar-backdrop {
+  display: none;
+}
+
+/* Below tablet width, the sidebar becomes a drawer that overlays content
+   (with a tap-to-close backdrop) instead of pushing it 280px to the right —
+   pushing caused the page to overflow horizontally on phone-width screens. */
+@media (max-width: 768px) {
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1999; /* below .sidebar's 2000, above page content */
+  }
+
+  .main-content-shifted {
+    margin-left: 0;
+  }
+
+  .sidebar {
+    width: min(280px, 85vw);
+  }
+}
+
 .sidebar.admin-theme {
   border-right: 2px solid #007bff;
   background: var(--card-bg);

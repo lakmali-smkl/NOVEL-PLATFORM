@@ -5,6 +5,46 @@
   color: var(--text-main);
 }
 
+.loading-text,
+.error-text {
+  color: var(--text-main);
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.collection-detail-header {
+  margin-bottom: 30px;
+}
+
+.collection-detail-header h1 {
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.collection-item-count {
+  color: var(--text-muted);
+}
+
+.collection-detail-divider {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin-bottom: 20px;
+}
+
+.saved-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.empty-collection-state {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-muted);
+}
+
 .back-link {
   color: var(--accent);
   text-decoration: none;

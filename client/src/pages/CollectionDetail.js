@@ -48,30 +48,30 @@ const CollectionDetail = () => {
     }
   };
 
-  if (loading) return <div className="loading-text" style={{ color: '#fff', textAlign: 'center', marginTop: '2rem' }}>Loading collection items...</div>;
+  if (loading) return <div className="loading-text">Loading collection items...</div>;
 
-  if (!collection) return <div className="error-text" style={{ color: '#fff', textAlign: 'center', marginTop: '2rem' }}>Collection not found.</div>;
+  if (!collection) return <div className="error-text">Collection not found.</div>;
 
   return (
-    <div className="collection-detail-container" style={{ padding: '20px', color: '#fff' }}>
-      
+    <div className="collection-detail-container">
+
       {/* 📁 Header Row */}
-      <div className="collection-detail-header" style={{ marginBottom: '30px' }}>
-        <Link to="/dashboard/read-later" className="back-link" style={{ color: '#3b82f6', textDecoration: 'none' }}>
+      <div className="collection-detail-header">
+        <Link to="/dashboard/read-later" className="back-link">
           &larr; Back to Collections
         </Link>
-        <h1 style={{ marginTop: '15px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <h1>
           <span>{collection.icon || '📁'}</span> {collection.name}
         </h1>
-        <p style={{ color: '#aaa' }}>{collection.savedItems?.length || 0} items stored in this folder</p>
+        <p className="collection-item-count">{collection.savedItems?.length || 0} items stored in this folder</p>
       </div>
 
-      <hr style={{ borderColor: '#333', marginBottom: '20px' }} />
+      <hr className="collection-detail-divider" />
 
       {/* 📚 Render Saved Items list from MongoDB */}
-      <div className="saved-items-list" style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+      <div className="saved-items-list">
         {!collection.savedItems || collection.savedItems.length === 0 ? (
-          <div className="empty-collection-state" style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+          <div className="empty-collection-state">
             <p>This collection is empty. Go to a story or article page to add items here!</p>
           </div>
         ) : (

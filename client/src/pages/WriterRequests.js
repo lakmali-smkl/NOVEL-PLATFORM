@@ -5,6 +5,8 @@ import './WriterRequests.css';
 import { API_BASE_URL } from '../config';
 const WriterRequests = () => {
   const [requests, setRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
 
   const pendingRequests = requests.filter(req => req.status === 'pending');
   const handledRequests = requests.filter(req => req.status !== 'pending');
@@ -12,12 +14,19 @@ const WriterRequests = () => {
   // Load all writer application records
   useEffect(() => {
     const fetchRequests = async () => {
-      const res = await axios.get(`${API_BASE_URL}/api/admin/writer-requests`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      setRequests(res.data);
+      try {
+        const res = await axios.get(`${API_BASE_URL}/api/admin/writer-requests`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        setRequests(res.data);
+      } catch (error) {
+        console.error('Error fetching writer requests:', error);
+        setLoadError(true);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchRequests();
   }, []);
@@ -63,6 +72,36 @@ const WriterRequests = () => {
     if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
     return `${Math.floor(diff / 86400)}d ago`;
   };
+
+  if (loading) {
+    return (
+      <div className="wreq-page">
+        <div className="wreq-page-header">
+          <h1>Writer Applications</h1>
+          <p className="wreq-page-subtitle">Review and manage requests from readers who want publishing rights.</p>
+        </div>
+        <div className="wreq-empty">
+          <span className="wreq-empty-icon">⏳</span>
+          <p>Loading requests...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div className="wreq-page">
+        <div className="wreq-page-header">
+          <h1>Writer Applications</h1>
+          <p className="wreq-page-subtitle">Review and manage requests from readers who want publishing rights.</p>
+        </div>
+        <div className="wreq-empty">
+          <span className="wreq-empty-icon">⚠️</span>
+          <p>Couldn't load writer requests. Please refresh the page.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="wreq-page">

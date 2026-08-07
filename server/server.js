@@ -32,18 +32,41 @@ const adminRoutes = require('./routes/admin');
 const Collection = require('./models/Collection');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { auth, admin } = require('./middleware/auth');
+const { auth, admin, optionalAuth } = require('./middleware/auth');
 const { encryptText, decryptText } = require('./utils/crypto');
+
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+const ALLOWED_TEXT_TYPES = ['text/plain', 'application/pdf'];
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'uploads/');
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + '-' + file.originalname);
+    // path.basename strips any directory components from the client-supplied
+    // filename (e.g. "../../server.js") before it reaches disk — multer does
+    // not sanitize this itself, so without it a crafted filename can write
+    // outside the uploads/ folder. The character whitelist further blocks
+    // anything that could be reinterpreted as a path or shell-special token.
+    const safeOriginal = path.basename(file.originalname).replace(/[^a-zA-Z0-9._-]/g, '_');
+    cb(null, `${Date.now()}-${safeOriginal}`);
   }
 });
-const upload = multer({ storage: storage });
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 8 * 1024 * 1024 }, // 8MB per file
+  fileFilter: (req, file, cb) => {
+    const isImageField = file.fieldname === 'coverPhoto' || file.fieldname === 'profilePicture';
+    const isTextField = file.fieldname === 'textFile';
+    if (isImageField && !ALLOWED_IMAGE_TYPES.includes(file.mimetype)) {
+      return cb(Object.assign(new Error('Only JPEG, PNG, WEBP, or GIF images are allowed.'), { code: 'INVALID_FILE_TYPE' }));
+    }
+    if (isTextField && !ALLOWED_TEXT_TYPES.includes(file.mimetype)) {
+      return cb(Object.assign(new Error('Only .txt or .pdf files are allowed.'), { code: 'INVALID_FILE_TYPE' }));
+    }
+    cb(null, true);
+  }
+});
 
 const app = express();
 
@@ -129,7 +152,8 @@ app.post('/register', async (req, res) => {
     await newUser.save();
     res.status(201).json({ message: "Success!" });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Registration error:", error);
+    res.status(500).json({ error: "Server error during registration." });
   }
 });
 
@@ -541,13 +565,16 @@ app.get('/api/novels/author/:authorId', auth, async (req, res) => {
   } catch (error) { res.status(500).json({ error: "Failed to fetch author stories" }); }
 });
 
-app.get('/api/novels/:id', async (req, res) => {
+app.get('/api/novels/:id', optionalAuth, async (req, res) => {
   try {
     const novel = await Novel.findById(req.params.id);
     if (!novel) return res.status(404).json({ error: "Story not found" });
 
     if (novel.status === 'draft') {
-      const requesterId = req.query.userId;
+      // Ownership must come from the verified JWT (req.user), never a
+      // client-supplied ?userId= — that was trivially spoofable to view
+      // any private draft just by knowing its author's id.
+      const requesterId = req.user?._id?.toString();
       if (!novel.authorId || novel.authorId.toString() !== requesterId) {
         return res.status(403).json({ error: "This story is a private draft and cannot be viewed." });
       }
@@ -574,8 +601,8 @@ app.post('/api/articles', auth, upload.fields([{ name: 'coverPhoto' }, { name: '
     await newArticle.save();
     res.status(201).json({ message: "Article saved successfully!" });
   } catch (error) {
-    console.error("Save Error:", error); 
-    res.status(500).json({ error: error.message });
+    console.error("Save Error:", error);
+    res.status(500).json({ error: "Failed to save article." });
   }
 });
 
@@ -608,13 +635,15 @@ app.get('/api/articles/author/:authorId', auth, async (req, res) => {
   } catch (error) { res.status(500).json({ error: "Failed to fetch author articles" }); }
 });
 
-app.get('/api/articles/:id', async (req, res) => {
+app.get('/api/articles/:id', optionalAuth, async (req, res) => {
   try {
     const article = await Article.findById(req.params.id);
     if (!article) return res.status(404).json({ error: "Article not found" });
 
     if (article.status === 'draft') {
-      const requesterId = req.query.userId;
+      // Same reasoning as GET /api/novels/:id — ownership must come from the
+      // verified JWT, not a spoofable ?userId= query param.
+      const requesterId = req.user?._id?.toString();
       if (!article.authorId || article.authorId.toString() !== requesterId) {
         return res.status(403).json({ error: "This article is a private draft and cannot be viewed." });
       }
@@ -657,8 +686,14 @@ app.get('/api/users/admin-contact', auth, async (req, res) => {
   }
 });
 
-app.get('/api/users/:email', async (req, res) => {
+app.get('/api/users/:email', auth, async (req, res) => {
   try {
+    // This returns the full profile document (favorites, reading history,
+    // role flags, etc.) — only the owner may fetch it. Admin lookups of
+    // other users go through the dedicated GET /api/admin/users/:id route.
+    if (req.user.email !== req.params.email) {
+      return res.status(403).json({ error: "Access denied. You can only view your own profile." });
+    }
     const user = await User.findOne({ email: req.params.email }).select('-password -hintAnswer');
     if (!user) return res.status(404).json({ error: "User not found" });
     res.json(user);
@@ -739,7 +774,8 @@ app.delete('/api/users/:userId/favorites/:contentId', auth, async (req, res) => 
     if (!user) return res.status(404).json({ message: "User not found" });
     res.json({ message: "Removed successfully", favorites: user.favorites });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Remove favorite error:", error);
+    res.status(500).json({ error: "Failed to remove favorite." });
   }
 });
 
@@ -814,7 +850,10 @@ app.post('/api/:type/:id/like', auth, async (req, res) => {
 
     await item.save();
     res.json({ likesCount: item.likes.length });
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) {
+    console.error("Like error:", err);
+    res.status(500).json({ error: "Failed to update like." });
+  }
 });
 
 app.post('/api/:type/:id/comment', auth, async (req, res) => {
@@ -856,7 +895,7 @@ app.post('/api/:type/:id/comment', auth, async (req, res) => {
     res.json(item.comments);
   } catch (err) {
     console.error("Comment Error:", err);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: "Failed to post comment." });
   }
 });
 
@@ -920,7 +959,7 @@ app.post('/api/:type/:id/comment/:commentId/reply', auth, async (req, res) => {
     res.json(item.comments);
   } catch (err) {
     console.error("Reply Error:", err);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: "Failed to post reply." });
   }
 });
 
@@ -948,7 +987,7 @@ app.delete('/api/:type/:id/comment/:commentId', auth, async (req, res) => {
     res.json(item.comments);
   } catch (err) {
     console.error("Delete comment error:", err);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: "Failed to delete comment." });
   }
 });
 
@@ -979,7 +1018,7 @@ app.delete('/api/:type/:id/comment/:commentId/reply/:replyId', auth, async (req,
     res.json(item.comments);
   } catch (err) {
     console.error("Delete reply error:", err);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: "Failed to delete reply." });
   }
 });
 
@@ -1170,7 +1209,8 @@ app.post('/api/collections/:collectionId/add-item', auth, async (req, res) => {
 
     res.status(200).json({ message: "Saved!", collection });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Add to collection error:", error);
+    res.status(500).json({ error: "Failed to save item to collection." });
   }
 });
 
@@ -2025,6 +2065,27 @@ if (fs.existsSync(clientBuildPath)) {
     res.sendFile(path.join(clientBuildPath, 'index.html'));
   });
 }
+
+// ==========================================
+// GLOBAL ERROR HANDLER
+// ==========================================
+// Catches anything passed to next(err) — chiefly multer rejecting an upload
+// (bad file type / over the size limit) — and responds with clean JSON
+// instead of Express's default HTML error page, which echoes the stack
+// trace (internal file paths, code structure) straight to the client.
+app.use((err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(413).json({ error: 'FILE_TOO_LARGE', message: 'File exceeds the 8MB upload limit.' });
+    }
+    return res.status(400).json({ error: 'UPLOAD_ERROR', message: err.message });
+  }
+  if (err && err.code === 'INVALID_FILE_TYPE') {
+    return res.status(400).json({ error: 'INVALID_FILE_TYPE', message: err.message });
+  }
+  console.error('Unhandled route error:', err);
+  res.status(500).json({ error: 'SERVER_ERROR', message: 'Something went wrong. Please try again.' });
+});
 
 // ==========================================
 // SERVER SPIN UP

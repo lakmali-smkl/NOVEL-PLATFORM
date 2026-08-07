@@ -5,13 +5,23 @@ import { Link } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 const NovelList = () => {
   const [novels, setNovels] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch(`${API_BASE_URL}/api/novels`)
       .then(res => res.json())
       .then(data => setNovels(data))
-      .catch(err => console.error("Error:", err));
+      .catch(err => console.error("Error:", err))
+      .finally(() => setLoading(false));
   }, []);
+
+  if (loading) {
+    return <div className="novel-gallery"><p className="novel-list-status">Loading stories...</p></div>;
+  }
+
+  if (novels.length === 0) {
+    return <div className="novel-gallery"><p className="novel-list-status">No stories found.</p></div>;
+  }
 
   return (
     <div className="novel-gallery">
