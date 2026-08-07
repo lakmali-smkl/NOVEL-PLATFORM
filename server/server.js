@@ -38,23 +38,14 @@ const { encryptText, decryptText } = require('./utils/crypto');
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 const ALLOWED_TEXT_TYPES = ['text/plain', 'application/pdf'];
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/');
-  },
-  filename: (req, file, cb) => {
-    // path.basename strips any directory components from the client-supplied
-    // filename (e.g. "../../server.js") before it reaches disk — multer does
-    // not sanitize this itself, so without it a crafted filename can write
-    // outside the uploads/ folder. The character whitelist further blocks
-    // anything that could be reinterpreted as a path or shell-special token.
-    const safeOriginal = path.basename(file.originalname).replace(/[^a-zA-Z0-9._-]/g, '_');
-    cb(null, `${Date.now()}-${safeOriginal}`);
-  }
-});
+// Images are kept in memory just long enough to be Base64-encoded into the
+// MongoDB document (see toDataUri below) — not written to local disk. Render
+// (and most hosts) give the app an ephemeral filesystem, so anything saved
+// to disk disappears on the next deploy/restart; storing the image data in
+// MongoDB itself means it persists the same way the rest of the app's data does.
 const upload = multer({
-  storage: storage,
-  limits: { fileSize: 8 * 1024 * 1024 }, // 8MB per file
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 4 * 1024 * 1024 }, // 4MB per file — keeps documents small since images now live in MongoDB
   fileFilter: (req, file, cb) => {
     const isImageField = file.fieldname === 'coverPhoto' || file.fieldname === 'profilePicture';
     const isTextField = file.fieldname === 'textFile';
@@ -67,6 +58,11 @@ const upload = multer({
     cb(null, true);
   }
 });
+
+// Converts an in-memory uploaded file into a self-contained data: URI so it
+// can be stored directly on the Mongo document and rendered with a plain
+// <img src="..."> on the frontend, with no separate file-serving route.
+const toDataUri = (file) => `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
 
 const app = express();
 
@@ -323,7 +319,7 @@ app.put('/api/users/:id/settings', auth, upload.single('profilePicture'), async 
 
     // Handle Profile Picture Upload
     if (req.file) {
-      user.profilePicture = req.file.path.replace(/\\/g, '/'); // Normalize path
+      user.profilePicture = toDataUri(req.file);
     }
 
     await user.save();
@@ -523,8 +519,10 @@ app.post('/api/novels', auth, upload.fields([{ name: 'coverPhoto' }, { name: 'te
       author: authorName,
       authorSpeech,
       authorId: req.user._id,
-      coverPhoto: req.files['coverPhoto'] ? req.files['coverPhoto'][0].path : null,
-      textFile: req.files['textFile'] ? req.files['textFile'][0].path : null,
+      coverPhoto: req.files['coverPhoto'] ? toDataUri(req.files['coverPhoto'][0]) : null,
+      // The raw imported .txt/.pdf is never read back anywhere (the client
+      // already extracts its text into `content` before this request), so
+      // it isn't persisted — nothing was gained by saving it to begin with.
       status: status || 'draft'
     });
     
@@ -594,8 +592,9 @@ app.post('/api/articles', auth, upload.fields([{ name: 'coverPhoto' }, { name: '
       author: authorName,
       authorId: req.user._id,
       status: status || 'draft',
-      coverPhoto: req.files['coverPhoto'] ? req.files['coverPhoto'][0].path : null,
-      textFile: req.files['textFile'] ? req.files['textFile'][0].path : null
+      // See the equivalent /api/novels comment — the raw imported file is
+      // never read back, so it isn't persisted.
+      coverPhoto: req.files['coverPhoto'] ? toDataUri(req.files['coverPhoto'][0]) : null
     });
 
     await newArticle.save();

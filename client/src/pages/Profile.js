@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './Profile.css';
 
-import { API_BASE_URL as API } from '../config';
+import { API_BASE_URL as API, resolveMediaUrl } from '../config';
 const Profile = () => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
 
@@ -49,7 +49,7 @@ const Profile = () => {
     if (user.profilePicture) {
       return (
         <img 
-          src={`${API}/${user.profilePicture}`} 
+          src={resolveMediaUrl(user.profilePicture)}
           alt="Profile Avatar" 
           className="avatar-image" 
         />

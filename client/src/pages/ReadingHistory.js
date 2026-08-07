@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './ReadingHistory.css';
 
-import { API_BASE_URL } from '../config';
+import { API_BASE_URL, resolveMediaUrl } from '../config';
 const ReadingHistory = () => {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -113,7 +113,7 @@ const ReadingHistory = () => {
               <div className="history-cover-wrap">
                 {item.coverPhoto ? (
                   <img 
-                    src={`${API_BASE_URL}/${item.coverPhoto}`} 
+                    src={resolveMediaUrl(item.coverPhoto)}
                     alt={item.title} 
                     className="history-cover"
                   />

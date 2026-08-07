@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme, THEMES } from '../ThemeContext';
 import './Settings.css';
 
-import { API_BASE_URL } from '../config';
+import { API_BASE_URL, resolveMediaUrl } from '../config';
 const Settings = ({ setUser: setAppUser }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -35,7 +35,7 @@ const Settings = ({ setUser: setAppUser }) => {
     setUsername(localUser.username || '');
     setEmail(localUser.email || '');
     if (localUser.profilePicture) {
-      setProfilePicturePreview(`${API_BASE_URL}/${localUser.profilePicture}`);
+      setProfilePicturePreview(resolveMediaUrl(localUser.profilePicture));
     }
   }, [navigate]);
 
@@ -102,7 +102,7 @@ const Settings = ({ setUser: setAppUser }) => {
         
         // Update preview from server-normalized path
         if (data.user.profilePicture) {
-          setProfilePicturePreview(`${API_BASE_URL}/${data.user.profilePicture}`);
+          setProfilePicturePreview(resolveMediaUrl(data.user.profilePicture));
         }
 
         // Reset password fields

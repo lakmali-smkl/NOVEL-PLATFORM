@@ -2,7 +2,7 @@ import React, { useState, useEffect, useLayoutEffect, useRef, useCallback } from
 import { useParams, useNavigate } from 'react-router-dom';
 import './ChatPage.css';
 
-import { API_BASE_URL } from '../config';
+import { API_BASE_URL, resolveMediaUrl } from '../config';
 
 // Popover that flips from below-the-bubble to above-the-bubble when it would
 // otherwise be clipped by the scrollable messages list (e.g. for messages
@@ -439,7 +439,7 @@ const ChatPage = () => {
               <button key={u._id} className="chat-conv-item search-result" onClick={() => startConversation(u)}>
                 <div className="chat-conv-avatar">
                   {u.profilePicture ? (
-                    <img src={`${API_BASE_URL}/${u.profilePicture}`} alt="" />
+                    <img src={resolveMediaUrl(u.profilePicture)} alt="" />
                   ) : (
                     <span>{u.username.charAt(0).toUpperCase()}</span>
                   )}
@@ -479,7 +479,7 @@ const ChatPage = () => {
               >
                 <div className="chat-conv-avatar">
                   {conv.profilePicture ? (
-                    <img src={`${API_BASE_URL}/${conv.profilePicture}`} alt="" />
+                    <img src={resolveMediaUrl(conv.profilePicture)} alt="" />
                   ) : (
                     <span>{conv.username.charAt(0).toUpperCase()}</span>
                   )}
@@ -513,7 +513,7 @@ const ChatPage = () => {
               </button>
               <div className="chat-header-avatar">
                 {activeConversation.profilePicture ? (
-                  <img src={`${API_BASE_URL}/${activeConversation.profilePicture}`} alt="" />
+                  <img src={resolveMediaUrl(activeConversation.profilePicture)} alt="" />
                 ) : (
                   <span>{activeConversation.username.charAt(0).toUpperCase()}</span>
                 )}
@@ -698,7 +698,7 @@ const ChatPage = () => {
                 <button key={u._id} type="button" className="chat-forward-target" onClick={() => sendForward(u._id)}>
                   <div className="chat-conv-avatar">
                     {u.profilePicture ? (
-                      <img src={`${API_BASE_URL}/${u.profilePicture}`} alt="" />
+                      <img src={resolveMediaUrl(u.profilePicture)} alt="" />
                     ) : (
                       <span>{u.username.charAt(0).toUpperCase()}</span>
                     )}

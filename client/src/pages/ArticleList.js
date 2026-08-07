@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './ArticleList.css';
 
-import { API_BASE_URL } from '../config';
+import { API_BASE_URL, resolveMediaUrl } from '../config';
 const ArticleList = () => {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -30,7 +30,7 @@ const ArticleList = () => {
         <div key={article._id} className="article-card">
           {article.coverPhoto && (
             <img
-              src={`${API_BASE_URL}/${article.coverPhoto}`}
+              src={resolveMediaUrl(article.coverPhoto)}
               alt={article.title}
             />
           )}

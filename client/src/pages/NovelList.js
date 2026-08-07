@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './NovelList.css';
 import { Link } from 'react-router-dom';
 
-import { API_BASE_URL } from '../config';
+import { API_BASE_URL, resolveMediaUrl } from '../config';
 const NovelList = () => {
   const [novels, setNovels] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,7 +31,7 @@ const NovelList = () => {
             {/* Display the Cover Photo */}
             {novel.coverPhoto && (
               <img 
-                src={`${API_BASE_URL}/${novel.coverPhoto}`} 
+                src={resolveMediaUrl(novel.coverPhoto)}
                 alt={novel.title} 
                 className="cover-img"
               />
