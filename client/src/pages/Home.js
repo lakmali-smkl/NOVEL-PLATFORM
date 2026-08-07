@@ -5,7 +5,7 @@ import myVideo from './backgroundVideo.mp4';
 import RecommendationSection from './RecommendationSection';
 import ChatbotWidget from '../components/ChatbotWidget';
 
-import { API_BASE_URL } from '../config';
+import { API_BASE_URL, resolveMediaUrl } from '../config';
 const literaryQuotes = [
   { text: "A reader lives a thousand lives before he dies. The man who never reads lives only one.", author: "George R.R. Martin" },
   { text: "There is no barrier, obstacle, or limitation that can be placed on a mind that loves stories.", author: "Unknown" },
@@ -164,7 +164,7 @@ const Home = ({ user }) => {
                 <div key={item.contentId} className="continue-card">
                   <div className="continue-cover-wrapper">
                     {item.coverPhoto ? (
-                      <img src={`${API_BASE_URL}/${item.coverPhoto}`} alt={item.title} />
+                      <img src={resolveMediaUrl(item.coverPhoto)} alt={item.title} />
                     ) : (
                       <div className="continue-cover-placeholder">📖</div>
                     )}
@@ -279,7 +279,7 @@ const Home = ({ user }) => {
             {trending.length > 0 ? (
               trending.map(item => (
                 <div key={item._id} className="novel-card">
-                  <img src={`${API_BASE_URL}/${item.coverPhoto}`} alt={item.title} />
+                  <img src={resolveMediaUrl(item.coverPhoto)} alt={item.title} />
                   <h3>{item.title}</h3>
                   <Link to={`/read/novel/${item._id}`} className="read-now-btn">Read Now</Link>
                 </div>
@@ -311,7 +311,7 @@ const Home = ({ user }) => {
                 <div key={novel._id} className="genre-novel-card">
                   <div className="genre-novel-cover">
                     {novel.coverPhoto ? (
-                      <img src={`${API_BASE_URL}/${novel.coverPhoto}`} alt={novel.title} />
+                      <img src={resolveMediaUrl(novel.coverPhoto)} alt={novel.title} />
                     ) : (
                       <div className="genre-cover-placeholder">📚</div>
                     )}
@@ -405,7 +405,7 @@ const Home = ({ user }) => {
                 <div key={item._id} className="guest-preview-card">
                   <div className="guest-preview-cover">
                     {item.coverPhoto ? (
-                      <img src={`${API_BASE_URL}/${item.coverPhoto}`} alt={item.title} />
+                      <img src={resolveMediaUrl(item.coverPhoto)} alt={item.title} />
                     ) : (
                       <div className="placeholder-art">📖</div>
                     )}

@@ -1,7 +1,7 @@
 import React from 'react';
 import './SidebarProfile.css';
 
-import { API_BASE_URL as API } from '../config';
+import { resolveMediaUrl } from '../config';
 const roleConfig = {
   admin:  { label: 'Administrator', color: '#3399ff', bg: 'rgba(0,123,255,0.12)', border: 'rgba(0,123,255,0.3)',  icon: '🛡️' },
   writer: { label: 'Writer',        color: '#f97316', bg: 'rgba(249,115,22,0.12)', border: 'rgba(249,115,22,0.3)', icon: '✍️' },
@@ -21,7 +21,7 @@ const SidebarProfile = ({ user }) => {
       <div className="sbp-avatar-wrap">
         {user.profilePicture ? (
           <img
-            src={`${API}/${user.profilePicture}`}
+            src={resolveMediaUrl(user.profilePicture)}
             alt="avatar"
             className="sbp-avatar-img"
           />
