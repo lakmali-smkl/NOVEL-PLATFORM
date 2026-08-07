@@ -12,6 +12,8 @@ if (!process.env.MONGO_URI) {
 
 const dns = require('dns');
 dns.setServers(['8.8.8.8', '8.8.4.4']);
+const path = require('path');
+const fs = require('fs');
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -2007,6 +2009,22 @@ app.post('/api/bot/message', async (req, res) => {
 });
 
 
+
+// ==========================================
+// SERVE REACT BUILD (single-service deployments, e.g. Render)
+// ==========================================
+// No-op locally / in split deployments where client/build doesn't exist —
+// only kicks in when the client has actually been built alongside the server.
+const clientBuildPath = path.join(__dirname, '..', 'client', 'build');
+if (fs.existsSync(clientBuildPath)) {
+  app.use(express.static(clientBuildPath));
+  // Pathless catch-all (not app.get('*', ...)) — Express 5's path-to-regexp
+  // requires named wildcards for string patterns, so a bare '*' throws at
+  // startup. This only runs when nothing above it (API routes) matched.
+  app.use((req, res) => {
+    res.sendFile(path.join(clientBuildPath, 'index.html'));
+  });
+}
 
 // ==========================================
 // SERVER SPIN UP
