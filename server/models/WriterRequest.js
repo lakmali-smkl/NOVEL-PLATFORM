@@ -8,4 +8,6 @@ const WriterRequestSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now }
 },{ timestamps: true });
 
+WriterRequestSchema.index({ userId: 1, status: 1 });
+
 module.exports = mongoose.model('WriterRequest', WriterRequestSchema);

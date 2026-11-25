@@ -44,8 +44,8 @@ The whole app is themeable (7 built-in themes), and every account type shares a 
 | Database | MongoDB (Mongoose 9) |
 | Auth | JWT (`jsonwebtoken`), password hashing via `bcryptjs` |
 | Security | `helmet`, `cors`, `express-rate-limit` on auth endpoints |
-| File uploads | `multer` (disk storage, served from `/uploads`) |
-| Testing | Jest (backend), `react-scripts test` / Testing Library (frontend) |
+| File uploads | `multer` (in-memory; images stored in MongoDB and served from `/api/media/:type/:id/cover`) |
+| Testing | Jest + Supertest + `mongodb-memory-server` (backend API tests), `react-scripts test` / Testing Library (frontend) |
 | CI | GitHub Actions (`.github/workflows/ci.yml`) — lints/builds the client and syntax-checks + tests the server on every push/PR to `main`/`dev` |
 
 ## Features
@@ -91,15 +91,24 @@ novel-platform/
 │       └── config.js             # API_BASE_URL (reads REACT_APP_API_URL)
 │
 ├── server/                      # Express backend
-│   ├── server.js                 # App entry point — most routes live here
-│   ├── routes/admin.js           # Admin-only routes (mounted at /api/admin,
-│   │                              #   globally guarded by auth + admin middleware)
+│   ├── server.js                 # Entry point: env checks, MongoDB connection, listen
+│   ├── app.js                    # Builds the Express app (middleware + routers);
+│   │                              #   imported by tests without a database
+│   ├── routes/                   # One router per area: auth, users, content,
+│   │                              #   notifications, announcements, collections,
+│   │                              #   recommendations, messages, bot, admin
+│   │                              #   (admin is mounted at /api/admin and globally
+│   │                              #   guarded by auth + admin middleware)
+│   ├── lib/                      # Shared helpers: upload (multer), validation,
+│   │                              #   media (cover-image URLs)
+│   ├── scripts/                  # One-off data migrations
+│   ├── tests/                    # API tests (Supertest + in-memory MongoDB)
 │   ├── models/                   # Mongoose schemas: User, Novel, Article,
 │   │                              #   Message, Notification, Announcement,
 │   │                              #   Collection, WriterRequest
 │   ├── middleware/auth.js        # `auth` (JWT verify) and `admin` (role check)
 │   ├── utils/crypto.js           # AES-256-GCM encrypt/decrypt for message text
-│   └── uploads/                  # User-uploaded cover photos / text files
+│   └── uploads/                  # Legacy uploads from before images moved to MongoDB
 │
 ├── .github/workflows/ci.yml     # CI: client build+test, server syntax+test
 └── .postman/                    # Postman/API client resources
@@ -189,10 +198,10 @@ A user's role is stored on their `User` document (`isWriter`, `isAdmin` booleans
 
 ## API Overview
 
-All routes are prefixed implicitly by the server root (`http://localhost:5000`). Full detail lives in `server/server.js` and `server/routes/admin.js`; the high-level surface:
+All routes are prefixed implicitly by the server root (`http://localhost:5000`). Full detail lives in `server/routes/*.js`; the high-level surface:
 
 - **Auth** — `POST /register`, `POST /login`, password-reset flow (rate-limited)
-- **Content** — `GET/POST /api/novels`, `GET/POST /api/articles` (creation requires auth; `authorId` is taken from the verified JWT, never the request body), plus `/:id`, `/author/:authorId`, like/comment/reply sub-routes
+- **Content** — `GET/POST /api/novels`, `GET/POST /api/articles` (creation requires auth; `authorId` is taken from the verified JWT, never the request body), plus `/:id`, `/author/:authorId`, like/comment/reply sub-routes. List endpoints return a short `content` excerpt and `commentCount` instead of full text/comments; covers are returned as URLs (`/api/media/:type/:id/cover`) instead of embedded images
 - **Users** — profile lookup, settings, favorites, reading history/stats, admin-contact lookup
 - **Messaging** — `/api/messages*` (conversations, send, edit, delete, react, read receipts, unread count)
 - **Notifications** — `/api/notifications*` (list, mark-read, delete, unread count)
@@ -207,10 +216,12 @@ All routes are prefixed implicitly by the server root (`http://localhost:5000`).
 - **Rate limiting** on `/login`, `/register`, and `/api/forgot-password` (20 requests / 15 min per IP).
 - **Helmet** for standard secure headers; CORS restricted to `CLIENT_URL`.
 - Sensitive fields (`password`, `hintAnswer`) are excluded from any route that returns a user document.
+- **Input validation** (`server/lib/validation.js`): edit routes only accept an allow-list of fields (no changing `authorId`, `views`, `likes`…); statuses, content types, usernames, emails and passwords are validated; user search input is regex-escaped.
+- **No account enumeration**: login and password-reset give the same response whether or not an email is registered.
 
 ## Testing & CI
 
-- Backend: `server/middleware/auth.test.js` (Jest) covers the JWT auth middleware.
+- Backend: `server/middleware/auth.test.js` covers the JWT auth middleware, `server/lib/validation.test.js` the validators, and `server/tests/api.test.js` runs the API against an in-memory MongoDB (`mongodb-memory-server` downloads a MongoDB binary on first run; set `MONGOMS_SYSTEM_BINARY` to use an installed `mongod` instead).
 - Frontend: CRA's default Testing Library setup.
 - GitHub Actions (`.github/workflows/ci.yml`) runs on every push/PR to `main`/`dev`: installs, builds, and tests the client; syntax-checks and tests the server.
 

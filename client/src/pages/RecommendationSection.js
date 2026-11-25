@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './RecommendationSection.css';
 
-import { API_BASE_URL as API_BASE } from '../config';
+import { API_BASE_URL as API_BASE, resolveMediaUrl } from '../config';
 const RecommendationSection = ({ user }) => {
   const [recommendations, setRecommendations] = useState([]);
   const [hasHistory, setHasHistory] = useState(false);
@@ -101,7 +101,7 @@ const RecommendationSection = ({ user }) => {
             <div className="rec-card-img-wrap">
               {item.coverPhoto ? (
                 <img
-                  src={`${API_BASE}/${item.coverPhoto}`}
+                  src={resolveMediaUrl(item.coverPhoto)}
                   alt={item.title}
                   className="rec-card-img"
                 />

@@ -80,8 +80,9 @@ const ReadPage = () => {
                 body: JSON.stringify({
                     contentId: id,
                     title: data.title,
-                    type: type,
-                    coverPhoto: data.coverPhoto
+                    // No coverPhoto: the server looks the cover up itself,
+                    // so the image isn't re-uploaded on every page view.
+                    type: type
                 })
             }).catch(err => console.error("History logging failed:", err));
         }

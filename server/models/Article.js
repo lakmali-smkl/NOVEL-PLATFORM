@@ -42,4 +42,9 @@ const articleSchema = new mongoose.Schema({
 
 
 
+// Indexes for the queries the API actually runs: published listings sorted
+// by date, and an author's own works.
+articleSchema.index({ status: 1, createdAt: -1 });
+articleSchema.index({ authorId: 1, createdAt: -1 });
+
 module.exports = mongoose.model('article', articleSchema);

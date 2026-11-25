@@ -48,4 +48,9 @@ const novelSchema = new mongoose.Schema({
 
 },{ timestamps: true });
 
+// Indexes for the queries the API actually runs: published listings sorted
+// by date, and an author's own works.
+novelSchema.index({ status: 1, createdAt: -1 });
+novelSchema.index({ authorId: 1, createdAt: -1 });
+
 module.exports = mongoose.model('chapter', novelSchema);

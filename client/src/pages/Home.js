@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom'; 
 import './Home.css';
 import myVideo from './backgroundVideo.mp4';
+// Shown instantly while the video loads (or if it can't autoplay).
+import videoPoster from './backgroundVideoPoster.jpg';
 import RecommendationSection from './RecommendationSection';
 import ChatbotWidget from '../components/ChatbotWidget';
 
@@ -347,7 +349,7 @@ const Home = ({ user }) => {
   return (
     <div className="home-container guest-view">
       <div className="hero-section">
-        <video autoPlay loop muted playsInline className="video-background">
+        <video autoPlay loop muted playsInline poster={videoPoster} className="video-background">
           <source src={myVideo} type="video/mp4" />
         </video>
         

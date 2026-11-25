@@ -14,4 +14,6 @@ const CollectionSchema = new mongoose.Schema({
   }]
 }, { timestamps: true });
 
+CollectionSchema.index({ userId: 1 });
+
 module.exports = mongoose.model('Collection', CollectionSchema);
