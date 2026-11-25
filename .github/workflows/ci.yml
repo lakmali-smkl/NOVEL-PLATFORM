@@ -37,6 +37,12 @@ jobs:
           node-version: 20
           cache: npm
           cache-dependency-path: server/package-lock.json
+      # API tests start an in-memory MongoDB; its binary is downloaded during
+      # npm ci, so restore the cache first.
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/mongodb-binaries
+          key: mongodb-binaries-${{ hashFiles('server/package-lock.json') }}
       - run: npm ci
-      - run: node --check server.js
+      - run: node --check server.js && node --check app.js
       - run: npx jest

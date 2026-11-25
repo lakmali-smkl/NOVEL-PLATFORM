@@ -3,6 +3,8 @@ const router = express.Router();
 const User = require('../models/User'); 
 const Novel = require('../models/Novel');     
 const Article = require('../models/Article'); 
+const mongoose = require('mongoose');
+const WriterRequest = require('../models/WriterRequest');
 const { auth, admin } = require('../middleware/auth');
 
 // Mount globally for all admin sub-routes
@@ -131,8 +133,10 @@ router.get('/content', async (req, res) => {
     try {
         // Populating 'authorId' to match the database schemas defined in your novel/article routes
         const [novels, articles] = await Promise.all([
-            Novel.find().populate('authorId', 'username email').lean(),
-            Article.find().populate('authorId', 'username email').lean()
+            // The oversight table only shows metadata — leave the full text,
+            // covers and comment threads in the database.
+            Novel.find().select('-content -coverPhoto -comments -textFile').populate('authorId', 'username email').lean(),
+            Article.find().select('-content -coverPhoto -comments -textFile').populate('authorId', 'username email').lean()
         ]);
 
         // Transform the payload schema so the UI component reads the profile under '.author'
@@ -212,6 +216,113 @@ router.get('/growth', async (req, res) => {
         console.error("Error fetching site growth metrics:", err);
         res.status(500).json({ error: "Failed to compile site growth analytics matrix." });
     }
+});
+
+
+/**
+ * =========================================================================
+ * 🛡️ SECTION: PLATFORM STATS & WRITER APPLICATIONS
+ * =========================================================================
+ * Base prefix assigned: /api/admin (moved here from server.js)
+ */
+router.get('/stats', async (req, res) => {
+  try {
+    const totalUsers = await User.countDocuments();
+    const totalWriters = await User.countDocuments({ isWriter: true });
+    const pendingApprovals = await User.countDocuments({ writerRequestStatus: 'pending' });
+    const novelCount = await Novel.countDocuments();
+    const articleCount = await Article.countDocuments();
+
+    res.json({
+      totalUsers,
+      totalWriters,
+      pendingApprovals,
+      totalWorks: novelCount + articleCount
+    });
+  } catch (error) {
+    console.error("Stats API Error:", error);
+    res.status(500).json({ error: "Failed to fetch stats" });
+  }
+});
+
+
+router.get('/writer-requests', async (req, res) => {
+  try {
+    const writerRequests = await WriterRequest.find().sort({ createdAt: -1 });
+    const requestedUserIds = writerRequests.map(wr => wr.userId.toString());
+    const orphanedUsers = await User.find({ 
+      writerRequestStatus: 'pending',
+      _id: { $nin: requestedUserIds }
+    }).select('_id username');
+    
+    const orphanedRequests = orphanedUsers.map(user => ({
+      _id: user._id,
+      userId: user._id,
+      username: user.username,
+      reason: '(No reason provided)',
+      status: 'pending',
+      createdAt: new Date()
+    }));
+
+    const handledUsersWithoutRequest = await User.find({
+      writerRequestStatus: { $in: ['approved', 'rejected'] },
+      _id: { $nin: requestedUserIds }
+    }).select('_id username writerRequestStatus');
+
+    const handledRequests = handledUsersWithoutRequest.map(user => ({
+      _id: user._id,
+      userId: user._id,
+      username: user.username,
+      reason: '(Historical request)',
+      status: user.writerRequestStatus,
+      createdAt: new Date()
+    }));
+    
+    const allRequests = [...writerRequests, ...orphanedRequests, ...handledRequests];
+    res.json(allRequests);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch requests" });
+  }
+});
+
+router.post('/approve-writer/:id', async (req, res) => {
+  const { action } = req.body;
+  if (action !== 'approve' && action !== 'reject') {
+    return res.status(400).json({ error: "Action must be 'approve' or 'reject'." });
+  }
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(400).json({ error: "Invalid user ID." });
+  }
+  try {
+    const update = action === 'approve' 
+      ? { isWriter: true, writerRequestStatus: 'approved' , hasSeenWelcome: false}
+      : { writerRequestStatus: 'rejected' };
+
+    await User.findByIdAndUpdate(req.params.id, update);
+    await WriterRequest.findOneAndUpdate(
+      { userId: req.params.id, status: 'pending' },
+      { status: action === 'approve' ? 'approved' : 'rejected' }
+    );
+    res.json({ message: `Writer ${action}ed successfully` });
+  } catch (error) {
+    res.status(500).json({ error: "Action failed" });
+  }
+});
+
+// DELETE history record — only removes the WriterRequest doc, does NOT touch User fields
+router.delete('/writer-requests/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: "Invalid record ID." });
+    }
+    // Just delete the document; if it doesn't exist (synthetic record) still return 200
+    await WriterRequest.findByIdAndDelete(id);
+    res.json({ message: "Record removed from history." });
+  } catch (error) {
+    console.error("Delete writer-request error:", error);
+    res.status(500).json({ error: "Failed to delete record." });
+  }
 });
 
 module.exports = router;
